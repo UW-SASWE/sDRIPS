@@ -28,6 +28,7 @@ The detailed functioning of the framework is outlined in the sD.R.I.P.S Paper. I
       ```bash
       python Canal_Config_Creator.py -h
       ```
+    Note: If users dont have the command area shapefile, but have the canal network shapefiles, users should run the `Command_Area_Creation.py` to generate an estimate of the command areas boundary.
 3. **Set up the configuration files**: In this step, we set up the `Script_Config` and `Secrets.ini` files.
    
     - **`Script_Config.ini` file**: 
