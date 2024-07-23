@@ -55,7 +55,6 @@ imerg_username = secrets.get('IMERG_Account', 'username')
 imerg_password = secrets.get('IMERG_Account', 'password')
 
 ## SETUP LOGGING
-# save_data_loc = "../Data_2023_March_Check3/"
 os.makedirs(f'{save_data_loc}',exist_ok = True)
 os.makedirs(f'{save_data_loc}/logs/',exist_ok = True)
 dt_fmt = '%Y%m%d_%H%M%S'
@@ -132,7 +131,6 @@ def sebal_eto_Landsat():
   total_iterations_sebal = len(run_week) * len(canal_list)
   with tqdm(total=total_iterations_sebal, desc="Estimating Penman ET and SEBAL ET", unit="Command Area") as pbar:
     for wktime in run_week:
-      # print(f'Working with {wktime}')
       with open(rf"{save_data_loc}/landsat/stats_" + wktime + ".txt", 'w') as txt:
         txt.write("Region,Penman_ET,Sebal_ET,Irrigation\n")
       if wktime == "lastweek":
@@ -141,9 +139,7 @@ def sebal_eto_Landsat():
       if wktime == "currentweek":
         startdate = start_date
         dayVal = 7
-      # print('startdate = ',startdate)
       enddate = datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(days = 8+2)
-      # print('enddate = ',enddate)
       startDate=ee.Date(startdate)
       endDate=ee.Date(enddate)
       logging.critical('Running Week:'+str(wktime))
@@ -242,7 +238,6 @@ def sebal_eto_Landsat():
                 geometry=ROI,
                 scale=selscale  # You may need to adjust the scale according to your data
             )
-            # print('max_temp_dict',max_temp_dict)
             maxtemp= ee.Image.constant(max_temp_dict.get('temperature_2m_above_ground').getInfo())
             mintemp= ee.Image.constant(min_temp_dict.get('temperature_2m_above_ground').getInfo())
             wind_u = gfs_forcings_composite.select('u_component_of_wind_10m_above_ground') 
@@ -383,22 +378,9 @@ def sebal_eto_Landsat():
             tt2=ee.Image.constant(0.183).multiply((Temp_TOA_10.subtract(Temp_TOA_11)).pow(ee.Image.constant(2)))
             tt3=(ee.Image.constant(54.30).subtract(ee.Image.constant(2.238).multiply(e_30m))).multiply(ee.Image.constant(1).subtract(b10_emissivity))
             Surface_temp = Temp_TOA_10.add(tt1).add(tt2).add(tt3).subtract(ee.Image.constant(0.268))
-            # tt1_check= tt1.reduceRegion(
-            #   reducer= ee.Reducer.mean(),
-            #   geometry= ROI,
-            #   scale= selscale,
-            #   maxPixels= 1e11
-            # )
-            # print(f'tt1_check:{tt1_check.getInfo()}')
-
-            # print('tt1',tt1.get('constant').getInfo())
-            # print('tt2',tt2.get('constant').getInfo())
-            # print('tt3',tt3.get('constant').getInfo())
+            
             #########*******END of Module (5) Surface Temperature********########/
-            #Map.addLayer( Temp_TOA_10,{},'check')
             
-            
-            ##logging.info('check',check)
             #########*******Module (6) Daily Radiation (mm/day)********########/
             # Daily 24 hr radiation - For flat terrain only !
             # 1) Shortwave Radiation
@@ -462,7 +444,6 @@ def sebal_eto_Landsat():
             tmp3=Surface_temp.subtract(ee.Image.constant(273.15))
             G= tmp1.multiply(tmp2).multiply(tmp3).multiply(Rn)
             #########*******END of Module (7) Soil Heat Flux (mm/day)********########/
-            ##logging.info('G',G)
             #########*******Module (8) Selection of Cold/Hot Pixels********########/
             maxNDVI= NDVI.reduceRegion(
               reducer= ee.Reducer.max(),
@@ -470,7 +451,6 @@ def sebal_eto_Landsat():
               scale= selscale,
               maxPixels= 1e11
             )
-           #   print('maxNDVI',maxNDVI.getInfo())
             stdNDVI= NDVI.reduceRegion(
               reducer= ee.Reducer.stdDev(),
               geometry= ROI,
@@ -952,9 +932,7 @@ def convertingToETo():
   for canal in tqdm(canal_list, desc="Processing Canals TIFF to Readable Format", unit = 'canal'):
       try:
         regionid = canal[0]
-        #logging.info(regionid)
         regionn = canal[0]
-        # print('regionn',regionn)
         regionid = regionid.replace(" ", "-")
         for sensor in ['landsat']:
           for weeki in run_week:
@@ -998,7 +976,7 @@ def etinfo_update():
                       txt.write("Region,Penman_ET,Sebal_ET,Irrigation\n")
                       for i in range(len(regions1)):
                           txt.write(regions1[i] + ',' + '{0:.3f}'.format(penman1[i]) + "," + '{0:.3f}'.format(sebal1[i]) + ',' + '{0:.3f}'.format(irri1[i]) + '\n')
-                      # print('Just wrote ',rf'{save_data_loc}' + sensor + r'_stats_currentweek.txt')
+                      
               elif week_time == 'lastweek':            
                   secondfilepath = open(rf"{save_data_loc}" + sensor + rf'/stats_{week_time}.txt', 'r')
                   lines2 = secondfilepath.readlines()
@@ -1040,7 +1018,7 @@ def etinfo_update():
                       txt.write("Region,Penman_ET,Sebal_ET,Irrigation\n")
                       for i in range(len(regions2)):
                           txt.write(regions2[i] + ',' + '{0:.3f}'.format(penmanf[i]) + "," + '{0:.3f}'.format(sebalf[i]) + ',' + '{0:.3f}'.format(irri2[i]) + '\n')
-                      # print('Just wrote ',rf'{save_data_loc}' + sensor + r'_stats_lastweek.txt')
+                    
     except Exception as logerror:
       logging.error("Found Error While Executing etinfo_update(): " )
       logging.info("") 
@@ -1071,9 +1049,7 @@ def imergprecip():
           r = requests.get(r'https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/3B-HHR-E.MS.MRG.3IMERG.' + datestr + '-S233000-E235959.1410.V07B.1day.tif', auth=(imerg_username, imerg_password))  # Goto link and check if it exist, if error comes
           with open(fpath, 'wb') as f:
               f.write(r.content)
-          # print('Just wrote',fpath)    
           os.system(f'{osgeo_path} gdalwarp -of GTiff -tr 0.1 0.1 -te {bounds_leftlon} {bounds_bottomlat} {bounds_rightlon} {bounds_toplat} -overwrite ' + fpath + rf" {save_data_loc}/precip/precip.imerg." + datestr + '.tif')
-          # print('Just did mycall2')
           #os.system('C:\OSGeo4W64\OSGeo4W.bat gdalwarp -of GTiff -tr 0.1 0.1 -te 89.0 23.0 93.0 25.5 -overwrite ' + fpath + rf" {save_data_loc}precip/precip.imerg."" + datestr + '.tif')
           rasterstr = rasterstr + " -" + letterstr[dayi-1] + " " + rf"{save_data_loc}/precip/precip.imerg." + datestr + '.tif' + " "
     else:
