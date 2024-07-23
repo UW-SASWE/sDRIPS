@@ -82,5 +82,5 @@ The detailed functioning of the framework is outlined in the sD.R.I.P.S Paper. I
 
 ### How to Cite
 <div style="text-align: justify;">
-If you use this code, please cite the following paper:
+If you use the scripts from this repository, please cite the following paper:
 </div>
