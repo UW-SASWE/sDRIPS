@@ -1,5 +1,3 @@
-##### Add Distribution Uniformity, and leaching
-
 # Importing required libraries 
 import ee 
 import logging
@@ -23,30 +21,6 @@ import sys
 import traceback
 import warnings
 warnings.filterwarnings("ignore")
-
-
-# def configure_logging():
-#     # Create a logger
-#     logger = logging.getLogger()
-#     logger.setLevel(logging.INFO)
-
-#     # Create a colorlog handler
-#     handler = logging.FileHandler(f'../logs/{datetime.datetime.today().strftime(dt_fmt)}.html')
-#     handler.setFormatter(colorlog.ColoredFormatter(
-#         '%(log_color)s%(levelname)-8s%(reset)s %(message)s',
-#         log_colors={
-#             'DEBUG': 'cyan',
-#             'INFO': 'green',
-#             'WARNING': 'yellow',
-#             'ERROR': 'red',
-#             'CRITICAL': 'bold_green',
-#         },
-#         secondary_log_colors={},
-#         style='%'
-#     ))
-
-#     # Add the handler to the logger
-#     logger.addHandler(handler)
 
 # Initialise Earth Engine
 # ee.Authenticate() # If you are running the earth engine first time in your machine, you need to run the ee.Authenticate() command first.
@@ -95,12 +69,7 @@ logging.critical('Run Week:'+ str(run_week) )
 # Accessing the information from 'OSGEO_Path' section
 osgeo_path = script_config.get('OSGEO_Path', 'path')
 canal_config_path = script_config.get('Canal_Config', 'path')
-# irrigation_canals= ee.FeatureCollection('users/skhan7/PhD/Chapter2/Mapped_Buffer_Canals')
-# irrigation_canals= ee.FeatureCollection('users/skhan7/PhD/Chapter2/BWDB_Teesta_Command_Area')
-# irrigation_canals= ee.FeatureCollection('users/skhan7/PhD/Chapter2/BWDB_Commad_Area_Simplified')
-irrigation_canals= ee.FeatureCollection(gee_asset_id)  #latest one correct one
-# irrigation_canals= ee.FeatureCollection('users/skhan7/PhD/Chapter2/Bogra_104_CommandArea')
-# irrigation_canals= ee.FeatureCollection('users/skhan7/PhD/Chapter2/S8T_34_CommandArea')
+irrigation_canals= ee.FeatureCollection(gee_asset_id) 
 canal_list = irrigation_canals.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
 glcc = ee.Image("COPERNICUS/Landcover/100m/Proba-V-C3/Global/2019")
 
@@ -187,8 +156,6 @@ def sebal_eto_Landsat():
         regionid = regionid.replace(" ", "-")
         if os.path.exists(rf"{save_data_loc}/landsat/sebal/" + wktime + r"/sebal_eto_" + regionid + ".zip") ==False:
           try:
-            # print(f'Starting Process for {regionid}')
-            # print(f'Working for {wktime}')
             table = irrigation_canals.filter(ee.Filter.equals(feature_name, regionn))
             glccmask = glcc.select("discrete_classification").clip(table)
             glcc_1 = glccmask.gt(20)
@@ -196,13 +163,10 @@ def sebal_eto_Landsat():
             glcc_crop = glccmask.updateMask(glcc_1).updateMask(glcc_2)
             ROI=table
             NDVIhot_low = 0.03               # Lower NDVI treshold for hot pixels
-            #NDVIhot_high = 0.25              # Higher NDVI treshold for hot pixels (Default)
             NDVIhot_high = 0.25              # Higher NDVI treshold for hot pixels
             Cold_Pixel_Constant=0.50
-            #Hot_Pixel_Constant=2.0      (Default)
             Hot_Pixel_Constant=2.00
             selscale = 30
-            # growth_kc = 1.23
             #########*******Module (2) Satellite Image********########/
             # Reference a Landsat scene.
             l8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA").filterBounds(ROI) \
@@ -524,9 +488,6 @@ def sebal_eto_Landsat():
               geometry= ROI,
               scale= selscale,
               maxPixels= 1e11)
-            # print('tempCold',tempCold.getInfo())
-            ##logging.info('zerocold',zeroCold)
-            ##logging.info('dt',tempCold)
             hot_pixels =Surface_temp.select('B10').rename('hot')
             hot_pixels_check= hot_pixels.reduceRegion(
               reducer= ee.Reducer.mean(),
@@ -534,7 +495,6 @@ def sebal_eto_Landsat():
               scale= selscale,
               maxPixels= 1e11
             )
-            # print(f'hot_pixels_check:{hot_pixels_check.getInfo()}')
             hotLow=hot_pixels.gt(ee.Number(NDVIhot_low))
             hotHigh=hot_pixels.lt(ee.Number(NDVIhot_high))
             hot_pixels_mask = hot_pixels.updateMask(hotLow)
@@ -547,18 +507,12 @@ def sebal_eto_Landsat():
               scale= selscale,
               maxPixels= 1e11
             )
-            # print(f'avgtempHot:{avgtempHot.getInfo()}')
             stdtempHot= hot_pixels.reduceRegion(
               reducer= ee.Reducer.stdDev(),
               geometry= ROI,
               scale= selscale,
               maxPixels= 1e11
               )
-            # print()
-            # print('avg temp hot',avgtempHot.get('hot').getInfo())
-            # print('hot_pixels',hot_pixels.getInfo()) 
-            # print('Hot_Pixel_Constant',Hot_Pixel_Constant)
-            # print('stdtempHot',stdtempHot.get('hot').getInfo())
             tempHot=ee.Number(avgtempHot.get('hot').getInfo()).add(ee.Number(Hot_Pixel_Constant).multiply(stdtempHot.get('hot').getInfo()))
 
             #########*******END of Module (8) Selection of Cold/Hot Pixels********########/
@@ -607,26 +561,7 @@ def sebal_eto_Landsat():
             srtmclip=srtm.clip(ROI)
             #Map.addLayer(srtmclip,{},'srtmclip')
             DEM_300m = srtmclip.resample('bilinear')
-            #Map.addLayer(DEM_30m.clip(ROI),{},'demclip')
-            # avgH= srtmclip.reduceRegion(
-            #   reducer= ee.Reducer.median(),
-            #   geometry= ROI,
-            #   scale= selscale,
-            #   maxPixels= 1e11
-            #   )
             
-            ##logging.info('srtm',srtmclip)
-            ##logging.info('avgH',avgH)
-            
-            #DEM_30m = srtm.clip(ROI).resample('bilinear').reproject({
-            #  crs: sample.select('B1').projection().crs(),
-            #  scale: 30
-            #})
-            
-            
-            #Map.addLayer(air_dens)
-            #air_dens = PS_30m.divide(ee.Image.constant(1.01).multiply(Surface_temp).multiply(ee.Image.constant(287)))
-            #Map.addLayer(air_dens)
             # Giving the first guess for the stability (LE = 0 Therefore Rn-G = H)
             dT_init = (Rn.subtract(G)).multiply(rah).divide(air_dens.multiply(ee.Image.constant(1004)))
             dT_init=dT_init.select('constant').rename('dt')
@@ -636,15 +571,10 @@ def sebal_eto_Landsat():
               scale= selscale,
               maxPixels= 1e11
               )
-            ##logging.info('medDt',medDT)
-            #slope_dt = ee.Number(medDT.get('dt').getInfo()).divide(tempHot.subtract(tempCold.get('cold')))
             tmp=tempHot.getInfo()-(tempCold.get('cold').getInfo())
             ##logging.info(tmp)
             slope_dt = dT_init.divide(ee.Image.constant(tmp))
-            ##logging.info('slope',slope_dt)
-            #offset_dt = ee.Number(medDT.get('dt').getInfo()).subtract(slope_dt.multiply(tempHot))
             offset_dt = dT_init.subtract(slope_dt.multiply(ee.Image.constant(tempHot.getInfo())))
-            #dT=ee.Image.constant(offset_dt).add(ee.Image.constant(slope_dt).multiply(Surface_temp))
             dT=offset_dt.add(slope_dt.multiply(Surface_temp))
             H_initial = air_dens.multiply(ee.Image.constant(1004)).multiply(dT).divide(rah)
             initial_H_max = H_initial.reduceRegion(
@@ -655,7 +585,7 @@ def sebal_eto_Landsat():
             ).get('constant')
             H = H_initial
             H_prev = H_initial
-            ##logging.info('dT',dT)
+            
             # Sensible Heat
 
             #### New approach for iteration
@@ -663,13 +593,7 @@ def sebal_eto_Landsat():
             
             
             # Iterative process is required here for correcting ustar & rah
-            
-            # Run the loop
-            # if regionid == 'Bogra_Canal_104':
-            #     iterations_number = 7
-            # else:
-            #     iterations_number = 5
-
+          
             for iter in range(3):    #### Changing the original iteration number from 5 to 3
               tmp1=ee.Image.constant(-1004).multiply(air_dens).multiply(ustar.pow(3)).multiply(Surface_temp)
               tmp2=ee.Image.constant(k_vk).multiply(ee.Image.constant(9.81)).multiply(H)
@@ -730,103 +654,13 @@ def sebal_eto_Landsat():
               dT=ee.Image.constant(offset_dt).add(ee.Image.constant(slope_dt).multiply(Surface_temp))
               # Sensible Heat
               H = air_dens.multiply(ee.Image.constant(1004)).multiply(dT).divide(rah_corr)
-                
-                # dT_avg= dT.reduceRegion(
-                #   reducer= ee.Reducer.mean(),
-                #   geometry= ROI,
-                #   scale= selscale,
-                #   maxPixels= 1e11
-                #   )
-            
-            
-            # for iter in range(15):
-            #     tmp1=ee.Image.constant(-1004).multiply(air_dens).multiply(ustar.pow(3)).multiply(Surface_temp)
-            #     tmp2=ee.Image.constant(k_vk).multiply(ee.Image.constant(9.81)).multiply(H)
-            #     L_MO = tmp1.divide(tmp2)
-            #     # L_MO < 0 Unstable, L_MO > 0 Stable, L_MO = 0 Neutral.
-            #     # Stability Condition
-            #     psi_m200_stable = ee.Image.constant(-10).divide(L_MO)
-            #     psi_h2_stable = ee.Image.constant(-10).divide(L_MO)
-            #     psi_h001_stable = ee.Image.constant(-0.05).divide(L_MO)
-            #     # Neutral Condition
-            #     # psi_m200_neutral = ee.Image.constant(0)
-            #     # psi_h2_neutral = ee.Image.constant(0)
-            #     # psi_h001_neutral = ee.Image.constant(0)
-            #     # UnStability Condition
-            #     tmp=ee.Image.constant(1).subtract(ee.Image.constant(16).multiply(ee.Image.constant(2)).divide(L_MO))
-            #     x2 = tmp.pow(0.25)  # x at 2m
-            #     tmp=ee.Image.constant(1).subtract(ee.Image.constant(16).multiply(ee.Image.constant(200)).divide(L_MO))
-            #     x200 = tmp.pow(0.25)  # x at 200m
-            #     tmp=ee.Image.constant(1).subtract(ee.Image.constant(16).multiply(ee.Image.constant(0.01)).divide(L_MO))
-            #     x001 = tmp.pow(0.25)  # x at 0.01m
-            #     tmp=(ee.Image.constant(1).add(x2.pow(2))).divide(ee.Image.constant(2)).log()
-            #     psi_h2_unstable= ee.Image.constant(2).multiply(tmp)
-            #     tmp=(ee.Image.constant(1).add(x001.pow(2))).divide(ee.Image.constant(2)).log()
-            #     psi_h001_unstable= ee.Image.constant(2).multiply(tmp)
-                
-            #     tmp1=(ee.Image.constant(1).add(x200)).divide(ee.Image.constant(2)).log()
-            #     tmp2=(ee.Image.constant(1).add(x200.pow(2))).divide(ee.Image.constant(2)).log()
-            #     tmp3=ee.Image.constant(2).multiply(x200.atan())
-            #     psi_m200_unstable= (ee.Image.constant(2).multiply(tmp1)).add(tmp2).subtract(tmp3).add(ee.Image.constant(0.5).multiply(math.pi))
-            #     tmp1=ee.Image.constant(k_vk).multiply(u_200)
-            #     tmp2=((ee.Image.constant(200).divide(Surf_roughness)).log()).subtract(psi_m200_unstable)
-            #     ustar_corr_unstable = tmp1.divide(tmp2)
-            #     tmp2=((ee.Image.constant(200).divide(Surf_roughness)).log()).subtract(psi_m200_stable)
-            #     ustar_corr_stable = tmp1.divide(tmp2)
-            #     ustar_corr=ustar_corr_unstable
-            #     L_unstable=L_MO.lt(1.0)
-            #     ustar_corr_mask=ustar_corr.updateMask(L_unstable)  #masking stable pixels
-            #     ustar_corr=ustar_corr_mask.unmask(ustar_corr_stable)
-            #     tmp1=((ee.Image.constant(2).divide(ee.Image.constant(0.01))).log()).subtract(psi_h2_stable).add(psi_h001_stable)
-            #     tmp2=ee.Image.constant(k_vk).multiply(ustar_corr)
-            #     rah_corr_stable=tmp1.divide(tmp2)
-            #     tmp1=((ee.Image.constant(2).divide(ee.Image.constant(0.01))).log()).subtract(psi_h2_unstable).add(psi_h001_unstable)
-            #     rah_corr_unstable=tmp1.divide(tmp2)
-            #     rah_corr=rah_corr_unstable
-            #     L_unstable=L_MO.lt(1.0)
-            #     rah_corr_mask=rah_corr.updateMask(L_unstable)  #masking stable pixels
-            #     rah_corr=rah_corr_mask.unmask(rah_corr_stable)
-            #     dT_corr = (Rn.subtract(G)).multiply(rah_corr).divide(air_dens.multiply(ee.Image.constant(1004)))
-            #     dT_corr=dT_corr.select('constant').rename('dt')
-            #     medDT= dT_corr.reduceRegion(
-            #     reducer= ee.Reducer.median(),
-            #     geometry= ROI,
-            #     scale= selscale,
-            #     maxPixels= 1e11
-            #     )
-            #     slope_dt= ee.Number(medDT.get('dt').getInfo()).divide(tempHot.subtract(tempCold.get('cold')))
-            #     offset_dt = ee.Number(medDT.get('dt').getInfo()).subtract(slope_dt.multiply(tempHot))
-            #     dT=ee.Image.constant(offset_dt).add(ee.Image.constant(slope_dt).multiply(Surface_temp))
-            #     # Sensible Heat
-            #     H = air_dens.multiply(ee.Image.constant(1004)).multiply(dT).divide(rah_corr)
-            #     final_H_max = H.reduceRegion(
-            #         reducer=ee.Reducer.max(),
-            #         geometry=ROI,
-            #         scale=selscale,
-            #         maxPixels=1e11
-            #     ).get('constant')
-            #     if ee.Number(final_H_max).gt(ee.Number(initial_H_max).multiply(10)).getInfo():
-            #         H = H_prev  # Use the H value from the previous 
-            #         # print('Stopped at iter:',iter)
-            #         break  # Stop the loop if the condition is met
-            #     # dT_avg= dT.reduceRegion(
-            #     #   reducer= ee.Reducer.mean(),
-            #     #   geometry= ROI,
-            #     #   scale= selscale,
-            #     #   maxPixels= 1e11
-            #     #   )
-            #     H_prev = H
-
-
+             
             
             H_mask=H.updateMask(H.gte(0))
             H_mask=H_mask.unmask(0)
             
             
             #########*******END of Module (9) Sensible Heat Flux********########/
-            #Map.addLayer(Rn,{},'Rn')
-            #Map.addLayer(H,{},'H')
-            #Map.addLayer(G,{},'G')
             #########*******Module (10) Reference ET********########/
             # Reference Evapotranspiration (Penman-Monteith)
             # Effective leaf area index involved, see Allen et al. (2006):
@@ -964,9 +798,6 @@ def sebal_eto_Landsat():
             urllib.request.urlretrieve(url, rf"{save_data_loc}/landsat/irrigation/" + wktime + r"/irrigation_" + regionid + ".zip")
             logging.info('ET Values For The Processed Command Area - Format: Command Area, Average Penman ET, Average SEBAL ET, Average Overirrigation (SEBAL - Penman)')
             logging.info((canal[0] + ',' + str(median_etref) + "," + str(avg_etc)+ ',' + str(avg_irri)))
-            # with open(rf"{save_data_loc}/landsat/stats_" + wktime + ".txt", 'a') as txt: 
-            #   txt.write(regionid + "," + str(median_etref) + "," + str(avg_etc)+ ',' + str(irristatus) + '\n')
-            # # print('Just wrote ',r"../Data/landsat/stats_" + wktime + ".txt")
             penman_mean_values.append((regionid, median_etref))
             sebal_mean_values.append((regionid, avg_etc))
             irr_mean_values.append((regionid, avg_irri))
@@ -975,8 +806,6 @@ def sebal_eto_Landsat():
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(f"Error found: {e}")
-            # print('Error on', wktime.capitalize())
-            # print(f"Exception in {fname} on line {exc_tb.tb_lineno}")
             logging.error("Week: " + str(wktime) + ", Region: " + str(regionid) + " Showed Error During Processing. Error Line:" + str(exc_tb.tb_lineno)+" See error below.\n")
             logging.error(traceback.format_exc())  # Logging full traceback
             continue
@@ -1221,7 +1050,6 @@ def etinfo_update():
 
 def imergprecip():
     logging.critical('IMERG Precipitation Download Started')
-    # startDate = datetime.datetime.today() #should be 0
     start_date_Script = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
     startDate = datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(days = 0)
     rasterstr = "{osgeo_path} gdal_calc".format(osgeo_path=osgeo_path)
@@ -1571,12 +1399,6 @@ def union_info():
     raster_crs = raster.crs
     raster.close()
     canal_shp_reprojected = canal_shp.to_crs(raster_crs)
-    # print("Shapefie Bounds:",canal_shp.total_bounds)
-    # print("Shapefie CRS:",canal_shp.crs)
-    # print("Raster CRS: ", raster_crs)
-    # print("Raster Bounds:",raster.bounds)
-    # print('Reprojected Canals Shapefile Bounds:',canal_shp_reprojected.total_bounds)
-    # print('Reprojected Canals Shapefile CRS:',canal_shp_reprojected.crs)
     canal_shp_reprojected['Currentweek PPT'] = np.nan
     canal_shp_reprojected['Nextweek PPT'] = np.nan
     simple_canal_list = [item[0] for item in canal_list]
@@ -1841,33 +1663,13 @@ def ensure_feature_collection(roi):
         raise ValueError("ROI is neither a Geometry, Feature, nor a FeatureCollection")
     
 if __name__ == '__main__':
-    # configure_logging()
-    # print('Making Directory if it does not exist')
     makeDirectory()
-    # # print('Finished making directory if they were not present')
-    # # print('Clear Data Started')
     clearData()
-    # # print('Clear Data Finished')
-    # # print('sebal_eto_Landsat Started')
     penman_mean_values,sebal_mean_values,irr_mean_values = sebal_eto_Landsat()
-    # # print('sebal_eto_Landsat Finished')
-    # # print('unziptiffs Started')
     ET_Values(penman_mean_values = penman_mean_values,sebal_mean_values= sebal_mean_values,irr_mean_values= irr_mean_values)
-
     unziptiffs()
-    # # print('unziptiffs Finished')
-    # # print('convertTiffs Started')
     convertTiffs()
-    # # print('convertTiffs Finished')
-    # # print('converting Penman TIF into ETo')
     convertingToETo()
-    # print('Finished converting Penman TIF into ETo')
-    # print('imergprecip Started')
     imergprecip()
-    # print('imergprecip Finished')
-    # print('gfsdata Started')
-    gfsdata() # for 'tmax', 'tmin', 'ugrd', 'vgrd'
-    # print('gfsdata Finished')
-    # print('union_info Started')
+    gfsdata()
     union_info()
-    # # print('union_info Finished')
