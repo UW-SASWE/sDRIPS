@@ -1,12 +1,12 @@
 # sD.R.I.P.S - Framework
 
-### Satellite Data Rendered Irrigation using Penman and SEBAL (sD.R.I.P.S) for Surface Water Irrigation Optimization 
+### Satellite Data Rendered Irrigation using Penman and SEBAL (sD.R.I.P.S) for Surface Water Irrigation Optimization: 
 
 <div style="text-align: justify;">
 This study proposes a water-provider-centric irrigation advisory system designed to manage surface water resources and allocate water efficiently to areas in need, thereby promoting sustainable irrigation practices in the context of a changing climate. The system utilizes satellite remote sensing based SEBAL (Surface Energy Balance Algorithm for Land) and Penman-Monteith evapotranspiration models to estimate crop water use. By integrating the responses from the previous irrigation cycle, current precipitation, forecasted precipitation, and evapotranspiration-based water needs, the framework calculates the net water requirements for command areas within irrigation canal networks. Operating on a weekly basis, the system generates advisories that enable water providers to make informed, science-based decisions about water allocation. These advisories quantify the water needs, giving water providers the flexibility to direct water to areas of higher need based on their judgment. Additionally, the proposed framework can simulate future scenarios by assuming potential policy changes come into effect today and evaluating their impact on water supply to irrigation areas. This allows stakeholders to assess the response of crops to such changes and develop strategies to mitigate adverse effects on water supply conditions.
 </div>
 
-### Repository Outline
+### Repository Outline:
 <div style="text-align: justify;">
 This repository mirrors the directory structure of the sD.R.I.P.S framework prior to setup for any specific region of interest. The repository includes:
 
