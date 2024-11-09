@@ -58,6 +58,10 @@ if default_run_week:
 else:
     run_week = eval(script_config.get('Date_Running', 'run_week'))
 
+clear_directory_condition = script_config.getboolean('Clean_Directory', 'clear_directory_condition')
+
+ET_estimation = script_config.getboolean('Run_ET_Estimation', 'ET_estimation')
+
 GLCC_mask_condition = script_config.getboolean('GLCC_Mask', 'glcc_mask')
 if GLCC_mask_condition:
     glcc_mask = True
@@ -67,6 +71,8 @@ else:
 precipitation_condition = script_config.getboolean('Precipitation_Config', 'consider_preciptation')
 
 weather_condition = script_config.getboolean('Weather_Config', 'consider_forecasted_weather')
+
+percolation_condition = script_config.getboolean('Percolation_Config', 'consider_percolation')
 
 region_stats_condition = script_config.getboolean('Region_stats', 'estimate_region_stats')
 
@@ -162,7 +168,7 @@ sebal_mean_values = []
 irr_mean_values = []
 def sebal_eto_Landsat():
   total_iterations_sebal = len(run_week) * len(canal_list)
-  with tqdm(total=total_iterations_sebal, desc="Estimating Penman ET and SEBAL ET", unit="Command Area") as pbar:
+  with tqdm(total=total_iterations_sebal, desc="Estimating Penman ET and SEBAL ET", unit=" Command Area") as pbar:
     for wktime in run_week:
       # print(f'Working with {wktime}')
       with open(rf"{save_data_loc}/landsat/stats_" + wktime + ".txt", 'w') as txt:
@@ -1088,7 +1094,7 @@ def unziptiffs():
             for weeki in weeks:
                 indir = rf"{save_data_loc}/" + sensor + r'/' + var + r'/' + weeki + r'/'  
                 files_to_process = [fn for fn in os.listdir(indir) if ".zip" in fn]
-                for fn in tqdm(files_to_process, desc=f"Processing {var} for {weeki}", unit="file"):
+                for fn in tqdm(files_to_process, desc=f"Processing {var} for {weeki}", unit=" file"):
                     if ".zip" in fn:
                         #logging.info(fn)
                         infile = indir + fn
@@ -1110,7 +1116,7 @@ def convertTiffs():
         for param in ['sebal','penman','irrigation']:
             try:
               files_to_process = [fn for fn in os.listdir(rf"{save_data_loc}" + sensor + r'/' + param + r'/' + weeki + r'/') if fn.endswith('.tif')]
-              for fn in tqdm(files_to_process, desc=f"Processing {param} for {weeki}", unit="file"):
+              for fn in tqdm(files_to_process, desc=f"Processing {param} for {weeki}", unit=" file"):
                     in_fn= rf"{save_data_loc}"+ r'/'+sensor + r'/' + param + r'/' + weeki + r'/' + fn
                     outfn = rf"{save_data_loc}uploads/"+sensor + '_' + weeki + "_" + fn.replace('.constant','').replace('.eta','').replace('_eto','').replace('.etr','')
                     kwargs = {
@@ -1131,7 +1137,7 @@ def convertTiffs():
                       
 def convertingToETo():
   logging.critical("Saving The TIFF For Uploading Purpose")
-  for canal in tqdm(canal_list, desc="Processing Canals TIFF to Readable Format", unit = 'canal'):
+  for canal in tqdm(canal_list, desc="Processing Canals TIFF to Readable Format", unit = ' canal'):
       try:
         regionid = canal[0]
         #logging.info(regionid)
@@ -1343,7 +1349,7 @@ def gfsdata_ee():
     weeks = ['currentweek', 'nextweek']
     params_ee = ['u_component_of_wind_10m_above_ground', 'v_component_of_wind_10m_above_ground', 'temperature_2m_above_ground']
     total_iterations = len(weeks) * (len(params_ee)+1) * 14  # 14 comes from the range(12, 169, 12)
-    with tqdm(total=total_iterations, desc="Downloading GFS Data From GEE", unit="file") as pbar:
+    with tqdm(total=total_iterations, desc="Downloading GFS Data From GEE", unit=" file") as pbar:
         for week in weeks:
             week_date = startDate + datetime.timedelta(days=-7) if week == 'currentweek' else startDate
             week_date_end = week_date + datetime.timedelta(days=1)
@@ -1429,7 +1435,7 @@ def gfsdata_noaa():
     letterstr = "ABCDEFGHIJKLMN"
     # Total iterations for progress calculation
     total_iterations = len(weeks) * len(params) * 14  # 14 comes from the range(12, 169, 12)
-    with tqdm(total=total_iterations, desc="Downloading and GFS Data From NOAA Server", unit="file") as pbar:
+    with tqdm(total=total_iterations, desc="Downloading and GFS Data From NOAA Server", unit=" file") as pbar:
         for week in weeks:
             for param in params:
                 datestr = startDate.strftime("%Y%m%d")
@@ -1477,7 +1483,7 @@ def gfsdata():
     letterstr = "ABCDEFGHIJKLMN"
     # Total iterations for progress calculation
     total_iterations = len(weeks) * len(params)
-    with tqdm(total=total_iterations, desc="Processing GFS Data", unit="file") as pbar:
+    with tqdm(total=total_iterations, desc="Processing GFS Data", unit=" file") as pbar:
       for week in weeks:
           for param in params:
             datestr = startDate.strftime("%Y%m%d")
@@ -1598,7 +1604,7 @@ def union_info():
         total_canals = len(canal_list) + 1
     else:
         total_canals = len(canal_list) * len(run_week)
-    with tqdm(total=total_canals, desc="Processing Canal And Creating Command Area Stats", unit="canal") as pbar:
+    with tqdm(total=total_canals, desc="Processing Canal And Creating Command Area Stats", unit=" canal") as pbar:
         if set(run_week) == {'currentweek', 'lastweek'}:
             canal_shp_reprojected['7Day Irrigation'] = np.nan
             canal_shp_reprojected['14Day Irrigation'] = np.nan
@@ -1845,7 +1851,7 @@ def converrt_ETtiff2images(variable, folder_path=f'{save_data_loc}/uploads/'):
         return
 
     # Iterate through all matching TIFF files with tqdm progress bar
-    for tiff_file in tqdm(tiff_files, desc="Converting ET TIF Files to PNGs", unit="file"):
+    for tiff_file in tqdm(tiff_files, desc="Converting ET TIF Files to PNGs", unit=" file"):
         filename = os.path.basename(tiff_file)
         region_name = filename.split('_')[-1].split('.tif')[0]
 
@@ -1951,7 +1957,7 @@ def converrt_Irrigationtiff2images(folder_path=f'{save_data_loc}/uploads/'):
         return
     
     # Iterate through all matching TIFF files with tqdm progress bar
-    for tiff_file in tqdm(tiff_files, desc="Converting Irrigation TIF Files to PNGs", unit="file"):
+    for tiff_file in tqdm(tiff_files, desc="Converting Irrigation TIF Files to PNGs", unit=" file"):
         filename = os.path.basename(tiff_file)
         region_name = filename.split('_')[-1].split('.tif')[0]
 
@@ -2042,8 +2048,128 @@ def converrt_Irrigationtiff2images(folder_path=f'{save_data_loc}/uploads/'):
         os.makedirs(f'{save_data_loc}/PNGs/', exist_ok=True)
         plt.savefig(f'{save_data_loc}/PNGs/{region_name}_DeficitET_{date_png}.png', bbox_inches='tight')
         
+def percolation_estimation():
+    logging.critical('Started Percolation Estimation')
+    for wktime in run_week:
+        try:
+            if wktime == "currentweek":
+                startdate = start_date
+                enddate = datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(days = 8+2)
+            elif wktime == "lastweek":
+                startdate = start_date
+                enddate = datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(days = 8+2+7)
+            # start_date = (datetime.today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d')
+            startDate=ee.Date(start_date)
+            endDate=ee.Date(enddate)
+            # Load the shapefile as a feature collection
+            logging.critical('Running Week:'+str(wktime))
+            logging.critical("Running Week's Start Date:"+str(start_date))
+            logging.critical("Running Week's End Date:"+str(enddate))
 
+            field_capacity = ee.Image("OpenLandMap/SOL/SOL_WATERCONTENT-33KPA_USDA-4B1C_M/v01").select('b10').divide(ee.Number(100)).clip(irrigation_canals)
 
+            # Initialize a list to store dataframes for each region
+            region_dataframes = []
+
+            # Use tqdm to add a progress bar for the number of regions
+            region_list = irrigation_canals.toList(irrigation_canals.size()).getInfo()
+            for region in tqdm(region_list, desc="Estimating Soil Mositure", unit=" Command Area"):
+                region_feature = ee.Feature(region)
+                region_id = region_feature.get('CNLNM_ID').getInfo()
+                region_geometry = region_feature.geometry()
+
+                # Load Sentinel-1 Image Collection for the last 7 days and apply speckle filtering
+                s1_collection = (ee.ImageCollection('COPERNICUS/S1_GRD')
+                                .filterBounds(region_geometry)
+                                .filterDate(startDate, endDate)
+                                .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                                .select(['VV']))
+
+                # Apply smoothing, calculate soil moisture, and create a feature collection for the output
+                def process_image(image):
+                    # Apply focal median filter for smoothing
+                    smoothed = image.addBands(image.focal_max(30, 'circle', 'meters').rename("Smooth"))
+
+                    # Calculate wet and dry indices using smoothed collection
+                    wet_index = s1_collection.max().select('VV')
+                    dry_index = s1_collection.min().select('VV')
+                    sensitivity = wet_index.subtract(dry_index)
+
+                    # Define urban and water masks
+                    urban_mask = smoothed.select('Smooth').gt(-6)
+                    water_mask = smoothed.select('Smooth').lt(-17)
+
+                    # Calculate soil moisture
+                    Mv = smoothed.select("Smooth").subtract(dry_index).divide(sensitivity)
+                    Mv = Mv.updateMask(water_mask.Not()).updateMask(urban_mask.Not())
+
+                    # Upscale and clamp soil moisture
+                    Mv_upscaled = Mv.reduceResolution(reducer=ee.Reducer.mean(), bestEffort=True).reproject(crs=Mv.projection(), scale=250)
+                    Mv_upscaled_clamped = Mv_upscaled.clamp(0, 0.6)
+
+                    # Calculate mean soil moisture in the region
+                    median_ssm = Mv_upscaled_clamped.reduceRegion(
+                        reducer=ee.Reducer.median(),
+                        geometry=region_geometry,
+                        scale=250,
+                        maxPixels=1e9
+                    ).get('Smooth')
+
+                    # Calculate field capacity
+                    median_field_capacity = field_capacity.reduceRegion(
+                        reducer=ee.Reducer.median(),
+                        geometry=region_geometry,
+                        scale=250,
+                        maxPixels=1e9
+                    ).get('b10')
+
+                    # # Calculate percolation
+                    # percolation = Mv_upscaled_clamped.subtract(field_capacity).max(0)
+                    # median_percolation = percolation.reduceRegion(
+                    #     reducer=ee.Reducer.median(),
+                    #     geometry=region_geometry,
+                    #     scale=250,
+                    #     maxPixels=1e9
+                    # ).get('Smooth')
+
+                    # Return as a feature with aggregated data for the period
+                    return ee.Feature(None, {
+                        'CNLNM_ID': region_id,
+                        'MedianSoilMoisture': median_ssm,
+                        'MedianFieldCapacity': median_field_capacity
+                    })
+
+                # Apply the processing function to each image in the smoothed collection
+                soil_moisture_features = s1_collection.map(process_image)
+
+                # Retrieve data for each region and create a DataFrame
+                ssm_features = soil_moisture_features.getInfo()
+                week_data = [{'CNLNM_ID': f['properties']['CNLNM_ID'],
+                            'MedianSoilMoisture': f['properties']['MedianSoilMoisture'],
+                            'MedianFieldCapacity': f['properties']['MedianFieldCapacity']}
+                            for f in ssm_features['features']]
+                
+                # Append the data for the current region to the list
+                region_df = pd.DataFrame(week_data)
+                region_dataframes.append(region_df)
+                logging.info('Estimated Soil Moisture for Region:'+str(region_id)+' For week:'+str(wktime))
+            # Combine all regional dataframes into a single DataFrame
+            final_df = pd.concat(region_dataframes, ignore_index=True)
+            # Group by region and calculate the mean values for each metric
+            final_means_df = final_df.groupby('CNLNM_ID').mean().reset_index()
+            final_means_df['MedianPercolation'] = (final_means_df['MedianSoilMoisture'] - final_means_df['MedianFieldCapacity']).clip(lower=0)
+            os.makedirs(f'{save_data_loc}/Percolation', exist_ok = True)
+            final_means_df.to_csv(f'{save_data_loc}/Percolation/Percolation_{wktime}.csv', index = False)
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            # print(f"Error found: {e}")
+            # print('Error on', wktime.capitalize())
+            # print(f"Exception in {fname} on line {exc_tb.tb_lineno}")
+            logging.error("Week: " + str(wktime) + ", Region: " + str(region_id) + " Showed Error During Processing. Error Line:" + str(exc_tb.tb_lineno)+" See error below.\n")
+            logging.error(traceback.format_exc())  # Logging full traceback
+            continue    
 
 def ensure_feature_collection(roi):
     if isinstance(roi, ee.geometry.Geometry):
@@ -2064,19 +2190,21 @@ if __name__ == '__main__':
     makeDirectory()
     # # print('Finished making directory if they were not present')
     # # print('Clear Data Started')
-    clearData()
+    if clear_directory_condition:
+        clearData()
     # # print('Clear Data Finished')
     # # print('sebal_eto_Landsat Started')
-    penman_mean_values,sebal_mean_values,irr_mean_values = sebal_eto_Landsat()
-    # # print('sebal_eto_Landsat Finished')
-    # # print('unziptiffs Started')
-    ET_Values(penman_mean_values = penman_mean_values,sebal_mean_values= sebal_mean_values,irr_mean_values= irr_mean_values)
-    unziptiffs()
-    convertTiffs()
-    convertingToETo()
+    if ET_estimation:
+        penman_mean_values,sebal_mean_values,irr_mean_values = sebal_eto_Landsat()
+        ET_Values(penman_mean_values = penman_mean_values,sebal_mean_values= sebal_mean_values,irr_mean_values= irr_mean_values)
+        unziptiffs()
+        convertTiffs()
+        convertingToETo()
     if precipitation_condition:
         imergprecip()
     if weather_condition:
         gfsdata()
+    if percolation_condition:
+        percolation_estimation()
     if region_stats_condition:
         union_info()
