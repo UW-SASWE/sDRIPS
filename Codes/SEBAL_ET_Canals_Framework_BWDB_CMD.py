@@ -6,7 +6,7 @@ import logging
 import colorlog
 from tqdm import tqdm
 # import geemap
-import os, datetime, requests, zipfile, time, math
+import os, datetime, requests, zipfile, time, math, glob
 import urllib.request
 import datetime,math
 import numpy as np
@@ -21,6 +21,12 @@ import matplotlib.pyplot as plt
 import configparser
 import sys
 import traceback
+import cartopy.crs as ccrs
+from contextily import add_basemap  
+from matplotlib.colors import Normalize
+from matplotlib.colors import TwoSlopeNorm
+from matplotlib.patches import FancyArrow
+from rasterio.coords import BoundingBox
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -1832,6 +1838,213 @@ def union_info():
     logging.critical('Finished Command Area Info')
 
 
+def converrt_ETtiff2images(variable, folder_path=f'{save_data_loc}/uploads/'):
+    pattern = os.path.join(folder_path, f"landsat_*_{variable}_*.tif*")  
+    tiff_files = glob.glob(pattern)
+    if not tiff_files:
+        return
+
+    # Iterate through all matching TIFF files with tqdm progress bar
+    for tiff_file in tqdm(tiff_files, desc="Converting ET TIF Files to PNGs", unit="file"):
+        filename = os.path.basename(tiff_file)
+        region_name = filename.split('_')[-1].split('.tif')[0]
+
+        with rio.open(tiff_file) as src:
+            band = src.read(1)
+            nodata = src.nodata
+            bounds = src.bounds
+            crs = src.crs
+
+        if nodata is not None:
+            band = np.where(band == nodata, np.nan, band)
+
+        # Extended bounds calculation
+        margin = 0.1
+        width = bounds.right - bounds.left
+        height = bounds.top - bounds.bottom
+
+        extended_bounds = [
+            bounds.left - margin * width,
+            bounds.right + margin * width,
+            bounds.bottom - margin * height,
+            bounds.top + margin * height,
+        ]
+
+        new_bounds = BoundingBox(
+            left=extended_bounds[0],
+            bottom=extended_bounds[2],
+            right=extended_bounds[1],
+            top=extended_bounds[3]
+        )
+
+        # Plot settings
+        vmin = np.nanmin(band)
+        vmax = np.nanmax(band)
+        norm = Normalize(vmin=vmin, vmax=vmax)
+        cmap = plt.get_cmap("Blues")
+        rgba_image = cmap(norm(band))
+        rgba_image[np.isnan(band)] = [0, 0, 0, 0]
+
+        fig = plt.figure(figsize=(12, 8), dpi=300)
+        ax = plt.axes(projection=ccrs.PlateCarree())
+
+        img = ax.imshow(rgba_image, extent=[bounds.left, bounds.right, bounds.bottom, bounds.top],
+                        origin='upper', transform=ccrs.PlateCarree(), zorder=2, alpha=0.7)
+
+        ax.set_xlim(extended_bounds[0], extended_bounds[1])
+        ax.set_ylim(extended_bounds[2], extended_bounds[3])
+
+        add_basemap(ax, crs=ccrs.PlateCarree(), source='https://a.tile.openstreetmap.org/{z}/{x}/{y}.png')
+
+        ax.set_xlabel('Longitude')
+        ax.set_ylabel('Latitude')
+
+        gl = ax.gridlines(draw_labels=True, crs=ccrs.PlateCarree(), linestyle='--', alpha=0.5)
+        gl.top_labels = False
+        gl.right_labels = False
+
+        sm = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+        sm.set_array([])
+        cbar = plt.colorbar(sm, ax=ax, orientation='vertical', pad=0.05)
+        cbar.set_label('Evapotranspiration (mm)')
+
+        # North arrow
+        arrow_x = new_bounds.right - 0.1 * (new_bounds.right - new_bounds.left)
+        arrow_y = new_bounds.top - 0.05 * (new_bounds.top - new_bounds.bottom)
+        ax.annotate('N', xy=(arrow_x, arrow_y), xytext=(arrow_x, arrow_y - 0.0008),
+                    arrowprops=dict(facecolor='black', arrowstyle='simple', lw=1.5),
+                    ha='center', va='center', fontsize=14, fontweight='bold', transform=ccrs.PlateCarree())
+
+        # Scalebar position and length
+        latitude_midpoint = (new_bounds.bottom + new_bounds.top) / 2
+        meters_per_degree = 111320 * np.cos(np.deg2rad(latitude_midpoint))
+        scalebar_length_deg = 100 / meters_per_degree
+
+        x_start = new_bounds.right - 0.15 * (new_bounds.right - new_bounds.left)
+        y_start = new_bounds.top - 0.25 * (new_bounds.top - new_bounds.bottom)
+        ax.plot([x_start, x_start + scalebar_length_deg], [y_start, y_start],
+                color='black', linewidth=3, transform=ccrs.PlateCarree())
+        ax.text(x_start + scalebar_length_deg / 2, y_start + 0.0005 * (new_bounds.top - new_bounds.bottom),
+                '100 m', ha='center', va='bottom', fontsize=10, fontweight='bold', transform=ccrs.PlateCarree())
+        date_png = datetime.datetime.strptime(start_date, "%Y-%m-%d").strftime("%Y-%m-%d")
+        # Set title and save
+        if variable == 'penman':
+            ax.set_title(f'Penman-Montieth (Demand) ET for {region_name} on {date_png}', size=15)
+            png_filename = filename.replace(".tiff", ".png").replace(".tif", ".png")
+            plt.tight_layout()
+            os.makedirs(f'{save_data_loc}/PNGs/', exist_ok=True)
+            plt.savefig(f'{save_data_loc}/PNGs/{region_name}_DemandET_{date_png}.png', bbox_inches='tight')
+
+        elif variable == 'sebal':
+            ax.set_title(f'SEBAL (Observed) ET for {region_name} on {date_png}', size=15)
+            png_filename = filename.replace(".tiff", ".png").replace(".tif", ".png")
+            plt.tight_layout()
+            os.makedirs(f'{save_data_loc}/PNGs/', exist_ok=True)
+            plt.savefig(f'{save_data_loc}/PNGs/{region_name}_ObservedET_{date_png}.png', bbox_inches='tight')
+
+
+        
+def converrt_Irrigationtiff2images(folder_path=f'{save_data_loc}/uploads/'):
+    pattern = os.path.join(folder_path, "landsat_*_irrigation_*.tif*")  
+    tiff_files = glob.glob(pattern)
+    if not tiff_files:
+        return
+    
+    # Iterate through all matching TIFF files with tqdm progress bar
+    for tiff_file in tqdm(tiff_files, desc="Converting Irrigation TIF Files to PNGs", unit="file"):
+        filename = os.path.basename(tiff_file)
+        region_name = filename.split('_')[-1].split('.tif')[0]
+
+        # Load the TIFF file
+        with rio.open(tiff_file) as src:
+            band = src.read(1)
+            nodata = src.nodata
+            bounds = src.bounds
+            crs = src.crs
+
+        # Replace nodata values with NaN
+        if nodata is not None:
+            band = np.where(band == nodata, np.nan, band)
+
+        # Calculate extended bounds
+        margin = 0.1
+        width = bounds.right - bounds.left
+        height = bounds.top - bounds.bottom
+        extended_bounds = [
+            bounds.left - margin * width,
+            bounds.right + margin * width,
+            bounds.bottom - margin * height,
+            bounds.top + margin * height,
+        ]
+
+        new_bounds = BoundingBox(
+            left=extended_bounds[0],
+            bottom=extended_bounds[2],
+            right=extended_bounds[1],
+            top=extended_bounds[3]
+        )
+
+        # Processing the data and plotting steps (unchanged)
+        abs_max = np.nanmax(np.abs(band))
+        norm = TwoSlopeNorm(vcenter=0, vmin=-abs_max, vmax=abs_max)
+        cmap = plt.get_cmap("RdBu")
+        rgba_image = cmap(norm(band))
+        rgba_image[np.isnan(band)] = [0, 0, 0, 0]
+
+        fig = plt.figure(figsize=(12, 8), dpi=300)
+        ax = plt.axes(projection=ccrs.PlateCarree())
+        img = ax.imshow(rgba_image, extent=[bounds.left, bounds.right, bounds.bottom, bounds.top],
+                        origin='upper', transform=ccrs.PlateCarree(), zorder=2, alpha=0.7)
+
+        ax.set_xlim(extended_bounds[0], extended_bounds[1])
+        ax.set_ylim(extended_bounds[2], extended_bounds[3])
+
+        add_basemap(ax, crs=ccrs.PlateCarree(), source='https://a.tile.openstreetmap.org/{z}/{x}/{y}.png')
+
+        ax.set_xlabel('Longitude')
+        ax.set_ylabel('Latitude')
+        gl = ax.gridlines(draw_labels=True, crs=ccrs.PlateCarree(), linestyle='--', alpha=0.5)
+        gl.top_labels = False
+        gl.right_labels = False
+
+        sm = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+        sm.set_array([])
+        cbar = plt.colorbar(sm, ax=ax, orientation='vertical', pad=0.05)
+        cbar.set_label('Deficit (Red) / Surplus (Blue) Irrigation')
+
+        tick_values = np.linspace(-abs_max, abs_max, num=11)
+        cbar.set_ticks(tick_values)
+        cbar.set_ticklabels([f"{val:.1f}" for val in tick_values])
+
+        # Add custom North arrow
+        arrow_x = new_bounds.right - 0.1 * (new_bounds.right - new_bounds.left)
+        arrow_y = new_bounds.top - 0.05 * (new_bounds.top - new_bounds.bottom)
+        ax.annotate('N', xy=(arrow_x, arrow_y), xytext=(arrow_x, arrow_y - 0.0008),
+                    arrowprops=dict(facecolor='black', arrowstyle='simple', lw=1.5),
+                    ha='center', va='center', fontsize=14, fontweight='bold', transform=ccrs.PlateCarree())
+
+        # Calculate scalebar position and plot
+        latitude_midpoint = (new_bounds.bottom + new_bounds.top) / 2
+        meters_per_degree = 111320 * np.cos(np.deg2rad(latitude_midpoint))
+        scalebar_length_deg = 100 / meters_per_degree
+
+        x_start = new_bounds.right - 0.15 * (new_bounds.right - new_bounds.left)
+        y_start = new_bounds.top - 0.25 * (new_bounds.top - new_bounds.bottom)
+        ax.plot([x_start, x_start + scalebar_length_deg], [y_start, y_start],
+                color='black', linewidth=3, transform=ccrs.PlateCarree())
+        ax.text(x_start + scalebar_length_deg / 2, y_start + 0.0005 * (new_bounds.top - new_bounds.bottom),
+                '100 m', ha='center', va='bottom', fontsize=10, fontweight='bold', transform=ccrs.PlateCarree())
+        date_png = datetime.datetime.strptime(start_date, "%Y-%m-%d").strftime("%Y-%m-%d")
+        ax.set_title(f'Deficit or Surplus Irrigation for {region_name} on {date_png}', size=15)
+
+        png_filename = filename.replace(".tiff", ".png").replace(".tif", ".png")
+        plt.tight_layout()
+        os.makedirs(f'{save_data_loc}/PNGs/', exist_ok=True)
+        plt.savefig(f'{save_data_loc}/PNGs/{region_name}_DeficitET_{date_png}.png', bbox_inches='tight')
+        
+
+
+
 def ensure_feature_collection(roi):
     if isinstance(roi, ee.geometry.Geometry):
         # If ROI is a Geometry, convert it to a Feature, then to a FeatureCollection
@@ -1858,21 +2071,12 @@ if __name__ == '__main__':
     # # print('sebal_eto_Landsat Finished')
     # # print('unziptiffs Started')
     ET_Values(penman_mean_values = penman_mean_values,sebal_mean_values= sebal_mean_values,irr_mean_values= irr_mean_values)
-
     unziptiffs()
-    # # print('unziptiffs Finished')
-    # # print('convertTiffs Started')
     convertTiffs()
-    # # print('convertTiffs Finished')
-    # # print('converting Penman TIF into ETo')
     convertingToETo()
-    # print('Finished converting Penman TIF into ETo')
-    # print('imergprecip Started')
-    imergprecip()
-    # print('imergprecip Finished')
-    # print('gfsdata Started')
-    gfsdata() # for 'tmax', 'tmin', 'ugrd', 'vgrd'
-    # print('gfsdata Finished')
-    # print('union_info Started')
-    union_info()
-    # # print('union_info Finished')
+    if precipitation_condition:
+        imergprecip()
+    if weather_condition:
+        gfsdata()
+    if region_stats_condition:
+        union_info()
