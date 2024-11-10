@@ -931,6 +931,7 @@ def sebal_eto_Landsat():
                 ETA_24_mask = ETA_24_mask.clip(ROI)
             # ETA_24_mask = ETA_24_mask.updateMask(glcc_crop)
             ETA_mask = ETA_24_mask.multiply(ee.Image.constant(dayVal))
+            ETA_mask = ETA_mask.min(penmanET)
             #Map.addLayer(NDVI,{},'NDVI')
             ETA_mask=ETA_mask.clip(ROI).reproject(
               crs= proj,
