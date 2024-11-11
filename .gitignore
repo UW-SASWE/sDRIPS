@@ -169,8 +169,8 @@ Config_files/Script_Config_Backup.ini
 Config_files/Test_Canal_Config.ini
 
 #### Ignore Data
-Data*/
-
+*Data*/
+*data*/
 #### Ignore Playground
 Playground*/
 
