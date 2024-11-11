@@ -245,6 +245,8 @@ def sebal_eto_Landsat():
               planting_YY_MM_DD = canal_settings[canal[0]]['planting_date']
               crop_type = canal_settings[canal[0]]['crop_type']
               soil_coef = canal_settings[canal[0]]['soil_coef']
+              logging.info("Planting Date For:"+str(canal_settings[canal[0]])+' is :'+ planting_YY_MM_DD)
+              logging.info("Crop Type For:"+str(canal_settings[canal[0]])+' is :'+ crop_type)
             else:
               planting_YY_MM_DD = canal_settings['DEFAULT']['planting_date']
               crop_type = canal_settings['DEFAULT']['crop_type']
@@ -1622,15 +1624,15 @@ def union_info():
                         rasterpath_penman = rf"{save_data_loc}/landsat"  + r'/penman/' + week + r'/penman_eto_' + canal_list[i][0].replace(' ','-') + '.constant.tif' 
                         rasterpath_sebal = rf"{save_data_loc}/landsat"  + r'/sebal/' + week + r'/sebal_eto_' + canal_list[i][0].replace(' ','-') + '.eta.tif'  
                         try:
-                            with rio.open(rasterpath) as src:
-                                raster_crs = src.crs
-                                raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
-                                raster_data = src.read(1, masked=True)
-                                masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
-                            # Calculate the mean value of the masked raster
-                            # masked_mean = np.ma.mean(masked_data)    ##### Changing the np.ma.mean to np.mean
-                            masked_mean = np.mean(raster_data)
-                            canal_shp_reprojected['7Day Irrigation'][i] = masked_mean
+                            # with rio.open(rasterpath) as src:
+                            #     raster_crs = src.crs
+                            #     raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
+                            #     raster_data = src.read(1, masked=True)
+                            #     masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
+                            # # Calculate the mean value of the masked raster
+                            # # masked_mean = np.ma.mean(masked_data)    ##### Changing the np.ma.mean to np.mean
+                            # masked_mean = np.mean(raster_data)
+                            # canal_shp_reprojected['7Day Irrigation'][i] = masked_mean
 
                             ### Adding Penman and SEBAL ET Below
                             ## Penman
@@ -1655,12 +1657,14 @@ def union_info():
                             masked_mean = np.mean(raster_data)
                             canal_shp_reprojected['7Day SEBAL ET'][i] = masked_mean
                             ### Finished Adding Penman and SEBAL ET Below
-                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
-                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
+                            
                             pbar.update(1)
                         except Exception as error:
                             logging.error('Error Found for currentweek for',canal_list[i][0], 'Error Message:',error)
                             continue
+                    canal_shp_reprojected['7Day Irrigation'] = canal_shp_reprojected['7Day SEBAL ET'] - canal_shp_reprojected['7Day Penman ET']
+                    percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                    canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
                 elif week == 'lastweek':
                     for i in range(len(canal_list)):
                         rasterpath = rf"{save_data_loc}/landsat"  + r'/irrigation/' + week + r'/irrigation_' + canal_list[i][0].replace(' ','-') + '.eta.tif'  
@@ -1668,15 +1672,15 @@ def union_info():
                         rasterpath_penman = rf"{save_data_loc}/landsat"  + r'/penman/' + week + r'/penman_eto_' + canal_list[i][0].replace(' ','-') + '.constant.tif' 
                         rasterpath_sebal = rf"{save_data_loc}/landsat"  + r'/sebal/' + week + r'/sebal_eto_' + canal_list[i][0].replace(' ','-') + '.eta.tif'  
                         try:
-                            with rio.open(rasterpath) as src:
-                                raster_crs = src.crs
-                                raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
-                                raster_data = src.read(1, masked=True)
-                                masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
-                            # Calculate the mean value of the masked raster
-                            # masked_mean = np.ma.mean(masked_data)
-                            masked_mean = np.mean(raster_data)
-                            canal_shp_reprojected['14Day Irrigation'][i] = masked_mean
+                            # with rio.open(rasterpath) as src:
+                            #     raster_crs = src.crs
+                            #     raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
+                            #     raster_data = src.read(1, masked=True)
+                            #     masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
+                            # # Calculate the mean value of the masked raster
+                            # # masked_mean = np.ma.mean(masked_data)
+                            # masked_mean = np.mean(raster_data)
+                            # canal_shp_reprojected['14Day Irrigation'][i] = masked_mean
 
                             ### Adding Penman and SEBAL ET Below
                             ## Penman
@@ -1701,20 +1705,22 @@ def union_info():
                             masked_mean = np.mean(raster_data)
                             canal_shp_reprojected['14Day SEBAL ET'][i] = masked_mean
                             ### Finished Adding Penman and SEBAL ET Below
-                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
-                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
                         except Exception as error:
                             logging.error('Error Found for lastweek for',canal_list[i][0], 'Error Message:',error)
                             continue
                     
 
-                    rasterpath = f"{save_data_loc}/precip/precip.currentweek.tif"
-                    raster = rio.open(rasterpath)
-                    canal_shp_reprojected['Currentweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                    rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
-                    raster = rio.open(rasterpath)
-                    canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
+                        rasterpath = f"{save_data_loc}/precip/precip.currentweek.tif"
+                        raster = rio.open(rasterpath)
+                        canal_shp_reprojected['Currentweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
+                        rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
+                        raster = rio.open(rasterpath)
+                        canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
+                    
+                    canal_shp_reprojected['14Day Irrigation'] = canal_shp_reprojected['14Day SEBAL ET'] - canal_shp_reprojected['14Day Penman ET']
+                    percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                    canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
+                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
                     pbar.update(1)
         elif set(run_week) == {'currentweek'}:
             canal_shp_reprojected['7Day Irrigation'] = np.nan
@@ -1728,15 +1734,15 @@ def union_info():
                     rasterpath_penman = rf"{save_data_loc}/landsat"  + r'/penman/' + week + r'/penman_eto_' + canal_list[i][0].replace(' ','-') + '.constant.tif' 
                     rasterpath_sebal = rf"{save_data_loc}/landsat"  + r'/sebal/' + week + r'/sebal_eto_' + canal_list[i][0].replace(' ','-') + '.eta.tif'  
                     try:
-                        with rio.open(rasterpath) as src:
-                            raster_crs = src.crs
-                            raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
-                            raster_data = src.read(1, masked=True)
-                            masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
-                        # Calculate the mean value of the masked raster
-                        # masked_mean = np.ma.mean(masked_data)
-                        masked_mean = np.mean(raster_data)
-                        canal_shp_reprojected['7Day Irrigation'][i] = masked_mean
+                        # with rio.open(rasterpath) as src:
+                        #     raster_crs = src.crs
+                        #     raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
+                        #     raster_data = src.read(1, masked=True)
+                        #     masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
+                        # # Calculate the mean value of the masked raster
+                        # # masked_mean = np.ma.mean(masked_data)
+                        # masked_mean = np.mean(raster_data)
+                        # canal_shp_reprojected['7Day Irrigation'][i] = masked_mean
 
 
                         ### Adding Penman and SEBAL ET Below
@@ -1776,7 +1782,7 @@ def union_info():
                     except Exception as error:
                             logging.error('Error Found for currentweek for',canal_list[i][0], 'Error Message:',error)
                             continue
-                print(f'#1 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
+                canal_shp_reprojected['7Day Irrigation'] = canal_shp_reprojected['7Day SEBAL ET'] - canal_shp_reprojected['7Day Penman ET']
                 percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
                 canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
                 canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
@@ -1794,15 +1800,15 @@ def union_info():
                     rasterpath_sebal = rf"{save_data_loc}/landsat"  + r'/sebal/' + week + r'/sebal_eto_' + canal_list[i][0].replace(' ','-') + '.eta.tif'   
                     try:
 
-                        with rio.open(rasterpath) as src:
-                            raster_crs = src.crs
-                            raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
-                            raster_data = src.read(1, masked=True)
-                            masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
-                        # Calculate the mean value of the masked raster
-                            # masked_mean = np.ma.mean(masked_data)
-                            masked_mean = np.mean(raster_data)
-                            canal_shp_reprojected['14Day Irrigation'][i] = masked_mean
+                        # with rio.open(rasterpath) as src:
+                        #     raster_crs = src.crs
+                        #     raster_extent = [src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top]
+                        #     raster_data = src.read(1, masked=True)
+                        #     masked_data, _ = riomask(src, canal_shp_reprojected.geometry, crop=True)
+                        # # Calculate the mean value of the masked raster
+                        #     # masked_mean = np.ma.mean(masked_data)
+                        #     masked_mean = np.mean(raster_data)
+                        #     canal_shp_reprojected['14Day Irrigation'][i] = masked_mean
 
                             ### Adding Penman and SEBAL ET Below
                             ## Penman
@@ -1835,18 +1841,19 @@ def union_info():
                             rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
                             raster = rio.open(rasterpath)
                             canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
-                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
-                            canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
+                            
                             pbar.update(1)
                     except Exception as error:
                             logging.error('Error Found for lastweek for',canal_list[i][0], 'Error Message:',error)
                             continue
+                canal_shp_reprojected['14Day Irrigation'] = canal_shp_reprojected['14Day SEBAL ET'] - canal_shp_reprojected['14Day Penman ET']
+                percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
+                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
     # except Exception as error:
     #     logging.error('Error Found:',error)  
     #     pass
     canal_shp_reprojected = canal_shp_reprojected.drop(columns=['geometry'])
-    print(f'#2 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
     # canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation']
     canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['net_water_req'].apply(lambda x: x if x <= 0 else 0) 
     sorted_canal_shp_reprojected = canal_shp_reprojected.sort_values(by='ID')
