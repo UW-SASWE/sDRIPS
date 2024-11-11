@@ -173,8 +173,15 @@ Config_files/Test_Canal_Config.ini
 *Data*
 *data*/
 *data*
+
 #### Ignore Playground
-Playground*/
+*Playground*/
+*playground*/
+*playground*
+*Playground*
 
 #### Ignore Shapefiles
 *Shape*Files/
+*ShapeFiles*/
+*Shapefiles*/
+*shapefiles*/
