@@ -931,13 +931,12 @@ def sebal_eto_Landsat():
                 ETA_24_mask = ETA_24_mask.clip(ROI)
             # ETA_24_mask = ETA_24_mask.updateMask(glcc_crop)
             ETA_mask = ETA_24_mask.multiply(ee.Image.constant(dayVal))
-            ETA_mask = ETA_mask.min(penmanET)
             #Map.addLayer(NDVI,{},'NDVI')
             ETA_mask=ETA_mask.clip(ROI).reproject(
               crs= proj,
               scale= selscale
             )
-
+            ETA_mask = ETA_mask.min(penmanET)
             totET= ETA_mask.reduceRegion(
               reducer= ee.Reducer.sum(),
               geometry= ROI,
@@ -1601,6 +1600,7 @@ def union_info():
     canal_shp_reprojected.set_index(feature_name, inplace=True)
     canal_shp_reprojected = canal_shp_reprojected.reindex(simple_canal_list)
     canal_shp_reprojected.reset_index(inplace=True)
+    print(f'Running for Weeks: {run_week}')
     if set(run_week) == {'currentweek', 'lastweek'}:
         total_canals = len(canal_list) + 1
     else:
@@ -1655,7 +1655,8 @@ def union_info():
                             masked_mean = np.mean(raster_data)
                             canal_shp_reprojected['7Day SEBAL ET'][i] = masked_mean
                             ### Finished Adding Penman and SEBAL ET Below
-
+                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
                             pbar.update(1)
                         except Exception as error:
                             logging.error('Error Found for currentweek for',canal_list[i][0], 'Error Message:',error)
@@ -1700,7 +1701,8 @@ def union_info():
                             masked_mean = np.mean(raster_data)
                             canal_shp_reprojected['14Day SEBAL ET'][i] = masked_mean
                             ### Finished Adding Penman and SEBAL ET Below
-
+                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
                         except Exception as error:
                             logging.error('Error Found for lastweek for',canal_list[i][0], 'Error Message:',error)
                             continue
@@ -1712,7 +1714,7 @@ def union_info():
                     rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
                     raster = rio.open(rasterpath)
                     canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation']
+                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
                     pbar.update(1)
         elif set(run_week) == {'currentweek'}:
             canal_shp_reprojected['7Day Irrigation'] = np.nan
@@ -1769,11 +1771,16 @@ def union_info():
                         rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
                         raster = rio.open(rasterpath)
                         canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                        canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation']
+                        
                         pbar.update(1)
                     except Exception as error:
                             logging.error('Error Found for currentweek for',canal_list[i][0], 'Error Message:',error)
                             continue
+                print(f'#1 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
+                percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
+                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
+                print(f'#3 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
         elif set(run_week) == {'lastweek'}:
             canal_shp_reprojected['14Day Irrigation'] = np.nan
             ### Adding Penman and SEBAL ET Below
@@ -1828,7 +1835,9 @@ def union_info():
                             rasterpath = f"{save_data_loc}/precip/precip.nextweek.tif"
                             raster = rio.open(rasterpath)
                             canal_shp_reprojected['Nextweek PPT'][i] = get_mean_value_precip(raster, canal_shp_reprojected['geometry'][i:i+1])
-                            canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation']
+                            percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+                            canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
+                            canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
                             pbar.update(1)
                     except Exception as error:
                             logging.error('Error Found for lastweek for',canal_list[i][0], 'Error Message:',error)
@@ -1837,7 +1846,7 @@ def union_info():
     #     logging.error('Error Found:',error)  
     #     pass
     canal_shp_reprojected = canal_shp_reprojected.drop(columns=['geometry'])
-    
+    print(f'#2 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
     # canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation']
     canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['net_water_req'].apply(lambda x: x if x <= 0 else 0) 
     sorted_canal_shp_reprojected = canal_shp_reprojected.sort_values(by='ID')
@@ -2063,6 +2072,7 @@ def percolation_estimation():
             startDate=ee.Date(start_date)
             endDate=ee.Date(enddate)
             # Load the shapefile as a feature collection
+            percolation_feature_name = f'{feature_name}'
             logging.critical('Running Week:'+str(wktime))
             logging.critical("Running Week's Start Date:"+str(start_date))
             logging.critical("Running Week's End Date:"+str(enddate))
@@ -2076,7 +2086,7 @@ def percolation_estimation():
             region_list = irrigation_canals.toList(irrigation_canals.size()).getInfo()
             for region in tqdm(region_list, desc="Estimating Soil Mositure", unit=" Command Area"):
                 region_feature = ee.Feature(region)
-                region_id = region_feature.get('CNLNM_ID').getInfo()
+                region_id = region_feature.get(f'{feature_name}').getInfo()
                 region_geometry = region_feature.geometry()
 
                 # Load Sentinel-1 Image Collection for the last 7 days and apply speckle filtering
@@ -2135,7 +2145,7 @@ def percolation_estimation():
 
                     # Return as a feature with aggregated data for the period
                     return ee.Feature(None, {
-                        'CNLNM_ID': region_id,
+                        percolation_feature_name: region_id,
                         'MedianSoilMoisture': median_ssm,
                         'MedianFieldCapacity': median_field_capacity
                     })
@@ -2145,7 +2155,7 @@ def percolation_estimation():
 
                 # Retrieve data for each region and create a DataFrame
                 ssm_features = soil_moisture_features.getInfo()
-                week_data = [{'CNLNM_ID': f['properties']['CNLNM_ID'],
+                week_data = [{percolation_feature_name: f['properties'][percolation_feature_name],
                             'MedianSoilMoisture': f['properties']['MedianSoilMoisture'],
                             'MedianFieldCapacity': f['properties']['MedianFieldCapacity']}
                             for f in ssm_features['features']]
@@ -2157,10 +2167,10 @@ def percolation_estimation():
             # Combine all regional dataframes into a single DataFrame
             final_df = pd.concat(region_dataframes, ignore_index=True)
             # Group by region and calculate the mean values for each metric
-            final_means_df = final_df.groupby('CNLNM_ID').mean().reset_index()
+            final_means_df = final_df.groupby(percolation_feature_name).mean().reset_index()
             final_means_df['MedianPercolation'] = (final_means_df['MedianSoilMoisture'] - final_means_df['MedianFieldCapacity']).clip(lower=0)
-            os.makedirs(f'{save_data_loc}/Percolation', exist_ok = True)
-            final_means_df.to_csv(f'{save_data_loc}/Percolation/Percolation_{wktime}.csv', index = False)
+            os.makedirs(f'{save_data_loc}/percolation', exist_ok = True)
+            final_means_df.to_csv(f'{save_data_loc}/percolation/Percolation_{wktime}.csv', index = False)
 
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -2186,15 +2196,9 @@ def ensure_feature_collection(roi):
         raise ValueError("ROI is neither a Geometry, Feature, nor a FeatureCollection")
 
 if __name__ == '__main__':
-    # configure_logging()
-    # print('Making Directory if it does not exist')
     makeDirectory()
-    # # print('Finished making directory if they were not present')
-    # # print('Clear Data Started')
     if clear_directory_condition:
         clearData()
-    # # print('Clear Data Finished')
-    # # print('sebal_eto_Landsat Started')
     if ET_estimation:
         penman_mean_values,sebal_mean_values,irr_mean_values = sebal_eto_Landsat()
         ET_Values(penman_mean_values = penman_mean_values,sebal_mean_values= sebal_mean_values,irr_mean_values= irr_mean_values)
