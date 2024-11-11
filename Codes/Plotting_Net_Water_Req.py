@@ -8,6 +8,11 @@ from matplotlib.colors import ListedColormap
 from shapely import wkt
 import numpy as np
 from datetime import datetime
+import configparser
+
+script_config = configparser.ConfigParser()
+script_config.read('..\Config_files\Script_Config.ini')
+save_data_loc = script_config.get('Save_Data_Location', 'save_data_loc')
 
 # Function to lighten colormap
 def lighten_colormap(cmap, lightness_factor=0.5):
@@ -16,7 +21,7 @@ def lighten_colormap(cmap, lightness_factor=0.5):
     lightened_colors = (1 - lightness_factor) * cmap_colors + lightness_factor * white
     return ListedColormap(lightened_colors)
 
-def generate_water_requirement_plots(input_folder):
+def generate_water_requirement_plots(input_folder = save_data_loc):
     # Set CRS
     btm_proj4 = '+proj=tmerc +lat_0=0 +lon_0=90 +k=0.9996 +x_0=500000 +y_0=-2000000 +ellps=evrst30 +units=m +no_defs +type=crs'
     
@@ -32,8 +37,8 @@ def generate_water_requirement_plots(input_folder):
             
             # Extract the date from the filename (assuming the format is like 'Distribution_File_Stats_2023_04_07.csv')
             try:
-                date_str = file.split('_')[-3:]  # Extract "2023_04_07" part
-                date_str = "_".join(date_str).replace('.csv', '')  # Join back and remove ".csv"
+                date_str = file.split('_')[-3:]  
+                date_str = "_".join(date_str).replace('.csv', '') 
                 date_obj = datetime.strptime(date_str, "%Y_%m_%d")
                 date_formatted = date_obj.strftime("%d %B %Y")
             except ValueError:
@@ -86,12 +91,11 @@ def generate_water_requirement_plots(input_folder):
             plot_path = os.path.join(plots_dir, plot_filename)
             plt.savefig(plot_path, dpi=900, bbox_inches='tight')
             plt.close(fig)
-            print(f"Plot saved for {date_formatted} at {plot_path}")
 
 if __name__ == '__main__':
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Generate net water requirement plots from distribution files.")
-    parser.add_argument('-i', '--input_folder', type = str, required=True, help="Path to the input folder containing Distribution_Files.")
+    parser = argparse.ArgumentParser(description="Generate net water requirement plots from the distribution files.")
+    parser.add_argument('-i', '--input_folder', type = str, required=True, help="Path to the input folder containing distribution_files. By default it will be the run folder a.k.a save_data_loc from the Script_Config.ini.")
     args = parser.parse_args()
 
     # Run the function with provided arguments
