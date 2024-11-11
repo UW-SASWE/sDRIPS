@@ -1602,7 +1602,6 @@ def union_info():
     canal_shp_reprojected.set_index(feature_name, inplace=True)
     canal_shp_reprojected = canal_shp_reprojected.reindex(simple_canal_list)
     canal_shp_reprojected.reset_index(inplace=True)
-    print(f'Running for Weeks: {run_week}')
     if set(run_week) == {'currentweek', 'lastweek'}:
         total_canals = len(canal_list) + 1
     else:
@@ -1720,7 +1719,7 @@ def union_info():
                     canal_shp_reprojected['14Day Irrigation'] = canal_shp_reprojected['14Day SEBAL ET'] - canal_shp_reprojected['14Day Penman ET']
                     percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
                     canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
-                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
+                    canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] - canal_shp_reprojected['MedianPercolation'] * 7
                     pbar.update(1)
         elif set(run_week) == {'currentweek'}:
             canal_shp_reprojected['7Day Irrigation'] = np.nan
@@ -1785,8 +1784,7 @@ def union_info():
                 canal_shp_reprojected['7Day Irrigation'] = canal_shp_reprojected['7Day SEBAL ET'] - canal_shp_reprojected['7Day Penman ET']
                 percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
                 canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
-                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
-                print(f'#3 Columns of canal_shp_reprojected: {canal_shp_reprojected.columns}')
+                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['7Day Irrigation'] - canal_shp_reprojected['MedianPercolation'] * 7
         elif set(run_week) == {'lastweek'}:
             canal_shp_reprojected['14Day Irrigation'] = np.nan
             ### Adding Penman and SEBAL ET Below
@@ -1849,7 +1847,7 @@ def union_info():
                 canal_shp_reprojected['14Day Irrigation'] = canal_shp_reprojected['14Day SEBAL ET'] - canal_shp_reprojected['14Day Penman ET']
                 percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
                 canal_shp_reprojected = canal_shp_reprojected.merge(percolation_df, on = [f'{feature_name}'])
-                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] + canal_shp_reprojected['MedianPercolation'] * 7
+                canal_shp_reprojected['net_water_req'] = canal_shp_reprojected['Currentweek PPT'] + canal_shp_reprojected['Nextweek PPT'] + canal_shp_reprojected['14Day Irrigation'] - canal_shp_reprojected['MedianPercolation'] * 7
     # except Exception as error:
     #     logging.error('Error Found:',error)  
     #     pass
