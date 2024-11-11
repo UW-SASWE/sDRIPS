@@ -170,7 +170,9 @@ Config_files/Test_Canal_Config.ini
 
 #### Ignore Data
 *Data*/
+*Data*
 *data*/
+*data*
 #### Ignore Playground
 Playground*/
 
