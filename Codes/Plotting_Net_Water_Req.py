@@ -9,6 +9,8 @@ from shapely import wkt
 import numpy as np
 from datetime import datetime
 import configparser
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 script_config = configparser.ConfigParser()
 script_config.read('..\Config_files\Script_Config.ini')
