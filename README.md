@@ -72,7 +72,7 @@ The detailed functioning of the framework is outlined in the sD.R.I.P.S Paper. I
       ├── wind/  
       └── Landsat_Command_Area_Stats.csv
       ```
-5. **Run the `Canal_Water_Distribution_script.py`**:
+5. **Run the `Canal_Water_Distribution_script.py`**:  
     - This script estimates the deficit and surplus regions after the given water supply.
     - Users might need to change the names of a few columns to match their water supply files.
     - For help, users can type:

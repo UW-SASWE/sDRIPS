@@ -1,5 +1,3 @@
-# Users may need to change the column names according to their requirements, as each area of interest differs from the other.
-
 import geopandas as gpd
 import pandas as pd
 import pandas as pd
@@ -12,6 +10,7 @@ script_config = configparser.ConfigParser()
 script_config.read('..\Config_files\Script_Config.ini')
 feature_name = script_config.get('Irrigation_Canals_shapefile', 'feature_name')
 save_data_loc = script_config.get('Save_Data_Location', 'save_data_loc')
+run_date = script_config.get('Date_Running', 'start_date')
 supply_path = '../TBP_Data/TBP_CHR_Cleaned_Pivoted.csv'
 
 def get_discharge(date, df):
@@ -50,14 +49,14 @@ def get_discharge(date, df):
                 
     return discharge
 
-def Irr_status(interested_date,output_folder,net_water_req_corr = False):
+def Irr_status(data_run_folder = save_data_loc, interested_date = run_date,  net_water_req_corr = False, shp_file = '../TBP Shape Files/TCAD_Phase1_DataPartA/Modified_Command_Area_Irrigable.csv' ):
     # cmd = gpd.read_file('../TBP Shape Files/TCAD_Phase1_DataPartA/ShapeFiles/commandarea_teesta_ph1_simplified_modified.shp')
-    cmd = pd.read_csv('../TBP Shape Files/TCAD_Phase1_DataPartA/Modified_Command_Area_Irrigable.csv')
+    cmd = pd.read_csv(shp_file)
     cmd['Distribution_Factor'] = cmd['AREA']/cmd['AREA'].sum()
-    if os.path.isabs(save_data_loc):
-        stats_path = f'{save_data_loc}/Landsat_Command_Area_Stats.csv'
+    if os.path.isabs(data_run_folder):
+        stats_path = f'{data_run_folder}/Landsat_Command_Area_Stats.csv'
     else:
-        stats_path = f'{save_data_loc}/Landsat_Command_Area_Stats.csv'
+        stats_path = f'{data_run_folder}/Landsat_Command_Area_Stats.csv'
     stats_file = pd.read_csv(stats_path)
     if net_water_req_corr == False:
         try:
@@ -72,22 +71,24 @@ def Irr_status(interested_date,output_folder,net_water_req_corr = False):
     coming_supply['Date'] = pd.to_datetime(coming_supply['Date'], format='%m/%d/%Y')
     # discharge = coming_supply[coming_supply['Date']==interested_date]['Discharge'].values[0]
     discharge = get_discharge(interested_date, coming_supply)
-    # print(f'Discharge:{discharge}')
+    print(f'Discharge:{discharge}')
     cusecs_to_m3_day = 2446.58
     discharge_m3d = discharge*cusecs_to_m3_day
-    # print(f'Discharge (m3/day):{discharge_m3d}')
+    print(f'Discharge (m3/day):{discharge_m3d}')
     stats_merged['Water Provided'] = stats_merged['Distribution_Factor']*discharge_m3d
     stats_merged['Deficit between requirement and supply'] = stats_merged['Water Provided']+stats_merged['net_water_req (m3)'] 
     stats_merged['Irrigation Status'] = stats_merged['Deficit between requirement and supply'].apply(lambda x: 'Surplus' if x > 0 else ('Right Amount' if x == 0 else 'Deficit'))
-    stats_merged.to_csv(output_folder+f'/Distribution_File_Stats_{interested_date.replace("-", "_")}.csv',index = False)
+    os.makedirs(f'{data_run_folder}/distribution_files', exist_ok=True)
+    stats_merged.to_csv(f'{data_run_folder}/'+'/distribution_files'+f'/Distribution_File_Stats_{interested_date.replace("-", "_")}.csv',index = False)
     return stats_merged
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate dsitribution file csv file. By default this scrip looks for the Canal_ID attribute name. Users can change it to desired name in this script. Dont include space in the name.")
-    parser.add_argument("-o","--outputfolder", help="Path to the output folder,should be in double quotes for windows, and single quotes for Mac/Linux.")
-    parser.add_argument("-d","--supplydate", help="Default planting date in YYYY-MM-DD format.")
+    parser = argparse.ArgumentParser(description="Generates water distribution csv file based on the latest water supply conditions. Water supply conditions should be in CSV format. The output will be saved in the distribution_files folder.")
+    parser.add_argument("-i","--inputfolder", type = str, help="Path to the input folder. By default input folder is the run folder.")
+    parser.add_argument("-d","--interested_date", type = str, help="Latest supply date in YYYY-MM-DD format, or the supply date of the run. By default takes the date of the run.")
+    parser.add_argument("-s","--shpfile", type = str, help="Path to the shapefile or a csv file with the geometry column in it.")
     args = parser.parse_args()
-    Irr_status(args.supplydate,args.outputfolder)
+    Irr_status(args.inputfolder, args.interested_date, args.shpfile)
 
 if __name__ == "__main__":
     main()

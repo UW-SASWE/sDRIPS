@@ -33,7 +33,7 @@ def create_ini_file(canal_ids, ini_file_path, default_planting_date, default_cro
         config.write(configfile)
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate canal config file using irrigation canals shapefile. By default this scrip looks for the Canal_ID attribute name. Users can change it to desired name in this script. Dont include space in the name.")
+    parser = argparse.ArgumentParser(description="Generate canal config file using irrigation canals shapefile.")
     parser.add_argument("-s","--shp_path", help="Path to the shapefile, should be in double quotes for windows, and single quotes for Mac/Linux.")
     parser.add_argument("-o","--output", help="Path where the canal_config file will be created,should be in double quotes for windows, and single quotes for Mac/Linux.")
     parser.add_argument("-d","--default_planting_date", default="2023-04-01", help="Default planting date in YYYY-MM-DD format.")
