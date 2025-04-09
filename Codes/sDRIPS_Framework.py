@@ -1228,6 +1228,7 @@ def gfsdata_noaa():
     startDate = datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(days = 0)
     logging.info("GFS forecast data is being downloaded from NCEP NOAA server for the date "+str(startDate))
     logging.info("GFS forecast data is being downloaded from NCEP NOAA server ...")
+    datestr = (startDate).strftime("%Y%m%d")
     path = fr'https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?file=gfs.t00z.pgrb2.0p25.f168&var_APCP=on&subregion=&leftlon={bounds_leftlon}&rightlon={bounds_rightlon}&toplat={bounds_toplat}&bottomlat={bounds_bottomlat}&dir=%2Fgfs.' + datestr + '%2F00%2Fatmos'
     # print('Downloaded the data from: ', path)
     fpath = rf"{save_data_loc}/precip/precip.gfs." + datestr + '.nextweek.tif'
