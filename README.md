@@ -1,5 +1,7 @@
 # sD.R.I.P.S - Framework
 
+## Please Note: Major changes are coming to create a Python package from this framework and make it more user friendly and structured. 
+
 ### Satellite Data Rendered Irrigation using Penman and SEBAL (sD.R.I.P.S) for Surface Water Irrigation Optimization: 
 
 <div style="text-align: justify;">
