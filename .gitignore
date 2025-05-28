@@ -169,19 +169,13 @@ Config_files/Script_Config_Backup.ini
 Config_files/Test_Canal_Config.ini
 
 #### Ignore Data
-*Data*/
-*Data*
-*data*/
-*data*
+*[Dd]ata*/
 
 #### Ignore Playground
-*Playground*/
-*playground*/
-*playground*
-*Playground*
+*[Pp]layground*
 
 #### Ignore Shapefiles
-*Shape*Files/
-*ShapeFiles*/
-*Shapefiles*/
-*shapefiles*/
+*[Ss]hape[_]?[Ff]iles/
+
+#### Ignore Secrets
+*/[Ss]ecrets.yaml
