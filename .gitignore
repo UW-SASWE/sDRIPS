@@ -175,7 +175,7 @@ Config_files/Test_Canal_Config.ini
 *[Pp]layground*
 
 #### Ignore Shapefiles
-*[Ss]hape[_]?[Ff]iles/
+*[Ss]hape[Ff]iles*
 
 #### Ignore Secrets
 */[Ss]ecrets.yaml
