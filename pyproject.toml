@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sdrips"
+version = "0.1.0"
+description = "A Package For Optimizing Surface Water Irrigation using Satellite Remote Sensing"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+authors = [
+  { name = "Shahzaib Khan", email = "skhan7@uw.edu" }
+]
+dependencies = [
+]
+
+[project.urls]
+Homepage = "https://github.com/shahzaib1007/sDRIPS"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
