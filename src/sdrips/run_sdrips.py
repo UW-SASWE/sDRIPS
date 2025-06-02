@@ -17,37 +17,32 @@ import multiprocessing
 from multiprocessing.queues import Queue
 from typing import Tuple, Dict, List
 
-from src.sdrips.evapotranspiration import process_cmd_area_parallel 
-from src.sdrips.utils.utils import load_yaml_config
-from src.sdrips.utils.logging_utils import (
+from sdrips.utils.clean import clear_data
+from sdrips.utils.make_directory import make_directory
+from sdrips.evapotranspiration import process_cmd_area_parallel 
+from sdrips.utils.utils import load_yaml_config
+from sdrips.utils.logging_utils import (
     setup_logger_with_queue,
     worker_logger_setup,
     worker_init
 )
 
 
-def run_et_for_ca(save_data_loc: str) -> Dict[str, List[float]]:
+def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
     """
     Run ET estimation for all command areas.
 
     Args:
         save_data_loc (str): Directory to save data and logs.
     """
-    log_queue, queue_listener, log_file = setup_logger_with_queue(save_data_loc)
-    main_logger = logging.getLogger()
-    main_logger.setLevel(logging.DEBUG)
-    main_logger.addHandler(QueueHandler(log_queue))
-
+    worker_init(log_queue)
+    logger = logging.getLogger(__name__)
     try:
-        main_logger.info("Location of the Data Folder: " + save_data_loc)
-        main_logger.info("Starting ET estimation...")
+        logger.info("Starting ET estimation...")
 
-        penman_mean_values,sebal_mean_values,irr_mean_values = process_cmd_area_parallel(main_logger, log_queue)
+        penman_mean_values,sebal_mean_values,irr_mean_values = process_cmd_area_parallel(logger, log_queue)
     except Exception as e:
-        main_logger.exception("Unhandled exception in main process")
-
-    finally:
-        queue_listener.stop()
+        logger.exception("Unhandled exception in main process")
 
 def parse_args():
     """
@@ -70,12 +65,50 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+def main():
+    """
+    Main function to orchestrate sDRIPS execution.
+    """
     args = parse_args()
     config = load_yaml_config(args.config)
 
     save_data_loc = config['Save_Data_Location']['save_data_loc']
-    ET_estimation = config['Run_ET_Estimation'].get('et_estimation', False)
+    run_week = config['Date_Running']['run_week']
+    clear_condition = config['Clean_Directory'].get('clear_directory_condition', False)
+    run_et = config['Run_ET_Estimation'].get('et_estimation', False)
 
-    if ET_estimation:
-        run_et_for_ca(save_data_loc)
+    log_queue, queue_listener, log_file_path = setup_logger_with_queue(save_data_loc)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(QueueHandler(log_queue))
+
+    logger.info("===== Starting sDRIPS Framework Execution =====")
+    logger.info(f"Configuration loaded from: {args.config}")
+    logger.info(f"Data directory: {save_data_loc}")
+
+    try:
+        make_directory(save_data_loc, run_week)
+        if clear_condition:
+            logger.info("Initiating directory cleaning...")
+            clear_data(
+                save_data_loc,
+                clear_et=True,
+                clear_precip=True,
+                clear_weather=True,
+                clear_uploads=True
+            )
+
+        if run_et:
+            logger.info("Running ET module for all command areas...")
+            run_et_for_ca(save_data_loc, log_queue)
+
+    except Exception as e:
+        logger.exception("Unhandled exception during sDRIPS execution")
+
+    finally:
+        logger.info("===== sDRIPS Framework Finished =====")
+        queue_listener.stop()
+        
+
+if __name__ == '__main__':
+    main()
