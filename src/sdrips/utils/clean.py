@@ -62,7 +62,7 @@ def clear_data(
 
     if clear_weather:
         logger.info("Clearing weather data (excluding precipitation)...")
-        weather_params = ['avgt', 'tmax', 'tmin', 'ugrd', 'vgrd', 'wind', 'temp']
+        weather_params = ['avgt', 'tmax', 'tmin', 'ugrd', 'vgrd', 'wind', 'avgt']
         for param in weather_params:
             weather_dir = os.path.join(save_data_loc, param)
             safe_clear_folder(weather_dir, filetypes=('','.tif','.csv','.txt'))
