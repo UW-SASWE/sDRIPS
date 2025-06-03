@@ -33,7 +33,7 @@ from sdrips.tiff_preprocess import (
     convert_tiffs, 
     converting_to_eto
 )
-
+from sdrips.precipitation import imergprecip
 
 def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
     """
@@ -82,8 +82,10 @@ def main():
 
     save_data_loc = config['Save_Data_Location']['save_data_loc']
     run_week = config['Date_Running']['run_week']
+    start_date = config.get('Date_Running', 'start_date')
     clear_condition = config['Clean_Directory'].get('clear_directory_condition', False)
     run_et = config['Run_ET_Estimation'].get('et_estimation', False)
+    run_precip = config['Precipitation_Config']['consider_preciptation']
     cmd_area_list = get_cmd_area_list()
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(save_data_loc)
@@ -109,10 +111,13 @@ def main():
 
         if run_et:
             logger.info("Running ET module for all command areas...")
-            cmd_area_list = run_et_for_ca(save_data_loc, log_queue)
+            run_et_for_ca(save_data_loc, log_queue)
             unzip_tiffs(save_data_loc, run_week)
             convert_tiffs(save_data_loc, run_week)
             converting_to_eto(cmd_area_list, save_data_loc, run_week)
+        if run_precip:
+            logger.info("Running Precipitation module...")
+            imergprecip(save_data_loc)
 
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
