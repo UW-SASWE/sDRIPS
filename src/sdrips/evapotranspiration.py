@@ -130,6 +130,9 @@ cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature
 
 def get_cmd_area_list():
   return cmd_area_list
+
+def get_irrigation_cmd_area():
+  return irrigation_cmd_area
     
 glcc = ee.Image("COPERNICUS/Landcover/100m/Proba-V-C3/Global/2019")
 
