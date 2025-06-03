@@ -1,7 +1,7 @@
 """
 Download and preprocess IMERG precipitation data.
 
-This script fetches daily IMERG precipitation GeoTIFFs using NASA credentials,
+This script fetches daily IMERG precipitation GeoTIFFs using IMERG credentials in secrets,
 clips them to a given bounding box, and resamples them using Rasterio.
 """
 
@@ -158,6 +158,22 @@ def clip_and_resample_tif(src_path: Path, dst_path: Path, bounds: tuple, resolut
                     )
 
 def process_day(date: datetime.date, bounds: tuple, save_data_loc: str) -> bool:
+    """
+    Download, clip, and resample IMERG precipitation data for a given day.
+
+    This function downloads the raw IMERG precipitation GeoTIFF file for the specified
+    date, clips it to the specified geographic bounds, resamples it if needed, and
+    saves the processed file in the provided output location.
+
+    Args:
+        date (datetime.date): The date for which to process the IMERG data.
+        bounds (tuple): The bounding box to clip the data (minx, miny, maxx, maxy).
+        save_data_loc (str): The directory path where the processed data will be saved.
+
+    Returns:
+        bool: True if processing is successful, False otherwise.
+    """
+
     logger = logging.getLogger()
     try:
         raw_tif = download_imerg_file(date)
@@ -169,6 +185,36 @@ def process_day(date: datetime.date, bounds: tuple, save_data_loc: str) -> bool:
         logger.error(f"Failed to process IMERG for {date}: {e}")
         return False
 
+def compute_weekly_cummulative_precip(file_paths:list[Path], output_path: Path) -> Path:
+    """
+    Compute the weekly cumulative of IMERG rasters and save to output_path.
+    
+    Args:
+        file_paths (list of str): List of file paths to daily GeoTIFF precipitation files.
+        output_path (str): File path to save the weekly averaged GeoTIFF.
+
+    Returns:
+        str: The file path of the saved weekly averaged raster.
+    """
+    arrays = []
+    meta = None
+
+    for i, file in enumerate(file_paths):
+        with rasterio.open(file) as src:
+            data = src.read(1)
+            data[data < 0] = 0
+            arrays.append(data)
+
+            if meta is None:
+                meta = src.meta.copy()
+
+    stack = np.stack(arrays)
+    weekly_cummulative = np.sum(stack, axis=0) / 10  
+
+    meta.update(dtype=rasterio.float32)
+
+    with rasterio.open(output_path, "w", **meta) as dst:
+        dst.write(weekly_cummulative.astype(rasterio.float32), 1)
 
 def imergprecip(save_data_loc: Path):
     """
@@ -191,12 +237,24 @@ def imergprecip(save_data_loc: Path):
     ]
 
     success_flags = []
-    with ThreadPoolExecutor(max_workers = worker_count) as executor:
+    processed_files = [] 
+
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
         futures = {executor.submit(process_day, date, (left, bottom, right, top), save_data_loc): date for date in all_dates}
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing IMERG Precipitation Days"):
-            success_flags.append(future.result())
+            success = future.result()
+            success_flags.append(success)
+            if success:
+                date = futures[future]
+                processed_file = os.path.join(save_data_loc, 'precip', f'precip.imerg.{date.strftime("%Y%m%d")}.tif')
+                processed_files.append(processed_file)
 
     if all(success_flags):
-        logger.critical('Finished IMERG precipitation data download and processing successfully.')
+        logger.critical('Finished IMERG precipitation data download successfully.')
+
+        weekly_output_path = os.path.join(save_data_loc, 'precip', f'precip.currentweek.tif')
+        
+        compute_weekly_cummulative_precip(processed_files, weekly_output_path)
+        logger.critical(f'Weekly cumulative precipitation raster saved to: {weekly_output_path}')
     else:
         logger.critical('Error occurred during IMERG precipitation data download or processing.')
