@@ -30,21 +30,20 @@ import multiprocessing
 import warnings
 warnings.filterwarnings("ignore")
 
+from sdrips.utils.ee_initialize import initialize_earth_engine
 from sdrips.utils.utils import (
    load_yaml_config,
     read_cmd_area_settings,
     read_crop_coefficients,
     get_growth_kc
 )
-from src.sdrips.utils.logging_utils import worker_logger_setup
 from src.sdrips.utils.logging_utils import (
     worker_logger_setup,
     worker_init
 )
 
 # Initialise Earth Engine
-# ee.Authenticate() # If you are running the earth engine first time in your machine, you need to run the ee.Authenticate() command first.
-ee.Initialize()
+initialize_earth_engine()
 
 #########*******Module (1) USER INPUT (ROI and Intereset Dates and Planting Date)********########
 # Initialize ruamel.yaml YAML object

@@ -17,9 +17,11 @@ from rasterio.shutil import copy as rio_copy
 import tempfile
 from typing import Dict, Union
 
-ee.Initialize()
-
+from sdrips.utils.ee_initialize import initialize_earth_engine
 from sdrips.utils.utils import load_yaml_config
+
+
+initialize_earth_engine()
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -79,6 +81,14 @@ def convert_to_geotiff(input_path, output_path):
 def gfsdata_ee(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat):
     """
     Download and process GFS forecast data from Google Earth Engine.
+    
+    Args:
+        save_data_loc (str): Path to directory for saving processed files.
+        start_date (str): Forecast start date in format 'YYYY-MM-DD'.
+        bounds_leftlon (float): Western longitude of bounding box.
+        bounds_bottomlat (float): Southern latitude of bounding box.
+        bounds_rightlon (float): Eastern longitude of bounding box.
+        bounds_toplat (float): Northern latitude of bounding box.
     """
     logger = logging.getLogger()
     startDate = datetime.datetime.strptime(start_date, "%Y-%m-%d")
@@ -108,9 +118,9 @@ def gfsdata_ee(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, boun
 
     weeks = ['currentweek', 'nextweek']
     params_ee = ['u_component_of_wind_10m_above_ground', 'v_component_of_wind_10m_above_ground', 'temperature_2m_above_ground']
-    total_iterations = len(weeks) * (len(params_ee) + 1) * 14 # 14 comes from the range(12, 169, 12)
+    total_iterations = len(weeks) * len(params_ee) * 14 # 14 comes from the range(12, 169, 12)
 
-    with tqdm(total=total_iterations, desc="Downloading GFS Data From GEE", unit=" file") as pbar:
+    with tqdm(total=total_iterations, desc="Downloading GFS Data From GEE", unit="file") as pbar:
         for week in weeks:
             week_date = startDate - datetime.timedelta(days=7) if week == 'currentweek' else startDate
             week_date_end = week_date + datetime.timedelta(days=1)
@@ -190,7 +200,6 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
         logger.error("Failed to download GFS file: %s", err)
         return
 
-    # Convert downloaded GeoTIFF to ASC using rasterio
     try:
         with rio.open(precip_tif_path) as src:
             data = src.read(2)  # Read band 2
@@ -202,7 +211,6 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
     except Exception as e:
         logger.error("Error during GeoTIFF to ASC conversion: %s", e)
 
-    # Convert ASC back to GeoTIFF using rio
     try:
         with rio.open(precip_asc_path) as src:
             data = src.read(1)
@@ -221,7 +229,7 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
 
     total_steps = len(weeks) * len(params) * len(range(12, 169, 12))
 
-    with tqdm(total=total_steps, desc="Downloading GFS parameters", unit="file") as pbar:
+    with tqdm(total=total_steps, desc="Downloading GFS Data From NOAA", unit="file") as pbar:
         for week in weeks:
             for param, param_id in zip(params, param_ids):
                 for hour in range(12, 169, 12):
@@ -307,7 +315,6 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
                     if week == 'currentweek':
                         datestr = (start_date_obj - datetime.timedelta(days=7)).strftime("%Y%m%d")
 
-                    # Initialize list to store arrays
                     arrays = []
                     meta = None
 
@@ -322,13 +329,11 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
                             logger.warning(f"File not found: {file_path}")
 
                     if arrays and meta:
-                        # Calculate mean
+
                         mean_array = np.mean(arrays, axis=0)
 
-                        # Update metadata
                         meta.update(dtype=rio.float32, count=1)
 
-                        # Write the averaged file
                         out_path = os.path.join(save_data_loc, param, f"{param}.{week}.tif")
                         with rio.open(out_path, 'w', **meta) as dst:
                             dst.write(mean_array.astype(rio.float32), 1)
@@ -338,28 +343,6 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
 
                     pbar.update(1)
 
-            # Calculate average temperature
-            for week in weeks:
-                temp_path = os.path.join(save_data_loc, 'temp', f"temp.{week}.tif")
-                avgt_path = os.path.join(save_data_loc, 'avgt', f"avgt.{week}.tif")
-
-                if os.path.exists(tmax_path) and os.path.exists(tmin_path):
-                    with rio.open(tmax_path) as tmax_src, rio.open(tmin_path) as tmin_src:
-                        tmax = tmax_src.read(1)
-                        tmin = tmin_src.read(1)
-                        meta = tmax_src.meta.copy()
-
-                        avgt = (tmax + tmin) / 2
-                        meta.update(dtype=rio.float32, count=1)
-
-                        os.makedirs(os.path.dirname(avgt_path), exist_ok=True)
-                        with rio.open(avgt_path, 'w', **meta) as dst:
-                            dst.write(avgt.astype(rio.float32), 1)
-                        logger.info(f"Saved average temperature file: {avgt_path}")
-                else:
-                    logger.warning(f"Missing tmax or tmin files for week: {week}")
-
-            # Calculate wind speed
             for week in weeks:
                 ugrd_path = os.path.join(save_data_loc, 'ugrd', f"ugrd.{week}.tif")
                 vgrd_path = os.path.join(save_data_loc, 'vgrd', f"vgrd.{week}.tif")
@@ -395,7 +378,6 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
                     if week == 'currentweek':
                         datestr = (start_date_obj - datetime.timedelta(days=7)).strftime("%Y%m%d")
 
-                    # Initialize list to store arrays
                     arrays = []
                     meta = None
 
@@ -410,13 +392,10 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
                             logger.warning(f"File not found: {file_path}")
 
                     if arrays and meta:
-                        # Calculate mean
                         mean_array = np.mean(arrays, axis=0)
 
-                        # Update metadata
                         meta.update(dtype=rio.float32, count=1)
 
-                        # Write the averaged file
                         out_path = os.path.join(save_data_loc, param, f"{param}.{week}.tif")
                         with rio.open(out_path, 'w', **meta) as dst:
                             dst.write(mean_array.astype(rio.float32), 1)
@@ -426,7 +405,6 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
 
                     pbar.update(1)
 
-            # Calculate average temperature
             for week in weeks:
                 tmax_path = os.path.join(save_data_loc, 'tmax', f"tmax.{week}.tif")
                 tmin_path = os.path.join(save_data_loc, 'tmin', f"tmin.{week}.tif")
@@ -448,7 +426,6 @@ def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_
                 else:
                     logger.warning(f"Missing tmax or tmin files for week: {week}")
 
-            # Calculate wind speed
             for week in weeks:
                 ugrd_path = os.path.join(save_data_loc, 'ugrd', f"ugrd.{week}.tif")
                 vgrd_path = os.path.join(save_data_loc, 'vgrd', f"vgrd.{week}.tif")
