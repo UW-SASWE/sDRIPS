@@ -58,16 +58,17 @@ def read_crop_coefficients(config_path: str, crop: str) -> Dict[Tuple[int, int],
     Returns:
         Dict[Tuple[int, int], Union[float, Tuple]]: Mapping from day ranges to Kc or interpolation info.
     """
+    logger = logging.getLogger()
     crop_config = load_yaml_config(config_path)
     normalized_crop_config = {k.lower(): v for k, v in crop_config.items()}
     crop_key = crop.lower()
 
     if crop.lower() in ['grass', 'alfa-alfa']:
-        logging.info(f"Using constant Kc=1.0 for crop '{crop}'")
+        logger.info(f"Using constant Kc=1.0 for crop '{crop}'")
         return {(0, 999): 1.0}  
     
     if crop_key not in normalized_crop_config:
-        logging.error(f"Crop '{crop}' not found in crop config file: {config_path}")
+        logger.error(f"Crop '{crop}' not found in crop config file: {config_path}")
         sys.exit(1)
 
     crop_data = normalized_crop_config.get(crop_key, {})
@@ -77,7 +78,7 @@ def read_crop_coefficients(config_path: str, crop: str) -> Dict[Tuple[int, int],
         try:
             start_day, end_day = map(int, key.split('-'))
         except ValueError:
-            logging.error(f"Invalid day range key '{key}' in crop config for crop '{crop}'")
+            logger.error(f"Invalid day range key '{key}' in crop config for crop '{crop}'")
             sys.exit(1)
         if isinstance(value, list) and value[0] == 'linear':
             # Format: ['linear', start_value, end_value, num_days]
@@ -86,13 +87,13 @@ def read_crop_coefficients(config_path: str, crop: str) -> Dict[Tuple[int, int],
                     'linear', float(value[1]), float(value[2]), int(value[3])
                 )
             except (ValueError, IndexError):
-                logging.error(f"Invalid linear format for range {key} in crop '{crop}'")
+                logger.error(f"Invalid linear format for range {key} in crop '{crop}'")
                 sys.exit(1)
         else:
             try:
                 coefficients[(start_day, end_day)] = float(value)
             except ValueError:
-                logging.error(f"Non-numeric Kc value for range {key} in crop '{crop}'")
+                logger.error(f"Non-numeric Kc value for range {key} in crop '{crop}'")
                 sys.exit(1)
 
     return coefficients
