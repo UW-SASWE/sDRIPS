@@ -848,7 +848,7 @@ def process_single_cmd_area(args):
 def process_cmd_area_parallel(main_logger, log_queue, max_workers=worker_count):
   results = []
   total_iterations = len(run_week) * len(cmd_area_list)
-  with tqdm(total=total_iterations, desc="Estimating Penman ET and SEBAL ET", unit="Command Area") as pbar:
+  with tqdm(total=total_iterations, desc="Estimating ET with models", unit=" Command Area") as pbar:
     for wktime in run_week:
       stats_file = rf"{save_data_loc}/landsat/stats_{wktime}.txt"
       os.makedirs(os.path.dirname(stats_file), exist_ok=True)
