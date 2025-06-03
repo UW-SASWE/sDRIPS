@@ -28,7 +28,7 @@ def setup_logger_with_queue(save_data_loc: str) -> Tuple[Queue, QueueListener, s
     formatter = logging.Formatter('%(asctime)s - %(filename)s:%(lineno)d - %(message)s')
     file_handler.setFormatter(formatter)
 
-    excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', '__init__.py']
+    excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', '__init__.py', 'warp.py']
     file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
 
     queue_listener = QueueListener(log_queue, file_handler)
