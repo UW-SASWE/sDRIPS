@@ -29,7 +29,7 @@ def unzip_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
             for week in run_weeks:
                 input_dir = os.path.join(save_data_loc, sensor, var, week)
                 files_to_process = [f for f in os.listdir(input_dir) if f.endswith(".zip")]
-                for filename in tqdm(files_to_process, desc=f"Processing {var} for {week}", unit="file"):
+                for filename in tqdm(files_to_process, desc=f"Unzipping {var} for {week}", unit="file"):
                     filepath = os.path.join(input_dir, filename)
                     try:
                         with zipfile.ZipFile(filepath, "r") as zip_file:
@@ -72,7 +72,7 @@ def convert_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
                     logger.warning(f"Directory not found: {input_dir}")
                     continue
 
-                for fn in tqdm(files_to_process, desc=f"Processing {var} for {week}", unit="file"):
+                for fn in tqdm(files_to_process, desc=f"Processing {var} for {week}", unit=" file"):
                         in_fp = os.path.join(input_dir, fn)
                         cleaned_name = fn.replace('.constant', '') \
                                      .replace('.eta', '') \
@@ -104,7 +104,7 @@ def converting_to_eto(cmd_area_list: list[list[str]], save_data_loc: str, run_we
     logger = logging.getLogger()
     logger.critical("Starting TIFF conversion for uploading purpose...")
 
-    for ca_area in tqdm(cmd_area_list, desc="Processing Command Area TIFF to ETo Format", unit='ca_area'):
+    for ca_area in tqdm(cmd_area_list, desc="Processing Command Area TIFF to ETo Format", unit=' Command Area'):
         try:
             region_raw = ca_area[0]
             region_id = region_raw.replace(" ", "-")
