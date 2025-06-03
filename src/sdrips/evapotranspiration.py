@@ -128,6 +128,10 @@ else:
     irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
  
 cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
+
+def get_cmd_area_list():
+  return cmd_area_list
+    
 glcc = ee.Image("COPERNICUS/Landcover/100m/Proba-V-C3/Global/2019")
 
 # """ Reading the canal config file to parse the planting date, 
