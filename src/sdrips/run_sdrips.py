@@ -21,7 +21,9 @@ from sdrips.utils.clean import clear_data
 from sdrips.utils.make_directory import make_directory
 from sdrips.evapotranspiration import (
     process_cmd_area_parallel,
-    get_cmd_area_list)
+    get_cmd_area_list,
+    get_irrigation_cmd_area
+)
 from sdrips.utils.utils import load_yaml_config
 from sdrips.utils.logging_utils import (
     setup_logger_with_queue,
@@ -35,6 +37,7 @@ from sdrips.tiff_preprocess import (
 )
 from sdrips.precipitation import imergprecip
 from sdrips.gfs_processing import gfsdata
+from sdrips.percolation import percolation_estimation
 
 def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
     """
@@ -88,11 +91,13 @@ def main():
     run_et = config['Run_ET_Estimation'].get('et_estimation', False)
     run_precip = config['Precipitation_Config']['consider_preciptation']
     run_weather = config['Weather_Config']['consider_forecasted_weather']
+    run_soil_moisture = config['Percolation_Config']['consider_percolation']
     bounds_leftlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
     bounds_rightlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
     bounds_toplat = float(config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
     bounds_bottomlat = float(config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
     cmd_area_list = get_cmd_area_list()
+    irrigation_cmd_area = get_irrigation_cmd_area()
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(save_data_loc)
     logger = logging.getLogger()
@@ -127,7 +132,9 @@ def main():
         if run_weather:
             logger.info("Running GFS module...")
             gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat)
-
+        if run_soil_moisture:
+            logger.info("Running Percolation module...")
+            percolation_estimation(start_date, run_week, irrigation_cmd_area, save_data_loc)
 
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
