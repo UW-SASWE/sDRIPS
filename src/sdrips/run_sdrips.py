@@ -34,6 +34,7 @@ from sdrips.tiff_preprocess import (
     converting_to_eto
 )
 from sdrips.precipitation import imergprecip
+from sdrips.gfs_processing import gfsdata
 
 def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
     """
@@ -82,10 +83,15 @@ def main():
 
     save_data_loc = config['Save_Data_Location']['save_data_loc']
     run_week = config['Date_Running']['run_week']
-    start_date = config.get('Date_Running', 'start_date')
+    start_date = config['Date_Running']['start_date']
     clear_condition = config['Clean_Directory'].get('clear_directory_condition', False)
     run_et = config['Run_ET_Estimation'].get('et_estimation', False)
     run_precip = config['Precipitation_Config']['consider_preciptation']
+    run_weather = config['Weather_Config']['consider_forecasted_weather']
+    bounds_leftlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
+    bounds_rightlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
+    bounds_toplat = float(config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
+    bounds_bottomlat = float(config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
     cmd_area_list = get_cmd_area_list()
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(save_data_loc)
@@ -118,6 +124,10 @@ def main():
         if run_precip:
             logger.info("Running Precipitation module...")
             imergprecip(save_data_loc)
+        if run_weather:
+            logger.info("Running GFS module...")
+            gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat)
+
 
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
