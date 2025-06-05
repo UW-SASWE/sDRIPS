@@ -151,14 +151,10 @@ def percolation_estimation(start_date, run_week, irrigation_cmd_area, save_data_
                         region_dataframes.append(df)
 
             final_df = pd.concat(region_dataframes, ignore_index=True)
-            print(f"Total Command Areas Processed: {len(final_df)}")
-            print('final_df', final_df)
             final_means_df = final_df.groupby(feature_name).mean().reset_index()
-            print('final_means_df', final_means_df)
             final_means_df['MedianPercolation'] = (
                 final_means_df['MedianSoilMoisture'] - final_means_df['MedianFieldCapacity']
             ).clip(lower=0)
-            print('Median Percolation: ',final_means_df['MedianPercolation'][0])
 
             os.makedirs(f'{save_data_loc}/percolation', exist_ok=True)
             final_means_df.to_csv(f'{save_data_loc}/percolation/Percolation_{wktime}.csv', index=False)
