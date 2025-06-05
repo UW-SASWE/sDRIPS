@@ -38,6 +38,8 @@ from sdrips.tiff_preprocess import (
 from sdrips.precipitation import imergprecip
 from sdrips.gfs_processing import gfsdata
 from sdrips.percolation import percolation_estimation
+from sdrips.cmd_area_stats import command_area_info
+
 
 def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
     """
@@ -87,11 +89,15 @@ def main():
     save_data_loc = config['Save_Data_Location']['save_data_loc']
     run_week = config['Date_Running']['run_week']
     start_date = config['Date_Running']['start_date']
+    irrigation_cmd_area_path = config['Irrigation_cmd_area_shapefile']['path']
+    feature_name = config['Irrigation_cmd_area_shapefile']['feature_name']
+    numeric_id = config['Irrigation_cmd_area_shapefile']['numeric_id_name']
     clear_condition = config['Clean_Directory'].get('clear_directory_condition', False)
     run_et = config['Run_ET_Estimation'].get('et_estimation', False)
     run_precip = config['Precipitation_Config']['consider_preciptation']
     run_weather = config['Weather_Config']['consider_forecasted_weather']
     run_soil_moisture = config['Percolation_Config']['consider_percolation']
+    run_region_stats = config['Region_stats']['estimate_region_stats']
     bounds_leftlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
     bounds_rightlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
     bounds_toplat = float(config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
@@ -135,7 +141,9 @@ def main():
         if run_soil_moisture:
             logger.info("Running Percolation module...")
             percolation_estimation(start_date, run_week, irrigation_cmd_area, save_data_loc)
-
+        if run_region_stats:
+            logger.info("Running Command Area Statistics module...")
+            command_area_info(save_data_loc = save_data_loc, run_week = run_week, irrigation_canals_path = irrigation_cmd_area_path, cmd_area_list = cmd_area_list, feature_name = feature_name, numeric_ID = numeric_id)
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
 
