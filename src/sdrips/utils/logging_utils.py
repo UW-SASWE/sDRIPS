@@ -30,7 +30,7 @@ def setup_logger_with_queue(save_data_loc: str) -> Tuple[Queue, QueueListener, s
 
     excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', 
     '__init__.py', 'warp.py', 'mask.py', 
-    'utils.py', 'feature.py', 'collection.py',
+    'utils.py', 'features.py', 'collection.py',
     'collection.py']
     file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
 
