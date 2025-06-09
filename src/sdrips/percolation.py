@@ -3,25 +3,21 @@ import logging
 import os
 import sys
 import traceback
+import multiprocessing
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import ee
 import pandas as pd
 from tqdm import tqdm
 
-from sdrips.utils.utils import load_yaml_config
+from sdrips.utils.utils import (
+    load_yaml_config,
+    get_irrigation_cmd_area
+)
 from sdrips.utils.ee_initialize import initialize_earth_engine
-from sdrips.evapotranspiration import get_irrigation_cmd_area
 
 
-script_config = load_yaml_config("config_files/test_script_config.yaml")
-feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
-# print(f"Feature Name: {feature_name}")
-max_workers = script_config.get("Multiprocessing", {}).get("max_workers")
-worker_count = max_workers if max_workers is not None else multiprocessing.cpu_count() - 1
-irrigation_cmd_area = get_irrigation_cmd_area()
-
-def estimate_region_soil_moisture(region, s1_collection, field_capacity, feature_name):
+def estimate_region_soil_moisture(region, s1_collection, field_capacity, feature_name) -> pd.DataFrame:
     """
     Estimate median soil moisture and field capacity for a command area.
 
@@ -88,17 +84,27 @@ def estimate_region_soil_moisture(region, s1_collection, field_capacity, feature
         return pd.DataFrame()
 
 
-def percolation_estimation(start_date, run_week, irrigation_cmd_area, save_data_loc):
+def percolation_estimation(config_path) -> None:
     """
     Estimate percolation for command areas using Sentinel-1 data and soil field capacity maps.
 
     Runs percolation estimates for each week type defined in `run_week`,
     using parallel processing to accelerate per-region computations.
     Saves the weekly percolation results as CSV files.
+    Args:
+        config_path (str): Path to the main configuration file.
     """
     logger = logging.getLogger()
     logger.critical("Started Percolation Estimation")
-
+    script_config = load_yaml_config(config_path)
+    feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+    # print(f"Feature Name: {feature_name}")
+    cores = script_config.get("Multiprocessing", {}).get("cores")
+    worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
+    irrigation_cmd_area = get_irrigation_cmd_area(config_path)
+    start_date = script_config['Date_Running']['start_date']
+    run_week = script_config['Date_Running']['run_week']
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
     for wktime in run_week:
         try:
             if wktime == "currentweek":
