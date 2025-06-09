@@ -20,11 +20,13 @@ from typing import Tuple, Dict, List
 from sdrips.utils.clean import clear_data
 from sdrips.utils.make_directory import make_directory
 from sdrips.evapotranspiration import (
-    process_cmd_area_parallel,
-    get_cmd_area_list,
-    get_irrigation_cmd_area
+    process_cmd_area_parallel
 )
-from sdrips.utils.utils import load_yaml_config
+from sdrips.utils.utils import (
+    load_yaml_config,
+    get_cmd_area_list,
+    get_irrigation_cmd_area    
+)
 from sdrips.utils.logging_utils import (
     setup_logger_with_queue,
     worker_logger_setup,
@@ -39,22 +41,27 @@ from sdrips.precipitation import imergprecip
 from sdrips.gfs_processing import gfsdata
 from sdrips.percolation import percolation_estimation
 from sdrips.cmd_area_stats import command_area_info
+from sdrips.initialize import load_config
 
 
-def run_et_for_ca(save_data_loc: str, log_queue) -> Dict[str, List[float]]:
+def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float) -> None:
     """
     Run ET estimation for all command areas.
 
     Args:
         save_data_loc (str): Directory to save data and logs.
+        log_queue (multiprocessing.Queue): Queue for logging messages.
+        max_workers (float): Maximum number of worker processes to use.
+
+    Returns:
+        None
     """
     worker_init(log_queue)
     logger = logging.getLogger(__name__)
     try:
         logger.info("Starting ET estimation...")
+        process_cmd_area_parallel(config_path, logger, log_queue, max_workers)
 
-        penman_mean_values,sebal_mean_values,irr_mean_values = process_cmd_area_parallel(logger, log_queue)
-        # cmd_area_list = process_cmd_area_parallel(save_data_loc, log_queue)
     except Exception as e:
         logger.exception("Unhandled exception in main process")
 
@@ -79,40 +86,47 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def run_sdrips(config_path: str):
     """
     Main function to orchestrate sDRIPS execution.
+
+    Args:
+        config_path (str): Path to the main configuration file.
+
+    Returns:
+        None
     """
-    args = parse_args()
-    config = load_yaml_config(args.config)
+    config = load_config(config_path)
 
-    save_data_loc = config['Save_Data_Location']['save_data_loc']
-    run_week = config['Date_Running']['run_week']
-    start_date = config['Date_Running']['start_date']
-    irrigation_cmd_area_path = config['Irrigation_cmd_area_shapefile']['path']
-    feature_name = config['Irrigation_cmd_area_shapefile']['feature_name']
-    numeric_id = config['Irrigation_cmd_area_shapefile']['numeric_id_name']
-    clear_condition = config['Clean_Directory'].get('clear_directory_condition', False)
-    run_et = config['Run_ET_Estimation'].get('et_estimation', False)
-    run_precip = config['Precipitation_Config']['consider_preciptation']
-    run_weather = config['Weather_Config']['consider_forecasted_weather']
-    run_soil_moisture = config['Percolation_Config']['consider_percolation']
-    run_region_stats = config['Region_stats']['estimate_region_stats']
-    bounds_leftlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
-    bounds_rightlon = float(config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
-    bounds_toplat = float(config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
-    bounds_bottomlat = float(config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
-    cmd_area_list = get_cmd_area_list()
-    irrigation_cmd_area = get_irrigation_cmd_area()
+    save_data_loc = config.Save_Data_Location.save_data_loc
+    run_week = config.Date_Running.run_week
+    start_date = config.Date_Running.start_date
+    irrigation_cmd_area_path = config.Irrigation_cmd_area_shapefile.path
+    feature_name = config.Irrigation_cmd_area_shapefile.feature_name
+    numeric_id = config.Irrigation_cmd_area_shapefile.numeric_id_name
+    cores = config.Multiprocessing.cores if config.Multiprocessing.cores is not None else multiprocessing.cpu_count() - 1
+    clear_condition = config.Clean_Directory.clear_directory_condition
+    run_et = config.Run_ET_Estimation.et_estimation
+    run_precip = config.Precipitation_Config.consider_preciptation
+    run_weather = config.Weather_Config.consider_forecasted_weather
+    run_soil_moisture = config.Percolation_Config.consider_percolation
+    run_region_stats = config.Region_stats.estimate_region_stats
+    bounds_leftlon = float(config.Irrigation_cmd_area_shapefile_Bounds.leftlon)
+    bounds_rightlon = float(config.Irrigation_cmd_area_shapefile_Bounds.rightlon)
+    bounds_toplat = float(config.Irrigation_cmd_area_shapefile_Bounds.toplat)
+    bounds_bottomlat = float(config.Irrigation_cmd_area_shapefile_Bounds.bottomlat)
+    cmd_area_list = get_cmd_area_list(config_path)
+    irrigation_cmd_area = get_irrigation_cmd_area(config_path)
 
-    log_queue, queue_listener, log_file_path = setup_logger_with_queue(save_data_loc)
+    log_queue, queue_listener, log_file_path = setup_logger_with_queue(config_path)
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     logger.addHandler(QueueHandler(log_queue))
 
     logger.info("===== Starting sDRIPS Framework Execution =====")
-    logger.info(f"Configuration loaded from: {args.config}")
+    logger.info(f"Configuration loaded from: {config_path}")
     logger.info(f"Data directory: {save_data_loc}")
+    logger.info(f"Number of Cores Used: {cores}")
 
     try:
         make_directory(save_data_loc, run_week)
@@ -128,22 +142,22 @@ def main():
 
         if run_et:
             logger.info("Running ET module for all command areas...")
-            run_et_for_ca(save_data_loc, log_queue)
-            unzip_tiffs(save_data_loc, run_week)
-            convert_tiffs(save_data_loc, run_week)
-            converting_to_eto(cmd_area_list, save_data_loc, run_week)
+            run_et_for_ca(config_path, log_queue, cores)
+            unzip_tiffs(config_path)
+            convert_tiffs(config_path)
+            converting_to_eto(config_path)
         if run_precip:
             logger.info("Running Precipitation module...")
-            imergprecip(save_data_loc)
+            imergprecip(config_path)
         if run_weather:
             logger.info("Running GFS module...")
-            gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat)
+            gfsdata(config_path)
         if run_soil_moisture:
             logger.info("Running Percolation module...")
-            percolation_estimation(start_date, run_week, irrigation_cmd_area, save_data_loc)
+            percolation_estimation(config_path)
         if run_region_stats:
             logger.info("Running Command Area Statistics module...")
-            command_area_info(save_data_loc = save_data_loc, run_week = run_week, irrigation_canals_path = irrigation_cmd_area_path, cmd_area_list = cmd_area_list, feature_name = feature_name, numeric_ID = numeric_id)
+            command_area_info(config_path)
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
 
@@ -151,6 +165,10 @@ def main():
         logger.info("===== sDRIPS Framework Finished =====")
         queue_listener.stop()
         
+def main():
+    args = parse_args()
+    run_sdrips(args.config)
+
 
 if __name__ == '__main__':
     main()
