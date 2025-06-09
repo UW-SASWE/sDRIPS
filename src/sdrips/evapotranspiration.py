@@ -37,137 +37,18 @@ from sdrips.utils.utils import (
     read_crop_coefficients,
     get_growth_kc
 )
-from src.sdrips.utils.logging_utils import (
+from sdrips.utils.logging_utils import (
     worker_logger_setup,
     worker_init
 )
 
-# Initialise Earth Engine
-initialize_earth_engine()
 
 #########*******Module (1) USER INPUT (ROI and Intereset Dates and Planting Date)********########
-# Initialize ruamel.yaml YAML object
-yaml = YAML()
-yaml.preserve_quotes = True  # Optional: preserves quotes around strings
-
-script_config = load_yaml_config('config_files/test_script_config.yaml')
-
-# Accessing the information from 'Irrigation_cmd_area_shapefile' section
-irrigation_cmd_area_path = script_config['Irrigation_cmd_area_shapefile']['path']
-feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
-
-bounds_leftlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
-bounds_rightlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
-bounds_toplat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
-bounds_bottomlat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
-
-save_data_loc = script_config['Save_Data_Location']['save_data_loc']
-
-gee_asset_section = script_config.get('GEE_Asset_ID', {})
-
-if gee_asset_section.get('id'): 
-    gee_asset_id = gee_asset_section['id']
-elif gee_asset_section.get('shp'):
-    gee_asset_id = gee_asset_section['shp']
-else:
-    raise ValueError(
-        "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-        "Both are missing or empty."
-    )
-
-# Accessing the information from 'Date_Running' section
-start_date = script_config['Date_Running']['start_date']
-default_run_week = script_config['Date_Running']['default_run_week']
-run_week = (
-    ["lastweek", "currentweek"]
-    if default_run_week
-    else script_config['Date_Running'].get('run_week', [])
-)
-
-# Accessing the information from 'OSGEO_Path' section
-osgeo_path = script_config['OSGEO_Path']['path']
-cmd_config_path = script_config['Cmd_Area_Config']['path']
-
-# === Conditional Flags ===
-clear_directory_condition = script_config['Clean_Directory']['clear_directory_condition']
-ET_estimation = script_config['Run_ET_Estimation']['et_estimation']
-glcc_mask = script_config['GLCC_Mask'].get('glcc_mask', False)
-precipitation_condition = script_config['Precipitation_Config']['consider_preciptation']
-weather_condition = script_config['Weather_Config']['consider_forecasted_weather']
-percolation_condition = script_config['Percolation_Config']['consider_percolation']
-region_stats_condition = script_config['Region_stats']['estimate_region_stats']
-tiff_to_png = script_config['Tiff_to_PNGs'].get('tiff_to_pngs', False)
-
-# === multiprocessing ===
-max_workers = script_config.get("Multiprocessing", {}).get("max_workers")
-worker_count = max_workers if max_workers is not None else multiprocessing.cpu_count() - 1
-
-# === Accessing Secrets Configuration Files ===
-secrets_file_path = script_config['Secrets_Path']['path']
-secrets = load_yaml_config(rf'{secrets_file_path}')
-imerg_username = secrets['IMERG_Account']['username']
-imerg_password = secrets['IMERG_Account']['password']
-
-
-# === SETUP LOGGING ===
-# os.makedirs(f'{save_data_loc}',exist_ok = True)
-# os.makedirs(f'{save_data_loc}/logs/',exist_ok = True)
-# dt_fmt = '%Y%m%d_%H%M%S'
-# logging.basicConfig(filename=f'{save_data_loc}/logs/{datetime.datetime.today().strftime(dt_fmt)}.log', format='%(levelname)s - %(asctime)s :%(message)s', level=logging.DEBUG)
-# logging.info("")
-# logging.info("Location of the Data Folder: "+save_data_loc)
-# logging.info("")
-# logging.critical('Start Date:'+str(start_date) )
-# logging.critical('Run Week:'+ str(run_week) )
-
-if gee_asset_section.get('id'):
-    irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
-    # print(f'GEE Asset ID: {gee_asset_id}')
-else:
-    irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
- 
-cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
-
-def get_cmd_area_list():
-  return cmd_area_list
-
-def get_irrigation_cmd_area():
-  return irrigation_cmd_area
-    
-glcc = ee.Image("COPERNICUS/Landcover/100m/Proba-V-C3/Global/2019")
-
-# """ Reading the canal config file to parse the planting date, 
-# crop type and soil coefficient for each command region """
-
-config = load_yaml_config(cmd_config_path)
-
-# Extract defaults and check use_default
-defaults = config.get('DEFAULT', {})
-use_default = defaults.get('use_default', False)
-
-# Build cmd_area settings dictionary
-if use_default:
-    cmd_area_settings = {'DEFAULT': {
-        'planting_date': defaults['planting_date'],
-        'crop_type': defaults['crop_type'],
-        'soil_coefficient': defaults['soil_coef']
-    }}
-else:
-    cmd_area_settings = {}
-    for cmd_area_name, cmd_area_data in config.items():
-        if cmd_area_name == 'DEFAULT':
-            continue
-        cmd_area_settings[cmd_area_name] = read_cmd_area_settings(cmd_area_data, defaults)
-
-
-penman_mean_values = []
-sebal_mean_values = []
-irr_mean_values = []
 
 #########*******Module (2) Estimates Penman-Monteith and SEBAL Evapotranspiration********########
 def process_single_cmd_area(args):
   logger = logging.getLogger()
-  cmd_area, wktime, save_data_loc = args
+  cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
   try:
     regionid = cmd_area[0].replace(" ", "-")
     regionn = cmd_area[0]
@@ -189,6 +70,7 @@ def process_single_cmd_area(args):
     logger.critical("Running Week's Start Date:"+str(startdate))
     logger.critical("Running Week's End Date:"+str(enddate))
     table = irrigation_cmd_area.filter(ee.Filter.equals(feature_name, regionn))
+    glcc = ee.Image("COPERNICUS/Landcover/100m/Proba-V-C3/Global/2019")
     glccmask = glcc.select("discrete_classification").clip(table)
     glcc_1 = glccmask.gt(20)
     glcc_2 = glccmask.lte(40)
@@ -250,11 +132,10 @@ def process_single_cmd_area(args):
     # print(f'Planting Date for command area {canal[0]}:',planting_date)
     # print('Number of days = ',abs((my_datetime - planting_date).days))
     # print((f'Crop grown in command area {canal[0]}:',crop_type))
-    logger.info("Planting Date for the command area {area}:{date}".format(area = cmd_area[0],date =planting_date ) )
+    logger.info("Planting Date for the command area {area}:{date}".format(area = cmd_area[0],date = planting_date ) )
     logger.info("Number of days = %s",str(abs((my_datetime - planting_date).days)))
     logger.info('Crop grown in command area {canalname}: {crop_type}'.format(canalname = cmd_area[0],crop_type=crop_type))
 
-    crop_config_path = 'config_files/crop_config.yaml'
     coefficients = read_crop_coefficients(crop_config_path, crop_type)
     growth_kc = get_growth_kc(coefficients, num_days)
     # print(f"Growth Kc for {crop_type} at {num_days} days: {growth_kc}")  
@@ -616,7 +497,7 @@ def process_single_cmd_area(args):
     
     # Iterative process is required here for correcting ustar & rah
   
-    for iter in range(3):
+    for iter in range(correction_iter):
       tmp1=ee.Image.constant(-1004).multiply(air_dens).multiply(ustar.pow(3)).multiply(Surface_temp)
       tmp2=ee.Image.constant(k_vk).multiply(ee.Image.constant(9.81)).multiply(H)
       L_MO = tmp1.divide(tmp2)
@@ -831,10 +712,10 @@ def process_single_cmd_area(args):
     urllib.request.urlretrieve(url, rf"{save_data_loc}/landsat/irrigation/" + wktime + r"/irrigation_" + regionid + ".zip")
     logger.info('ET Values For The Processed Command Area - Format: Command Area, Average Penman ET, Average SEBAL ET, Average Overirrigation (SEBAL - Penman)')
     logger.info((cmd_area[0] + ',' + str(median_etref) + "," + str(avg_etc)+ ',' + str(avg_irri)))
-    penman_mean_values.append((regionid, median_etref))
-    sebal_mean_values.append((regionid, avg_etc))
-    irr_mean_values.append((regionid, avg_irri))
-    return (cmd_area[0], penman_mean_values, sebal_mean_values, irr_mean_values)
+    # penman_mean_values.append((regionid, median_etref))
+    # sebal_mean_values.append((regionid, avg_etc))
+    # irr_mean_values.append((regionid, avg_irri))
+    # return (cmd_area[0], penman_mean_values, sebal_mean_values, irr_mean_values)
             
   except Exception as e:
     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -847,7 +728,92 @@ def process_single_cmd_area(args):
     logger.error(traceback.format_exc())
 
 
-def process_cmd_area_parallel(main_logger, log_queue, max_workers=worker_count):
+def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
+  initialize_earth_engine()
+  yaml = YAML()
+  yaml.preserve_quotes = True  # Optional: preserves quotes around strings
+
+  script_config = load_yaml_config(config_path)
+
+  # Accessing the information from 'Irrigation_cmd_area_shapefile' section
+  irrigation_cmd_area_path = script_config['Irrigation_cmd_area_shapefile']['path']
+  feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+
+  save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+
+  gee_asset_section = script_config.get('GEE_Asset_ID', {})
+
+  if gee_asset_section.get('id'): 
+      gee_asset_id = gee_asset_section['id']
+  elif gee_asset_section.get('shp'):
+      gee_asset_id = gee_asset_section['shp']
+  else:
+      raise ValueError(
+          "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+          "Both are missing or empty."
+      )
+
+  # Accessing the information from 'Date_Running' section
+  start_date = script_config['Date_Running']['start_date']
+  default_run_week = script_config['Date_Running']['default_run_week']
+  run_week = (
+      ["lastweek", "currentweek"]
+      if default_run_week
+      else script_config['Date_Running'].get('run_week', [])
+  )
+
+  cmd_config_path = script_config['Cmd_Area_Config']['path']
+  crop_config_path = script_config['Crop_Config']['path']
+  # === Conditional Flags ===
+  glcc_mask = script_config['GLCC_Mask'].get('glcc_mask', False)
+
+  # === multiprocessing ===
+  cores = script_config.get("Multiprocessing", {}).get("cores")
+  worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
+
+  correction_iter = script_config["Correction_iter"]["correction_iter"]
+
+
+  if gee_asset_section.get('id'):
+      irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
+      # print(f'GEE Asset ID: {gee_asset_id}')
+  else:
+      irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
+  
+  cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
+
+
+  # def get_cmd_area_list():
+  #   return cmd_area_list
+
+  # def get_irrigation_cmd_area():
+  #   return irrigation_cmd_area
+  
+
+  # """ Reading the canal config file to parse the planting date, 
+  # crop type and soil coefficient for each command region """
+
+  config = load_yaml_config(cmd_config_path)
+
+  # Extract defaults and check use_default
+  defaults = config.get('DEFAULT', {})
+  use_default = defaults.get('use_default', False)
+
+  # Build cmd_area settings dictionary
+  if use_default:
+      cmd_area_settings = {'DEFAULT': {
+          'planting_date': defaults['planting_date'],
+          'crop_type': defaults['crop_type'],
+          'soil_coefficient': defaults['soil_coef']
+      }}
+  else:
+      cmd_area_settings = {}
+      for cmd_area_name, cmd_area_data in config.items():
+          if cmd_area_name == 'DEFAULT':
+              continue
+          cmd_area_settings[cmd_area_name] = read_cmd_area_settings(cmd_area_data, defaults)
+
+
   results = []
   total_iterations = len(run_week) * len(cmd_area_list)
   with tqdm(total=total_iterations, desc="Estimating ET with models", unit=" Command Area") as pbar:
@@ -862,10 +828,10 @@ def process_cmd_area_parallel(main_logger, log_queue, max_workers=worker_count):
       main_logger.critical(f"Start Date: {start_date}")
       # logger.critical(f"End Date: {(datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=8+2)).strftime('%Y-%m-%d')}")
 
-      args_list = [(cmd_area, wktime, save_data_loc) for cmd_area in cmd_area_list]
+      args_list = [(cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask) for cmd_area in cmd_area_list]
 
       with ProcessPoolExecutor(
-                max_workers=max_workers,
+                max_workers=cores,
                 initializer=worker_logger_setup,
                 initargs=(log_queue,)
             ) as executor:
@@ -885,8 +851,8 @@ def process_cmd_area_parallel(main_logger, log_queue, max_workers=worker_count):
 
           pbar.update(1)
     # Group by variable
-    penman_mean_values = [r[1] for r in results]
-    sebal_mean_values = [r[2] for r in results]
-    irr_mean_values = [r[3] for r in results]
+    # penman_mean_values = [r[1] for r in results]
+    # sebal_mean_values = [r[2] for r in results]
+    # irr_mean_values = [r[3] for r in results]
 
-    return penman_mean_values, sebal_mean_values, irr_mean_values
+    # return penman_mean_values, sebal_mean_values, irr_mean_values
