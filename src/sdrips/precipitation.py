@@ -25,42 +25,21 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from sdrips.utils.utils import load_yaml_config
 
-yaml = YAML()
-yaml.preserve_quotes = True
-script_config = load_yaml_config('config_files/test_script_config.yaml')
-
-bounds = script_config['Irrigation_cmd_area_shapefile_Bounds']
-left, right = float(bounds['leftlon']), float(bounds['rightlon'])
-top, bottom = float(bounds['toplat']), float(bounds['bottomlat'])
-save_data_loc = script_config['Save_Data_Location']['save_data_loc']
-start_date_str = script_config['Date_Running']['start_date']
-start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-default_run_week = script_config['Date_Running']['default_run_week']
-run_week = (
-    ["lastweek", "currentweek"]
-    if default_run_week
-    else script_config['Date_Running'].get('run_week', [])
-)
-max_workers = script_config.get("Multiprocessing", {}).get("max_workers")
-worker_count = max_workers if max_workers is not None else multiprocessing.cpu_count() - 1
-
-precipitation_condition = script_config['Precipitation_Config']['consider_preciptation']
-
-secrets_file_path = script_config['Secrets_Path']['path']
-secrets = load_yaml_config(rf'{secrets_file_path}')
-imerg_username = secrets['IMERG_Account']['username']
-imerg_password = secrets['IMERG_Account']['password']
 
 
 
 
 
-def download_imerg_file(date: datetime.date) -> Path:
+
+def download_imerg_file(date: datetime.date, save_data_loc, imerg_username, imerg_password ) -> Path:
     """
     Download IMERG GeoTIFF file.
 
     Args:
         date (datetime.date): Date to download.
+        save_data_loc (str): Main directory where the sDRIPS is running.
+        imerg_username (str): IMERG username for authentication.
+        imerg_password (str): IMERG password for authentication.
 
     Returns:
         Path: Path to downloaded file.
@@ -157,7 +136,7 @@ def clip_and_resample_tif(src_path: Path, dst_path: Path, bounds: tuple, resolut
                         resampling=Resampling.bilinear
                     )
 
-def process_day(date: datetime.date, bounds: tuple, save_data_loc: str) -> bool:
+def process_day(date: datetime.date, bounds: tuple, save_data_loc: str, imerg_username: str, imerg_password: str) -> bool:
     """
     Download, clip, and resample IMERG precipitation data for a given day.
 
@@ -169,6 +148,8 @@ def process_day(date: datetime.date, bounds: tuple, save_data_loc: str) -> bool:
         date (datetime.date): The date for which to process the IMERG data.
         bounds (tuple): The bounding box to clip the data (minx, miny, maxx, maxy).
         save_data_loc (str): The directory path where the processed data will be saved.
+        imerg_username (str): IMERG username for authentication.
+        imerg_password (str): IMERG password for authentication.
 
     Returns:
         bool: True if processing is successful, False otherwise.
@@ -176,7 +157,7 @@ def process_day(date: datetime.date, bounds: tuple, save_data_loc: str) -> bool:
 
     logger = logging.getLogger()
     try:
-        raw_tif = download_imerg_file(date)
+        raw_tif = download_imerg_file(date, save_data_loc, imerg_username, imerg_password)
         clipped_tif = os.path.join(save_data_loc, 'precip', f'precip.imerg.{date.strftime("%Y%m%d")}.tif')
         clip_and_resample_tif(raw_tif, clipped_tif, bounds)
         logger.info(f'Processed {clipped_tif}')
@@ -216,15 +197,40 @@ def compute_weekly_cummulative_precip(file_paths:list[Path], output_path: Path) 
     with rasterio.open(output_path, "w", **meta) as dst:
         dst.write(weekly_cummulative.astype(rasterio.float32), 1)
 
-def imergprecip(save_data_loc: Path):
+def imergprecip(config_path: Path):
     """
     Download and process IMERG precipitation data for 7 previous days in parallel.
 
     Args:
-        save_data_loc (Path): Path to store downloaded and processed data.
+        config_path (Path): Path to the main config file.
     """
     logger = logging.getLogger()
     logger.critical('IMERG Precipitation Download Started')
+
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    script_config = load_yaml_config(config_path)
+
+    bounds = script_config['Irrigation_cmd_area_shapefile_Bounds']
+    left, right = float(bounds['leftlon']), float(bounds['rightlon'])
+    top, bottom = float(bounds['toplat']), float(bounds['bottomlat'])
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+    start_date_str = script_config['Date_Running']['start_date']
+    start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+    default_run_week = script_config['Date_Running']['default_run_week']
+    run_week = (
+        ["lastweek", "currentweek"]
+        if default_run_week
+        else script_config['Date_Running'].get('run_week', [])
+    )
+    cores = script_config.get("Multiprocessing", {}).get("cores")
+    worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
+
+    secrets_file_path = script_config['Secrets_Path']['path']
+    secrets = load_yaml_config(rf'{secrets_file_path}')
+    imerg_username = secrets['IMERG_Account']['username']
+    imerg_password = secrets['IMERG_Account']['password']
+
 
     today = datetime.date.today()
     day_diff = abs((start_date - today).days)
@@ -240,7 +246,7 @@ def imergprecip(save_data_loc: Path):
     processed_files = [] 
 
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
-        futures = {executor.submit(process_day, date, (left, bottom, right, top), save_data_loc): date for date in all_dates}
+        futures = {executor.submit(process_day, date, (left, bottom, right, top), save_data_loc, imerg_username, imerg_password): date for date in all_dates}
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing IMERG Precipitation Days"):
             success = future.result()
             success_flags.append(success)
