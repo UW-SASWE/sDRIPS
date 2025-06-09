@@ -21,15 +21,7 @@ from sdrips.utils.ee_initialize import initialize_earth_engine
 from sdrips.utils.utils import load_yaml_config
 
 
-initialize_earth_engine()
 
-yaml = YAML()
-yaml.preserve_quotes = True
-script_config = load_yaml_config('config_files/test_script_config.yaml')
-bounds_leftlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
-bounds_rightlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
-bounds_toplat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
-bounds_bottomlat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
 
 def download_tif_from_ee(image, path, name, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat):
     """
@@ -279,24 +271,30 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
 
                     pbar.update(1)
 
-def gfsdata(start_date, save_data_loc, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat):
+def gfsdata(config_path: str)-> None:
     """
     Download and process GFS forecast data based on the date difference.
 
     If the date difference is greater than 10 days, data is fetched from Google Earth Engine.
     Otherwise, data is fetched from the NOAA server.
 
-    Parameters:
-    - start_date (str): The start date in 'YYYY-MM-DD' format.
-    - save_data_loc (str): Directory to save the downloaded data.
-    - bounds_leftlon (float): Left longitude of the bounding box.
-    - bounds_bottomlat (float): Bottom latitude of the bounding box.
-    - bounds_rightlon (float): Right longitude of the bounding box.
-    - bounds_toplat (float): Top latitude of the bounding box.
+    Args:
+    - config_path (str): Path to the main configuration file.
     """
     logger = logging.getLogger()
     logger.critical('GFS Data Download Started')
 
+    initialize_earth_engine()
+
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    script_config = load_yaml_config(config_path)
+    bounds_leftlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
+    bounds_rightlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
+    bounds_toplat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
+    bounds_bottomlat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
+    start_date = script_config['Date_Running']['start_date']
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
     start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
     date_difference = (datetime.datetime.today() - start_date_obj).days
 
