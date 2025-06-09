@@ -1,20 +1,25 @@
 import os
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
+from pathlib import Path
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio as rio
 from rasterio.mask import mask as riomask
+from ruamel.yaml import YAML
 from tqdm import tqdm
+import multiprocessing
 
-from src.sdrips.utils.utils import (
+from sdrips.utils.utils import (
     read_region_shapefile, 
     reproject_shapefile,
     get_valid_raster_path,
     get_mean_value_precip,
     initialize_cmd_area_df,
-    compute_masked_mean
+    compute_masked_mean,
+    load_yaml_config,
+    get_cmd_area_list
 )
 
 
@@ -78,13 +83,27 @@ def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, 
     return cmd_area_gdf
 
 
-def command_area_info(save_data_loc: str, irrigation_canals_path: str, run_week: List[str], cmd_area_list: List[List[str]], feature_name: str, numeric_ID: float) -> None:
+def command_area_info(config_path: Path) -> None:
     """
     Orchestrates the generation of irrigation and water requirement statistics
     for all command areas and saves the results as CSV files.
+    Args:
+        config_path (str): Path to the main configuration file.
     """
     logger = logging.getLogger()
     logger.critical('Started Command Area Info')
+
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    script_config = load_yaml_config(config_path)
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+    irrigation_canals_path = script_config['Irrigation_cmd_area_shapefile']['path']
+    feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+    numeric_ID = script_config['Irrigation_cmd_area_shapefile']['numeric_id_name']
+    cmd_area_list = get_cmd_area_list(config_path)
+    run_week = script_config['Date_Running']['run_week']
+
+
     cmd_area_gdf = read_region_shapefile(irrigation_canals_path)
     rasterpath = get_valid_raster_path(save_data_loc, cmd_area_list, run_week)
 
