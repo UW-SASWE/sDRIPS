@@ -5,6 +5,8 @@ import logging
 import datetime
 import geopandas as gpd
 import rasterio as rio
+import ee
+import geemap
 import numpy as np
 from rasterio.mask import mask as riomask
 from ruamel.yaml import YAML
@@ -226,3 +228,68 @@ def get_mean_value_precip(raster, geometry):
     """
     masked_data, _ = riomask(raster, geometry, crop=True)
     return np.mean(masked_data)
+
+
+def get_cmd_area_list(config_path: str) -> List[List[str]]:
+    """
+    Load command area list from the configuration file.
+    This function retrieves the command area names from the GEE asset ID or shapefile specified in the configuration.
+
+    Args:
+        config_path (str): Path to the main configuration file.
+    Returns:
+        List[List[str]]: List of command area names.
+    """
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    script_config = load_yaml_config(config_path)
+    gee_asset_section = script_config.get('GEE_Asset_ID', {})
+    feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+    if gee_asset_section.get('id'): 
+        gee_asset_id = gee_asset_section['id']
+    elif gee_asset_section.get('shp'):
+        gee_asset_id = gee_asset_section['shp']
+    else:
+        raise ValueError(
+            "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+            "Both are missing or empty."
+        )
+    if gee_asset_section.get('id'):
+        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
+        # print(f'GEE Asset ID: {gee_asset_id}')
+    else:
+        irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
+    cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
+    return cmd_area_list
+
+def get_irrigation_cmd_area(config_path: str) -> ee.FeatureCollection:
+    """
+    Load the irrigation command area from the configuration file.
+    This function retrieves the command area as an Earth Engine FeatureCollection
+
+    Args:
+        config_path (str): Path to the main configuration file.
+        
+    Returns:
+        ee.FeatureCollection: The irrigation command area as a FeatureCollection.
+    """
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    script_config = load_yaml_config(config_path)
+    gee_asset_section = script_config.get('GEE_Asset_ID', {})
+    feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+    if gee_asset_section.get('id'): 
+        gee_asset_id = gee_asset_section['id']
+    elif gee_asset_section.get('shp'):
+        gee_asset_id = gee_asset_section['shp']
+    else:
+        raise ValueError(
+            "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+            "Both are missing or empty."
+        )
+    if gee_asset_section.get('id'):
+        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
+        # print(f'GEE Asset ID: {gee_asset_id}')
+    else:
+        irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
+    return irrigation_cmd_area
