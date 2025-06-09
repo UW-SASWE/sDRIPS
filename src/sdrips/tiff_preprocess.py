@@ -5,7 +5,13 @@ from tqdm import tqdm
 import rasterio as rio
 import numpy as np
 
-def unzip_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
+from sdrips.utils.utils import (
+    load_yaml_config,
+    get_cmd_area_list
+)
+
+
+def unzip_tiffs(config_path: str) -> None:
     """
     Unzips all .zip files in specified directories organized by sensor, variable, and week.
 
@@ -22,6 +28,9 @@ def unzip_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
     """
     logger = logging.getLogger()
     logger.critical("Unzipping TIFF files...")
+    script_config = load_yaml_config(config_path)
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+    run_weeks = script_config['Date_Running']['run_week']
     sensors = ['landsat']
     variables = ['sebal', 'penman','irrigation'] 
     for sensor in sensors:
@@ -41,7 +50,7 @@ def unzip_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
     logger.critical("Finished unzipping TIFF files.")
 
 
-def convert_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
+def convert_tiffs(config_path: str) -> None:
     """
     Converts and renames TIFF files for upload, setting NoData value and standardizing names.
 
@@ -58,6 +67,9 @@ def convert_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
     """
     logger = logging.getLogger()
     logger.critical("Converting TIFF files...")
+    script_config = load_yaml_config(config_path)
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+    run_weeks = script_config['Date_Running']['run_week']
     sensors = ['landsat']
     variables = ['sebal', 'penman', 'irrigation']
     for sensor in sensors:
@@ -97,13 +109,25 @@ def convert_tiffs(save_data_loc: str, run_weeks: list[str]) -> None:
     logger.critical("Finished converting TIFF files.")
 
 
-def converting_to_eto(cmd_area_list: list[list[str]], save_data_loc: str, run_week: list[str]):
+def converting_to_eto(config_path:str) -> None:
     """
     Convert Penman-Monteith TIFFs to ETo-compatible TIFFs for upload, renaming accordingly.
+    
+    Parameters
+    ----------  
+    config_path : str
+        Path to the main configuration file.
+
+    Returns
+    -------
+    None
     """
     logger = logging.getLogger()
     logger.critical("Starting TIFF conversion for uploading purpose...")
-
+    script_config = load_yaml_config(config_path)
+    save_data_loc = script_config['Save_Data_Location']['save_data_loc']
+    run_week = script_config['Date_Running']['run_week']
+    cmd_area_list = get_cmd_area_list(config_path)
     for ca_area in tqdm(cmd_area_list, desc="Processing Command Area TIFF to ETo Format", unit=' Command Area'):
         try:
             region_raw = ca_area[0]
