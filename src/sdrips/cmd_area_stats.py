@@ -99,6 +99,7 @@ def command_area_info(config_path: Path) -> None:
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
     irrigation_canals_path = script_config['Irrigation_cmd_area_shapefile']['path']
     feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
+    area_column_name = script_config['Irrigation_cmd_area_shapefile']['area_column_name']
     numeric_ID = script_config['Irrigation_cmd_area_shapefile']['numeric_id_name']
     cmd_area_list = get_cmd_area_list(config_path)
     run_week = script_config['Date_Running']['run_week']
@@ -127,7 +128,8 @@ def command_area_info(config_path: Path) -> None:
         for week in run_week:
             cmd_area_gdf = process_week(save_data_loc = save_data_loc, cmd_area_gdf = cmd_area_gdf, cmd_area_list = cmd_area_list, week = week, feature_name = feature_name, pbar = pbar)
             cmd_area_gdf = cmd_area_gdf.drop(columns=['geometry'])
-            cmd_area_gdf['net_water_req'] = cmd_area_gdf['net_water_req'].apply(lambda x: x if x <= 0 else 0) 
+            cmd_area_gdf['net_water_req_mm'] = cmd_area_gdf['net_water_req'].apply(lambda x: x if x <= 0 else 0) 
+            cmd_area_gdf['net_water_req_m3'] = abs(cmd_area_gdf['net_water_req_mm']/1000) * (cmd_area_gdf[area_column_name]) 
             sorted_cmd_area_gdf = cmd_area_gdf.sort_values(by=f'{numeric_ID}')
             if week == 'currentweek':
                 sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats.csv",index = False)
