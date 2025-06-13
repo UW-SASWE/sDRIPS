@@ -42,6 +42,7 @@ from sdrips.gfs_processing import gfsdata
 from sdrips.percolation import percolation_estimation
 from sdrips.cmd_area_stats import command_area_info
 from sdrips.initialize import load_config
+from sdrips.canal_water_distribution import calculate_canal_cumulative_discharge
 
 
 def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float) -> None:
@@ -100,10 +101,6 @@ def run_sdrips(config_path: str):
 
     save_data_loc = config.Save_Data_Location.save_data_loc
     run_week = config.Date_Running.run_week
-    start_date = config.Date_Running.start_date
-    irrigation_cmd_area_path = config.Irrigation_cmd_area_shapefile.path
-    feature_name = config.Irrigation_cmd_area_shapefile.feature_name
-    numeric_id = config.Irrigation_cmd_area_shapefile.numeric_id_name
     cores = config.Multiprocessing.cores if config.Multiprocessing.cores is not None else multiprocessing.cpu_count() - 1
     clear_condition = config.Clean_Directory.clear_directory_condition
     run_et = config.Run_ET_Estimation.et_estimation
@@ -111,12 +108,7 @@ def run_sdrips(config_path: str):
     run_weather = config.Weather_Config.consider_forecasted_weather
     run_soil_moisture = config.Percolation_Config.consider_percolation
     run_region_stats = config.Region_stats.estimate_region_stats
-    bounds_leftlon = float(config.Irrigation_cmd_area_shapefile_Bounds.leftlon)
-    bounds_rightlon = float(config.Irrigation_cmd_area_shapefile_Bounds.rightlon)
-    bounds_toplat = float(config.Irrigation_cmd_area_shapefile_Bounds.toplat)
-    bounds_bottomlat = float(config.Irrigation_cmd_area_shapefile_Bounds.bottomlat)
-    cmd_area_list = get_cmd_area_list(config_path)
-    irrigation_cmd_area = get_irrigation_cmd_area(config_path)
+    canal_water_allotment = config.Canal_water_allotment
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(config_path)
     logger = logging.getLogger()
@@ -158,6 +150,10 @@ def run_sdrips(config_path: str):
         if run_region_stats:
             logger.info("Running Command Area Statistics module...")
             command_area_info(config_path)
+        if canal_water_allotment:
+            logger.info("Running Canal Water Allotment module...")
+            calculate_canal_cumulative_discharge(config_path)
+
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
 
