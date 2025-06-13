@@ -44,7 +44,10 @@ def setup_logger_with_queue(config_path: str) -> Tuple[Queue, QueueListener, str
     excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', 
     '__init__.py', 'warp.py', 'mask.py', 
     'utils.py', 'features.py', 'collection.py',
-    'collection.py', 'geodataframe.py']
+    'collection.py', 'geodataframe.py', 'retry.py'
+    'google_auth_httplib2.py', 'session.py', 'font_manager.py'
+    'file.py', 'google_auth_httplib2.py'
+    ]
     file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
 
     queue_listener = QueueListener(log_queue, file_handler)
