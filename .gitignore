@@ -162,11 +162,13 @@ cython_debug/
 #.idea/
 
 #### Ignore Secrets
-Config_files/Secrets.ini
-Config_files/Script_Config.ini
-Config_files/New_Canal_Config.ini
-Config_files/Script_Config_Backup.ini
-Config_files/Test_Canal_Config.ini
+config_files/Secrets.ini
+config_files/Script_Config.ini
+config_files/New_Canal_Config.ini
+config_files/Script_Config_Backup.ini
+config_files/Test_Canal_Config.ini
+config_files/ca_config.yaml
+config_files/test_script_config.yaml
 
 #### Ignore Data
 *[Dd]ata*/
