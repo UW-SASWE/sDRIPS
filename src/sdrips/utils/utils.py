@@ -14,6 +14,8 @@ from typing import Tuple, Any, Dict, List, Union, Optional
 from tqdm import tqdm
 
 
+from sdrips.utils.upload_shapefile_to_ee import upload_shapefile_to_ee
+
 yaml = YAML(typ='safe')
 yaml.preserve_quotes = True
 
@@ -258,7 +260,7 @@ def get_cmd_area_list(config_path: str) -> List[List[str]]:
         irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
         # print(f'GEE Asset ID: {gee_asset_id}')
     else:
-        irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
+        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
     cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
     return cmd_area_list
 
@@ -291,5 +293,5 @@ def get_irrigation_cmd_area(config_path: str) -> ee.FeatureCollection:
         irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
         # print(f'GEE Asset ID: {gee_asset_id}')
     else:
-        irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
+        irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id) 
     return irrigation_cmd_area
