@@ -26,6 +26,7 @@ from matplotlib.patches import FancyArrow
 from rasterio.coords import BoundingBox
 from ruamel.yaml import YAML
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 import warnings
 warnings.filterwarnings("ignore")
@@ -35,14 +36,16 @@ from sdrips.utils.utils import (
    load_yaml_config,
     read_cmd_area_settings,
     read_crop_coefficients,
-    get_growth_kc
+    get_growth_kc,
 )
 from sdrips.utils.logging_utils import (
     worker_logger_setup,
     worker_init
 )
+from sdrips.utils.upload_shapefile_to_ee import upload_shapefile_to_ee
 
 
+initialize_earth_engine()
 #########*******Module (1) USER INPUT (ROI and Intereset Dates and Planting Date)********########
 
 #########*******Module (2) Estimates Penman-Monteith and SEBAL Evapotranspiration********########
@@ -712,10 +715,6 @@ def process_single_cmd_area(args):
     urllib.request.urlretrieve(url, rf"{save_data_loc}/landsat/irrigation/" + wktime + r"/irrigation_" + regionid + ".zip")
     logger.info('ET Values For The Processed Command Area - Format: Command Area, Average Penman ET, Average SEBAL ET, Average Overirrigation (SEBAL - Penman)')
     logger.info((cmd_area[0] + ',' + str(median_etref) + "," + str(avg_etc)+ ',' + str(avg_irri)))
-    # penman_mean_values.append((regionid, median_etref))
-    # sebal_mean_values.append((regionid, avg_etc))
-    # irr_mean_values.append((regionid, avg_irri))
-    # return (cmd_area[0], penman_mean_values, sebal_mean_values, irr_mean_values)
             
   except Exception as e:
     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -729,7 +728,6 @@ def process_single_cmd_area(args):
 
 
 def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
-  initialize_earth_engine()
   yaml = YAML()
   yaml.preserve_quotes = True  # Optional: preserves quotes around strings
 
@@ -773,25 +771,12 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
 
   correction_iter = script_config["Correction_iter"]["correction_iter"]
 
-
   if gee_asset_section.get('id'):
       irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
-      # print(f'GEE Asset ID: {gee_asset_id}')
   else:
-      irrigation_cmd_area= geemap.shp_to_ee(gee_asset_id)
-  
+     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
+
   cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
-
-
-  # def get_cmd_area_list():
-  #   return cmd_area_list
-
-  # def get_irrigation_cmd_area():
-  #   return irrigation_cmd_area
-  
-
-  # """ Reading the canal config file to parse the planting date, 
-  # crop type and soil coefficient for each command region """
 
   config = load_yaml_config(cmd_config_path)
 
@@ -830,7 +815,7 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
 
       args_list = [(cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask) for cmd_area in cmd_area_list]
 
-      with ProcessPoolExecutor(
+      with ThreadPoolExecutor(
                 max_workers=cores,
                 initializer=worker_logger_setup,
                 initargs=(log_queue,)
