@@ -42,7 +42,7 @@ from sdrips.precipitation import imergprecip
 from sdrips.gfs_processing import gfsdata
 from sdrips.percolation import percolation_estimation
 from sdrips.cmd_area_stats import command_area_info
-from sdrips.initialize import load_config
+from sdrips.utils.initialize import load_config
 from sdrips.canal_water_distribution import calculate_canal_cumulative_discharge
 from sdrips.sen_corr_evapotranspiration import (
     process_cmd_area_sensor_parallel
