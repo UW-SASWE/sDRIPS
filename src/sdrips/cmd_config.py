@@ -75,11 +75,19 @@ def main():
         "-du", "--default_distribution_unif", type=float, default=1.0,
         help="Default distribution uniformity (e.g., 0.7, 1.0)."
     )
+    parser.add_argument(
+        "-o", "--output_path", default=None,
+        help="Optional output path for the YAML config file."
+    )
+
 
     args = parser.parse_args()
 
     # Set output YAML path and ensure the folder exists
-    output_path = Path("config_files/ca_config.yaml")
+    if args.output_path:
+        output_path = Path(args.output_path)
+    else:
+        output_path = Path("config_files/ca_config.yaml")
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Get unique command area IDs
