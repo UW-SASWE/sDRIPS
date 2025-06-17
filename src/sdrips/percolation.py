@@ -14,7 +14,7 @@ from sdrips.utils.utils import (
     load_yaml_config,
     get_irrigation_cmd_area
 )
-from sdrips.utils.ee_initialize import initialize_earth_engine
+from sdrips.utils.ee_utils import initialize_earth_engine
 
 
 def estimate_region_soil_moisture(region, s1_collection, field_capacity, feature_name) -> pd.DataFrame:
