@@ -4,8 +4,8 @@ import geemap
 import time
 import logging
 
-from sdrips.utils.utils import load_yaml_config
-from sdrips.utils.ee_initialize import initialize_earth_engine
+# from sdrips.utils.utils import load_yaml_config
+# from sdrips.utils.ee_initialize import initialize_earth_engine
 
 
 def initialize_earth_engine():
