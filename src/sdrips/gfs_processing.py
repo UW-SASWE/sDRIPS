@@ -17,7 +17,7 @@ from rasterio.shutil import copy as rio_copy
 import tempfile
 from typing import Dict, Union
 
-from sdrips.utils.ee_initialize import initialize_earth_engine
+from sdrips.utils.ee_utils import initialize_earth_engine
 from sdrips.utils.utils import load_yaml_config
 
 
