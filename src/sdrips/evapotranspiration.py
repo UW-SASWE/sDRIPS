@@ -31,7 +31,7 @@ import multiprocessing
 import warnings
 warnings.filterwarnings("ignore")
 
-from sdrips.utils.ee_initialize import initialize_earth_engine
+from sdrips.utils.ee_utils import initialize_earth_engine
 from sdrips.utils.utils import (
    load_yaml_config,
     read_cmd_area_settings,
@@ -42,7 +42,7 @@ from sdrips.utils.logging_utils import (
     worker_logger_setup,
     worker_init
 )
-from sdrips.utils.upload_shapefile_to_ee import upload_shapefile_to_ee
+from sdrips.utils.ee_utils import upload_shapefile_to_ee
 
 
 initialize_earth_engine()
