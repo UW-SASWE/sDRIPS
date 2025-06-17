@@ -8,6 +8,7 @@ and processes all defined command areas based on the configuration file flags.
 
 import os
 import logging
+import re
 import datetime
 from ruamel.yaml import YAML
 import argparse
@@ -43,9 +44,11 @@ from sdrips.percolation import percolation_estimation
 from sdrips.cmd_area_stats import command_area_info
 from sdrips.initialize import load_config
 from sdrips.canal_water_distribution import calculate_canal_cumulative_discharge
+from sdrips.sen_corr_evapotranspiration import (
+    process_cmd_area_sensor_parallel
+)
 
-
-def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float) -> None:
+def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float, sensor_condition: bool) -> None:
     """
     Run ET estimation for all command areas.
 
@@ -61,8 +64,10 @@ def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float) -> Non
     logger = logging.getLogger(__name__)
     try:
         logger.info("Starting ET estimation...")
-        process_cmd_area_parallel(config_path, logger, log_queue, max_workers)
-
+        if sensor_condition == False:
+            process_cmd_area_parallel(config_path, logger, log_queue, max_workers)
+        else:
+            process_cmd_area_sensor_parallel(config_path, logger, log_queue, max_workers)
     except Exception as e:
         logger.exception("Unhandled exception in main process")
 
@@ -109,6 +114,7 @@ def run_sdrips(config_path: str):
     run_soil_moisture = config.Percolation_Config.consider_percolation
     run_region_stats = config.Region_stats.estimate_region_stats
     canal_water_allotment = config.Canal_water_allotment
+    Insitu_Sensor_integration = config.Insitu_Sensor_integration
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(config_path)
     logger = logging.getLogger()
@@ -134,10 +140,11 @@ def run_sdrips(config_path: str):
 
         if run_et:
             logger.info("Running ET module for all command areas...")
-            run_et_for_ca(config_path, log_queue, cores)
+            run_et_for_ca(config_path, log_queue, cores, Insitu_Sensor_integration)
             unzip_tiffs(config_path)
             convert_tiffs(config_path)
             converting_to_eto(config_path)
+        
         if run_precip:
             logger.info("Running Precipitation module...")
             imergprecip(config_path)
