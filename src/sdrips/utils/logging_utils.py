@@ -46,7 +46,7 @@ def setup_logger_with_queue(config_path: str) -> Tuple[Queue, QueueListener, str
     'utils.py', 'features.py', 'collection.py',
     'collection.py', 'geodataframe.py', 'retry.py'
     'google_auth_httplib2.py', 'session.py', 'font_manager.py'
-    'file.py', 'google_auth_httplib2.py'
+    'file.py', 'google_auth_httplib2.py', 'api.py'
     ]
     file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
 
