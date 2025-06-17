@@ -14,7 +14,7 @@ from typing import Tuple, Any, Dict, List, Union, Optional
 from tqdm import tqdm
 
 
-from sdrips.utils.upload_shapefile_to_ee import upload_shapefile_to_ee
+from sdrips.utils.ee_utils import upload_shapefile_to_ee
 
 yaml = YAML(typ='safe')
 yaml.preserve_quotes = True
@@ -66,6 +66,7 @@ def read_crop_coefficients(config_path: str, crop: str) -> Dict[Tuple[int, int],
     Args:
         config_path (str): Path to the YAML file containing crop Kc values.
         crop (str): Crop name (case-insensitive).
+        - If crop is 'grass' or 'alfa-alfa', returns constant Kc=1.0.
 
     Returns:
         Dict[Tuple[int, int], Union[float, Tuple]]: Mapping from day ranges to Kc or interpolation info.
