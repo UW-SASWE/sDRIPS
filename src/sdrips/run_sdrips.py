@@ -47,8 +47,12 @@ from sdrips.canal_water_distribution import calculate_canal_cumulative_discharge
 from sdrips.sen_corr_evapotranspiration import (
     process_cmd_area_sensor_parallel
 )
+from sdrips.stn_corr_evapotranspiration import (
+    process_cmd_area_stn_parallel
+)
 
-def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float, sensor_condition: bool) -> None:
+
+def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float, cmd_area_nwr: bool = True, Insitu_Sensor_integration: bool = False, Weather_station_integration: bool = False) -> None:
     """
     Run ET estimation for all command areas.
 
@@ -64,10 +68,15 @@ def run_et_for_ca(config_path: str, log_queue: Queue, max_workers: float, sensor
     logger = logging.getLogger(__name__)
     try:
         logger.info("Starting ET estimation...")
-        if sensor_condition == False:
-            process_cmd_area_parallel(config_path, logger, log_queue, max_workers)
-        else:
+        logger.info(f"Configuration - Insitu : {Insitu_Sensor_integration}, Weather Station : {Weather_station_integration}, Command Area NWR : {cmd_area_nwr}")
+        if Insitu_Sensor_integration == True and cmd_area_nwr == True:
             process_cmd_area_sensor_parallel(config_path, logger, log_queue, max_workers)
+        elif Weather_station_integration == True and cmd_area_nwr == True:
+            process_cmd_area_stn_parallel(config_path, logger, log_queue, max_workers)
+        elif cmd_area_nwr == True :
+            process_cmd_area_parallel(config_path, logger, log_queue, max_workers)
+        
+
     except Exception as e:
         logger.exception("Unhandled exception in main process")
 
@@ -113,8 +122,10 @@ def run_sdrips(config_path: str):
     run_weather = config.Weather_Config.consider_forecasted_weather
     run_soil_moisture = config.Percolation_Config.consider_percolation
     run_region_stats = config.Region_stats.estimate_region_stats
+    cmd_area_nwr = config.Command_Area_Net_Water_Requirement
     canal_water_allotment = config.Canal_water_allotment
     Insitu_Sensor_integration = config.Insitu_Sensor_integration
+    Weather_station_integration = config.Weather_station_integration
 
     log_queue, queue_listener, log_file_path = setup_logger_with_queue(config_path)
     logger = logging.getLogger()
@@ -125,7 +136,6 @@ def run_sdrips(config_path: str):
     logger.info(f"Configuration loaded from: {config_path}")
     logger.info(f"Data directory: {save_data_loc}")
     logger.info(f"Number of Cores Used: {cores}")
-
     try:
         make_directory(save_data_loc, run_week)
         if clear_condition:
@@ -140,7 +150,7 @@ def run_sdrips(config_path: str):
 
         if run_et:
             logger.info("Running ET module for all command areas...")
-            run_et_for_ca(config_path, log_queue, cores, Insitu_Sensor_integration)
+            run_et_for_ca(config_path, log_queue, cores, cmd_area_nwr, Insitu_Sensor_integration, Weather_station_integration)
             unzip_tiffs(config_path)
             convert_tiffs(config_path)
             converting_to_eto(config_path)
