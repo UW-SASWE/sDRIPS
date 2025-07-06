@@ -54,8 +54,6 @@ from sdrips.utils.sensor_utils import (
 initialize_earth_engine()
 
 
-sensor_date_week_list = []
-
 def process_single_cmd_area_sensor(args):
   logger = logging.getLogger()
   air_temp_condition, wind_speed_sensor_condition, specific_humidity_sensor_condition, base_url, sensor_data_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, date_pattern, date_format, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
