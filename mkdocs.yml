@@ -1,0 +1,95 @@
+site_name: sDRIPS Documentation
+site_url: https://sdrips.readthedocs.io/
+site_author: Shahzaib Khan 
+repo_url: https://github.com/shahzaib1007/sDRIPS
+nav:
+  - Home: index.md
+  - API Reference:
+      - sdrips: api/sdrips.md
+
+theme:
+  name: readthedocs
+  include_homepage_in_sidebar: true
+  highlightjs: true
+  hljs_languages:
+        - yaml
+        - rust
+  include_homepage_in_sidebar: false
+  features:
+    - content.code.copy  
+  icon:
+    admonition:
+      success: fontawesome/solid/check
+      warning: fontawesome/solid/triangle-exclamation
+docs_dir: docs
+site_dir: site
+use_directory_urls: true
+markdown_extensions:
+  - admonition
+  - mdx_math
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:pymdownx.emoji.twemoji
+      emoji_generator: !!python/name:pymdownx.emoji.to_alt
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src] 
+          options:
+            show_source: true
+copyright: Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a>
+docs_dir: docs
+site_dir: site
+use_directory_urls: true
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+# Main pages
+- Home:
+    - 'sDRIPS': 'index.md'
+    - 'Motivation': 'Motivation/motivation.md'
+- Model:
+    - 'Conceptual Model': 'Model/ConceptualModel.md'
+    - 'Computational Model': 'Model/ComputationalModel.md'
+- Quick Start: 
+    - 'Getting Ready': 'QuickStart/GettingReady.md'
+    - 'Download Guide': 'QuickStart/UserGuide.md'
+- Commands:
+    - 'Command Line Interface': 'Commands/cli_commands.md'
+    - 'Python': 'Commands/python_commands.md'
+- Configuration:
+    - 'Script Configuration File': 'Configuration/rat_config.md'
+    - 'Crop Configuration File': 'Configuration/rat_config.md'
+    - 'Command Area Configuration File': 'Configuration/rat_config.md'
+    - 'Secrets File': 'Configuration/secrets.md'
+
+- Data Description:
+    - 'Directory Structure': 'RAT_Data/DirectoryStructure.md'
+    - 'Global Database': 'RAT_Data/GlobalDatabase.md'
+- Tutorials:
+    - 'Kickstart sDRIPS for Beginners': 'Tutorials/KarnatakaFloods.md' 
+- Application:
+    - 'Web App': 'Applications/WebApp.md'
+- Development:
+    - 'Recent Adjustments': 'Development/RecentAdjustments.md'
+    - 'Patch Notes': 'Development/PatchNotes.md'
+    - 'Dev Version': 'Development/DeveloperVersion.md'
+- Contact:
+    - 'Contact': 'Contact/contact.md'
+- Disclaimer:
+    - 'Disclaimer': 'Disclaimer/disclaimer.md'
+
