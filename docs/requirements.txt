@@ -1,0 +1,4 @@
+mkdocs
+mkdocs-material           # optional, or use another theme
+mkdocs-rtd-dropdown       # optional, for RTD-like dropdowns
+mkdocstrings[python]      # for auto-generating API docs
