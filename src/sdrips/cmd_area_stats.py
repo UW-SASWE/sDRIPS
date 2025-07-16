@@ -23,7 +23,7 @@ from sdrips.utils.utils import (
 )
 
 
-def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, cmd_area_list: list, feature_name: str, pbar: tqdm) -> gpd.GeoDataFrame:
+def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, cmd_area_list: list, feature_name: str, precip_condition: bool, percolation_condition: bool, pbar: tqdm) -> gpd.GeoDataFrame:
     """
     Processes command area statistics for a single week.
 
@@ -52,7 +52,7 @@ def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, 
             cmd_area_gdf.loc[i, f'{day_label} Penman ET'] = compute_masked_mean(penman_path, geometry)
             cmd_area_gdf.loc[i, f'{day_label} SEBAL ET'] = compute_masked_mean(sebal_path, geometry)
 
-            if is_current or is_last:
+            if precip_condition and (is_current or is_last):
                 ppt_curr_path = f"{save_data_loc}/precip/precip.currentweek.tif"
                 ppt_next_path = f"{save_data_loc}/precip/precip.nextweek.tif"
                 
@@ -69,16 +69,18 @@ def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, 
         cmd_area_gdf[f'{day_label} SEBAL ET'] - cmd_area_gdf[f'{day_label} Penman ET']
     )
 
-    percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
-    cmd_area_gdf = cmd_area_gdf.merge(percolation_df, on=feature_name)
+    if percolation_condition:
+        percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+        cmd_area_gdf = cmd_area_gdf.merge(percolation_df, on=feature_name)
 
     if is_current or is_last:
-        cmd_area_gdf['net_water_req'] = (
-            cmd_area_gdf['Currentweek PPT'] +
-            cmd_area_gdf['Nextweek PPT'] +
-            cmd_area_gdf[f'{day_label} Irrigation'] -
-            cmd_area_gdf['MedianPercolation'] * 7
-        )
+        irrigation = cmd_area_gdf[f'{day_label} Irrigation']
+        ppt = cmd_area_gdf.get('Currentweek PPT', 0) + cmd_area_gdf.get('Nextweek PPT', 0)
+        perc = cmd_area_gdf['MedianPercolation'] * 7 if percolation_condition else 0
+        cmd_area_gdf['net_water_req'] = irrigation + ppt - perc
+
+    else:
+        cmd_area_gdf['net_water_req'] = cmd_area_gdf[f'{day_label} Irrigation']
 
     return cmd_area_gdf
 
@@ -103,6 +105,8 @@ def command_area_info(config_path: Path) -> None:
     numeric_ID = script_config['Irrigation_cmd_area_shapefile']['numeric_id_name']
     cmd_area_list = get_cmd_area_list(config_path)
     run_week = script_config['Date_Running']['run_week']
+    precip_condition = script_config['Precipitation_Config']['consider_preciptation']
+    percolation_condition = script_config['Percolation_Config']['consider_percolation']
 
 
     cmd_area_gdf = read_region_shapefile(irrigation_canals_path)
@@ -126,14 +130,32 @@ def command_area_info(config_path: Path) -> None:
 
     with tqdm(total=total_cmd_areas, desc="Processing Command Area Stats", unit=" Command Areas") as pbar:
         for week in run_week:
-            cmd_area_gdf = process_week(save_data_loc = save_data_loc, cmd_area_gdf = cmd_area_gdf, cmd_area_list = cmd_area_list, week = week, feature_name = feature_name, pbar = pbar)
-            cmd_area_gdf = cmd_area_gdf.drop(columns=['geometry'])
+            cmd_area_gdf = process_week(save_data_loc = save_data_loc, cmd_area_gdf = cmd_area_gdf, cmd_area_list = cmd_area_list, week = week, feature_name = feature_name, precip_condition = precip_condition, percolation_condition = percolation_condition, pbar = pbar)
+            # cmd_area_gdf = cmd_area_gdf.drop(columns=['geometry'])
             cmd_area_gdf['net_water_req_mm'] = cmd_area_gdf['net_water_req'].apply(lambda x: x if x <= 0 else 0) 
-            cmd_area_gdf['net_water_req_m3'] = abs(cmd_area_gdf['net_water_req_mm']/1000) * (cmd_area_gdf[area_column_name]) 
-            sorted_cmd_area_gdf = cmd_area_gdf.sort_values(by=f'{numeric_ID}')
-            if week == 'currentweek':
-                sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats.csv",index = False)
-                logging.critical('Finished Command Area Info')
+            if area_column_name in cmd_area_gdf.columns:
+                cmd_area_gdf['net_water_req_m3'] = abs(cmd_area_gdf['net_water_req_mm']/1000) * (cmd_area_gdf[area_column_name]) 
+                sorted_cmd_area_gdf = cmd_area_gdf.sort_values(by=f'{numeric_ID}')
+                sorted_cmd_area_gdf = sorted_cmd_area_gdf.drop(columns=['geometry'])
+                if week == 'currentweek':
+                    sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats.csv",index = False)
+                    logging.critical('Finished Command Area Info')
+                else:
+                    sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats_{week}.csv",index = False)
+                    logging.critical('Finished Last Week Command Area Info')
             else:
-                sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats_{week}.csv",index = False)
-                logging.critical('Finished Last Week Command Area Info')
+                logging.info(f"Area column '{area_column_name}' not found in command area GeoDataFrame. Estimating area from geometry, this might be different than the irrigable area of the command area.")
+                if cmd_area_gdf.crs.is_geographic:
+                    logging.info("Command area shapefile is in geographic CRS. Estimating UTM CRS for area calculation.")
+                    utm_crs = cmd_area_gdf.estimate_utm_crs()
+                    cmd_area_gdf = cmd_area_gdf.to_crs(utm_crs)
+                cmd_area_gdf['Area_m2'] = cmd_area_gdf.geometry.area
+                cmd_area_gdf['net_water_req_m3'] = abs(cmd_area_gdf['net_water_req_mm']/1000) * (cmd_area_gdf['Area_m2']) 
+                sorted_cmd_area_gdf = cmd_area_gdf.sort_values(by=f'{numeric_ID}')
+                sorted_cmd_area_gdf = sorted_cmd_area_gdf.drop(columns=['geometry'])
+                if week == 'currentweek':
+                    sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats.csv",index = False)
+                    logging.critical('Finished Command Area Info')
+                else:
+                    sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats_{week}.csv",index = False)
+                    logging.critical('Finished Last Week Command Area Info')
