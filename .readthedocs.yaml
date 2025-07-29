@@ -7,7 +7,7 @@ build:
     python: "3.11"
   jobs:
     pre_build:
-      - pip install mkdocs mkdocs-rtd-dropdown mkdocstrings[python]
+      - pip install mkdocs mkdocs-rtd-dropdown mkdocstrings[python] mkdocs-jupyter
 
 python:
   install:
