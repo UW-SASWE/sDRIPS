@@ -40,13 +40,16 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
 plugins:
-  - search
-  - mkdocstrings:
-      handlers:
+    - search
+    - mkdocstrings:
+        handlers:
         python:
-          paths: [src] 
-          options:
+            paths: [src] 
+            options:
             show_source: true
+    - mkdocs-jupyter:       
+        execute: false     
+        include_source: true
 copyright: Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a>
 docs_dir: docs
 site_dir: site
@@ -68,22 +71,21 @@ nav:
 - Quick Start: 
     - 'Getting Ready': 'QuickStart/GettingReady.md'
     - 'Download Guide': 'QuickStart/UserGuide.md'
-- Commands:
-    - 'Command Line Interface': 'Commands/cli_commands.md'
-    - 'Python': 'Commands/python_commands.md'
 - Configuration:
     - 'Script Configuration File': 'Configuration/rat_config.md'
     - 'Crop Configuration File': 'Configuration/rat_config.md'
     - 'Command Area Configuration File': 'Configuration/rat_config.md'
     - 'Secrets File': 'Configuration/secrets.md'
-
 - Data Description:
     - 'Directory Structure': 'RAT_Data/DirectoryStructure.md'
     - 'Global Database': 'RAT_Data/GlobalDatabase.md'
 - Tutorials:
-    - 'Kickstart sDRIPS for Beginners': 'Tutorials/KarnatakaFloods.md' 
+        - Creating Command Area Config Files:
+            - Command Line Interface: tutorials/config_files/cli.md
+            - Notebook: tutorials/config_files/Creating_CMD_Config.ipynb
 - Application:
-    - 'Web App': 'Applications/WebApp.md'
+    - 'sDRIPS-Sense': 'Applications/WebApp.md'
+    - 'sDRIPS-Ukulima': 'Applications/API.md'
 - Development:
     - 'Recent Adjustments': 'Development/RecentAdjustments.md'
     - 'Patch Notes': 'Development/PatchNotes.md'
