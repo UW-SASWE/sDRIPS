@@ -17,6 +17,8 @@ theme:
   include_homepage_in_sidebar: false
   features:
     - content.code.copy  
+    - content.tabs.link
+    - content.admonitions
   icon:
     admonition:
       success: fontawesome/solid/check
@@ -59,6 +61,9 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+
+extra_css:
+  - css/custom.css
 
 nav:
 # Main pages
