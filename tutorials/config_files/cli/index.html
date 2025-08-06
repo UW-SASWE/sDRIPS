@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/tutorials/config_files/cli/" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Command Line Interface - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Command Line Interface";
+        var mkdocs_page_input_path = "tutorials\\config_files\\cli.md";
+        var mkdocs_page_url = "/tutorials/config_files/cli/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> sDRIPS Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Model/ConceptualModel.md">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Model/ComputationalModel.md">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../QuickStart/GettingReady.md">Getting Ready</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../QuickStart/UserGuide.md">Download Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Configuration/rat_config.md">Script Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Configuration/rat_config.md">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Configuration/rat_config.md">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Configuration/secrets.md">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../RAT_Data/DirectoryStructure.md">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../RAT_Data/GlobalDatabase.md">Global Database</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Creating Command Area Config Files</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Command Line Interface</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#checking-help">Checking Help</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#expected-output">Expected Output</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Applications/WebApp.md">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Applications/API.md">sDRIPS-Ukulima</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Development/RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Development/PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../../Development/DeveloperVersion.md">Dev Version</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Contact/contact.md">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../../Disclaimer/disclaimer.md">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tutorials</li>
+          <li class="breadcrumb-item">Creating Command Area Config Files</li>
+      <li class="breadcrumb-item active">Command Line Interface</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/shahzaib1007/sDRIPS/edit/master/docs/tutorials/config_files/cli.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="command-line-interface-cli-guide-for-generating-command-area-configuration-file">Command Line Interface (CLI) Guide for Generating Command Area Configuration File<a class="headerlink" href="#command-line-interface-cli-guide-for-generating-command-area-configuration-file" title="Permanent link">&para;</a></h1>
+<p>This function reads a vector dataset (e.g., Shapefile, GeoJSON, GeoPackage, FileGDB)
+using GeoPandas, extracts the unique command‑area identifiers from the specified
+attribute column, and writes a YAML config with one section per ID plus a DEFAULT
+section containing baseline parameters. Here Shapefile format is highly recommended as it 
+can be integrated with Google Earth Engine easily. </p>
+<h3 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash">python -m sdrips.cmd_config -s &quot;../../Shapefiles/cmd_area_wgs/Teesta_Command_Areas.shp&quot; -c &quot;CNLNM&quot; -d 2025-07-07 -cc Rice -o '../Data/cmd_config.yaml'
+</code></pre>
+<h3 id="checking-help">Checking Help<a class="headerlink" href="#checking-help" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash">python -m sdrips.cmd_config -h
+</code></pre>
+<h3 id="expected-output">Expected Output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">DEFAULT:
+  use_default: true
+  planting_date: &quot;2025-07-30&quot;
+  crop_type: Wheat
+  soil_coef: 0.6
+  distribution_unif: 0.8
+
+Teesta Canal A:
+  use_default: false
+  planting_date: &quot;2025-07-30&quot;
+  crop_type: Wheat
+  soil_coef: 0.6
+  distribution_unif: 0.8
+
+T1T:
+  use_default: false
+  planting_date: '2025-07-07'
+  crop_type: Wheat
+  soil_coef: 0.5
+  distribution_unif: 1.0
+...
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../cmd_area_creation/Creating_CMD_Config/" class="btn btn-neutral float-left" title="Notebook"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Creating_CMD_Config/" class="btn btn-neutral float-right" title="Notebook">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/shahzaib1007/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../cmd_area_creation/Creating_CMD_Config/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Creating_CMD_Config/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
