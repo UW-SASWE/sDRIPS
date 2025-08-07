@@ -19,10 +19,15 @@ theme:
     - content.code.copy  
     - content.tabs.link
     - content.admonitions
+    - search.suggest
   icon:
     admonition:
       success: fontawesome/solid/check
       warning: fontawesome/solid/triangle-exclamation
+  analytics:
+    provider: google
+    property: G-5C11Q4TSHT
+    
 docs_dir: docs
 site_dir: site
 use_directory_urls: true
@@ -42,7 +47,10 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
 plugins:
-    - search
+    - search:
+        prebuild_index: true
+        indexing: full
+        lang: en
     - mkdocstrings:
         handlers:
         python:
