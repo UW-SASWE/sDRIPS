@@ -18,13 +18,13 @@ Earlier versions of sDRIPS—tailored to projects in Bangladesh, the USA, and So
 
 <p>
 <div class="admonition lightning_note">
-  <p class="admonition-title">The Spark Behind sDRIPS</p>
+  <p class="admonition-title">The Spark Behind sDRIPS - A Brief History</p>
   <p>
     The motivation to create a robust tool for optimizing surface water irrigation arose not only from literature but also through direct engagement with farmers, whose lived experiences revealed gaps in existing systems. These field interactions highlighted the urgent need for accessible, scalable, and data-informed solutions. The conceptual foundation for <strong>sDRIPS</strong> originated from the <strong>Irrigation Advisory System (IAS)</strong>, long before the idea of sDRIPS as a centralized package came into existence. A formative video documenting the development of IAS and interactions with farmers, produced by <a href="https://www.ce.washington.edu/facultyfinder/faisal-hossain" target="_blank"><strong>Dr. Faisal Hossain</strong></a>, captures the tool’s user-centered genesis.
   </p>
 
   <div style="text-align:center;">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/2BZslnorTEs" 
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XD9OnnKEMf0" 
             title="IAS Documentary" frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
