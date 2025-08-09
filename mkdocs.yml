@@ -27,7 +27,7 @@ theme:
   analytics:
     provider: google
     property: G-5C11Q4TSHT
-    
+
 docs_dir: docs
 site_dir: site
 use_directory_urls: true
@@ -82,8 +82,8 @@ nav:
     - 'Conceptual Model': 'Model/ConceptualModel.md'
     - 'Computational Model': 'Model/ComputationalModel.md'
 - Quick Start: 
-    - 'Getting Ready': 'QuickStart/GettingReady.md'
-    - 'Download Guide': 'QuickStart/UserGuide.md'
+    - 'Getting Ready': 'Quick_Start/Getting_ready.md'
+    - 'Installation Guide': 'Quick_Start/Installation.md'
 - Configuration:
     - 'Script Configuration File': 'Configuration/rat_config.md'
     - 'Crop Configuration File': 'Configuration/rat_config.md'
