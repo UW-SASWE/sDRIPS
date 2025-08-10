@@ -1,5 +1,5 @@
 # Conceptual Model of sDRIPS
-sDRIPS is a cloud-based, open-source irrigation advisory system designed to optimize surface water use by integrating Earth observation datasets and numerical weather models. It leverages publicly available data from multiple sources, including:
+**sDRIPS** is a cloud-based, open-source irrigation advisory system designed to optimize surface water use by integrating Earth observation datasets and numerical weather models. It leverages publicly available data from multiple sources, including:
 
 1. **Landsat** and **Sentinel-1** satellites for surface monitoring
 2. **Global Forecast System (GFS)** for meteorological forecasts
@@ -20,6 +20,7 @@ sDRIPS applies both energy balance and water balance principles to generate acti
 
 
 ## Evapotranspiration 
+<span id="penman_et"></span>
 ### Penman-Monteith ET
 The **Penman–Monteith** evapotranspiration (\(ETo\)) represents the **potential water demand** for a well-watered reference crop. In sDRIPS, \(ETo\) is computed for each Landsat overpass date and across all regions of interest, following the methodology of <a href="https://www.fao.org/4/x0490e/x0490e00.htm" target="_blank">(Allen et al., 1998)</a>.  
 
@@ -52,6 +53,7 @@ Where:
 - $K_c$ — Crop coefficient (varies by crop type and growth stage)  
 - $K_s$ — Soil water stress coefficient (accounts for reduced transpiration under water-limited conditions)  
 
+<span id="sebal_et"></span>
 ### SEBAL ET
 The SEBAL algorithm, developed by <a href="https://doi.org/10.1016/S0022-1694(98)00253-4" target="_blank">Bastiaanssen et al. (1998)</a>, has been successfully implemented in more than 30 countries <a href="https://doi.org/10.1061/(ASCE)0733-9437(2005)131:1(85)" target="_blank">(Bastiaanssen et al., 2005)</a>. It has demonstrated high accuracy in estimating evapotranspiration.
 
@@ -70,7 +72,7 @@ Where:
 
 The SEBAL-based evapotranspiration (SEBAL ET) serves as a proxy for the **actual water consumed by the crop**, a concept validated by <a href="https://doi.org/10.1029/2020WR028654" target="_blank">Bose et al. (2021)</a>. In this study, daily (24-hour) evapotranspiration was estimated assuming that instantaneous ET variations are negligible over the day <a href="https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)" target="_blank">(Allen et al., 2007)</a>. For weekly ET, the evapotranspiration estimated on the Landsat acquisition day was assumed steady for the following seven days until the next image was available.
 
-
+<span id="percolation"></span>
 ## Percolation
 To account for percolation, Sentinel-1 Synthetic Aperture Radar (SAR) data available on Google Earth Engine (GEE) was utilized. Sentinel-1 C-band (5 cm wavelength) data has been extensively used for soil moisture estimation and shows promising results up to 100 mm depth (<a href="https://doi.org/10.1109/TGRS.2018.2858004" target="_blank">Bauer-Marschallinger et al., 2019</a>; <a href="https://doi.org/10.1016/j.asr.2022.03.019" target="_blank">Bhogapurapu et al., 2022</a>). Ground sensors are ideal but impractical for large-scale deployment. Hence, Sentinel-1 was selected to maintain global scalability.
 
@@ -84,6 +86,7 @@ Percolation =
 \end{cases}
 \]
 
+<span id="precipitation"></span>
 ## Precipitation
 Accurate estimation of net water requirement depends on incorporating precipitation events. Precipitation for the operational week is derived from GPM IMERG early run data.
 
@@ -98,11 +101,11 @@ $$
 
 Where:  
 
-- **SEBAL ET**: Estimated actual evapotranspiration  
-- **PET**: Potential evapotranspiration (Penman-Monteith method)  
-- **Per**: Percolation losses  
-- \(P_{nc}\): Nowcast precipitation   
-- \(P_{fc}\): Forecasted precipitation   
+- [**SEBAL ET**](#sebal_et): Estimated actual evapotranspiration  
+- [**PET**](#penman_et): Potential evapotranspiration (Penman-Monteith method)  
+- [**Per**](#percolation): Percolation losses  
+- [**P<sub>nc</sub>**](#precipitation): Nowcast precipitation  
+- [**P<sub>fc</sub>**](#precipitation): Forecasted precipitation  
 
 
 
