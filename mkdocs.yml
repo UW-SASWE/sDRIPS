@@ -76,9 +76,10 @@ markdown_extensions:
 
 extra_css:
   - css/custom.css
-  
+
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 nav:
 # Main pages
 - Home:
@@ -91,13 +92,13 @@ nav:
     - 'Getting Ready': 'Quick_Start/Getting_ready.md'
     - 'Installation Guide': 'Quick_Start/Installation.md'
 - Configuration:
-    - 'Script Configuration File': 'Configuration/rat_config.md'
-    - 'Crop Configuration File': 'Configuration/rat_config.md'
-    - 'Command Area Configuration File': 'Configuration/rat_config.md'
+    - 'Script Configuration File': 'Configuration/script_config.md'
+    - 'Crop Configuration File': 'Configuration/crop_config.md'
+    - 'Command Area Configuration File': 'Configuration/command_area_config.md'
     - 'Secrets File': 'Configuration/secrets.md'
 - Data Description:
-    - 'Directory Structure': 'RAT_Data/DirectoryStructure.md'
-    - 'Global Database': 'RAT_Data/GlobalDatabase.md'
+    - 'Directory Structure': 'Directory/Data_Used.md'
+    - 'Global Database': 'Directory/Directory.md'
 - Tutorials:
     - Creating Command Areas (Optional):
         - Command Line Interface: tutorials/cmd_area_creation/cli.md
