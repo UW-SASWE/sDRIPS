@@ -108,8 +108,8 @@ nav:
         - Notebook: tutorials/config_files/Creating_CMD_Config.ipynb
     
 - Application:
-    - 'sDRIPS-Sense': 'Applications/WebApp.md'
-    - 'sDRIPS-Ukulima': 'Applications/API.md'
+    - 'sDRIPS-Sense': 'https://depts.washington.edu/saswe/sdrips-sense/'
+    - 'sDRIPS-Ukulima': 'https://depts.washington.edu/saswe/sdrips_ukulima/'
 - Development:
     - 'Recent Adjustments': 'Development/RecentAdjustments.md'
     - 'Patch Notes': 'Development/PatchNotes.md'
