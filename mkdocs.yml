@@ -15,7 +15,6 @@ theme:
   hljs_languages:
         - yaml
         - rust
-  include_homepage_in_sidebar: false
   features:
     - content.code.copy  
     - content.tabs.link
