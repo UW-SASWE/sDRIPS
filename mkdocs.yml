@@ -9,6 +9,7 @@ nav:
 
 theme:
   name: readthedocs
+  logo: images/sDRIPS_Logo/Logo.png
   include_homepage_in_sidebar: true
   highlightjs: true
   hljs_languages:

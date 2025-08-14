@@ -214,3 +214,15 @@ p.folder_file_description{
 ul{
   margin-left: 20px;
 }
+
+.wy-side-nav-search > a img.logo {
+  width: 60% !important;    /* keep aspect ratio */
+}
+.wy-side-nav-search .wy-dropdown > a img.logo {
+  width: 40% !important;    /* keep aspect ratio */
+}
+
+
+/* .wy-side-nav-search {
+    background-color: #dbe7f0  !important;
+} */
