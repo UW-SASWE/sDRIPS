@@ -13,10 +13,39 @@ authors = [
   { name = "Shahzaib Khan", email = "skhan7@uw.edu" }
 ]
 dependencies = [
+    "beautifulsoup4",
+    "cartopy",
+    "colorlog",
+    "contextily",
+    "earthengine-api", 
+    "filelock",
+    "geemap",
+    "geopandas",
+    "geopy",
+    "matplotlib",
+    "networkx",
+    "numpy",
+    "pandas",
+    "paramiko",
+    "pykrige",
+    "pyproj",
+    "pytest",
+    "pyyaml",
+    "rasterio",
+    "requests",
+    "rioxarray",
+    "ruamel.yaml",   
+    "scikit-learn",
+    "scipy",
+    "setuptools",
+    "shapely",
+    "tqdm",
+    "xarray"
 ]
 
 [project.urls]
 Homepage = "https://github.com/shahzaib1007/sDRIPS"
+"Bug Tracker" = "https://github.com/shahzaib1007/sDRIPS/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -24,3 +53,5 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[project.scripts]
+sdrips = "sdrips.cli.sdrips_init:main"
