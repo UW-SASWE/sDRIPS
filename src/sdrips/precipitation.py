@@ -31,7 +31,7 @@ from sdrips.utils.utils import load_yaml_config
 
 
 
-def download_imerg_file(date: datetime.date, save_data_loc, imerg_username, imerg_password ) -> Path:
+def download_imerg_file(date: datetime.date, save_data_loc, imerg_username, imerg_password, precip_links_base_url, suffix, prefix) -> Path:
     """
     Download IMERG GeoTIFF file.
 
@@ -40,6 +40,9 @@ def download_imerg_file(date: datetime.date, save_data_loc, imerg_username, imer
         save_data_loc (str): Main directory where the sDRIPS is running.
         imerg_username (str): IMERG username for authentication.
         imerg_password (str): IMERG password for authentication.
+        precip_links_base_url (str): Base URL for IMERG precipitation links.
+        suffix (str): Suffix for IMERG precipitation files.
+        prefix (str): Prefix for IMERG precipitation files.
 
     Returns:
         Path: Path to downloaded file.
@@ -52,19 +55,22 @@ def download_imerg_file(date: datetime.date, save_data_loc, imerg_username, imer
     year, month = date.year, date.month
 
     if year > 2024:
+        base_url = precip_links_base_url['after']
         url = (
-            f'https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/'
-            f'{year}/{month:02d}/3B-HHR-E.MS.MRG.3IMERG.{datestr}-S233000-E235959.1410.V07B.1day.tif'
+            f'{base_url}'
+            f'{year}/{month:02d}/{prefix}{datestr}{suffix}'
         )
     elif year == 2024:
+         base_url = precip_links_base_url['year']
          url = (
-            f'https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/'
-            f'{year}/{month:02d}/3B-HHR-E.MS.MRG.3IMERG.{datestr}-S233000-E235959.1410.V07B.1day.tif'
+            f'{base_url}'
+            f'{year}/{month:02d}/{prefix}{datestr}{suffix}'
         )
     else:
+        base_url = precip_links_base_url['before']
         url = (
-            f'https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/'
-            f'{year}/{month:02d}/3B-HHR-E.MS.MRG.3IMERG.{datestr}-S233000-E235959.1410.V07B.1day.tif'
+            f'{base_url}'
+            f'{year}/{month:02d}/{prefix}{datestr}{suffix}'
         )
 
     logger.info(f'Downloading {url}')
@@ -136,7 +142,7 @@ def clip_and_resample_tif(src_path: Path, dst_path: Path, bounds: tuple, resolut
                         resampling=Resampling.bilinear
                     )
 
-def process_day(date: datetime.date, bounds: tuple, save_data_loc: str, imerg_username: str, imerg_password: str) -> bool:
+def process_day(date: datetime.date, bounds: tuple, save_data_loc: str, imerg_username: str, imerg_password: str, precip_links_base_url: str, suffix: str, prefix: str) -> bool:
     """
     Download, clip, and resample IMERG precipitation data for a given day.
 
@@ -150,6 +156,9 @@ def process_day(date: datetime.date, bounds: tuple, save_data_loc: str, imerg_us
         save_data_loc (str): The directory path where the processed data will be saved.
         imerg_username (str): IMERG username for authentication.
         imerg_password (str): IMERG password for authentication.
+        precip_links_base_url (str): Base URL for IMERG precipitation links.
+        suffix (str): Suffix for IMERG precipitation files.
+        prefix (str): Prefix for IMERG precipitation files.
 
     Returns:
         bool: True if processing is successful, False otherwise.
@@ -226,6 +235,12 @@ def imergprecip(config_path: Path):
     cores = script_config.get("Multiprocessing", {}).get("cores")
     worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
 
+    config_links_path = script_config['Config_links']['path']
+    precip_links = load_yaml_config(rf'{config_links_path}')
+    precip_links_base_url = precip_links["precipitation"]["base_urls"]
+    prefix = precip_links["precipitation"]["file_pattern"]["prefix"]
+    suffix = precip_links["precipitation"]["file_pattern"]["suffix"]
+
     secrets_file_path = script_config['Secrets_Path']['path']
     secrets = load_yaml_config(rf'{secrets_file_path}')
     imerg_username = secrets['IMERG_Account']['username']
@@ -246,7 +261,7 @@ def imergprecip(config_path: Path):
     processed_files = [] 
 
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
-        futures = {executor.submit(process_day, date, (left, bottom, right, top), save_data_loc, imerg_username, imerg_password): date for date in all_dates}
+        futures = {executor.submit(process_day, date, (left, bottom, right, top), save_data_loc, imerg_username, imerg_password, precip_links_base_url, suffix, prefix): date for date in all_dates}
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing IMERG Precipitation Days"):
             success = future.result()
             success_flags.append(success)
