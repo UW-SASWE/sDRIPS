@@ -1,0 +1,131 @@
+# --------------------------------------------
+# CONFIGURATION FILE FOR sD.R.I.P.S. (Satellite Data Rendered Irrigation using Penman-Monteith and SEBAL)
+# --------------------------------------------
+
+
+# -------------------------------
+# HIGH-LEVEL MODULE CONTROLS
+# -------------------------------
+Command_Area_Net_Water_Requirement: true  # Generate advisory on how much water should be allotted to each command area
+Canal_water_allotment: false          # Generate advisory on how much water should be allotted to each canal (From primary to tertiary canals)
+Insitu_Sensor_integration: false  # Toggle to integrate in-situ sensor data with satellite data for bias correction
+Weather_station_integration: false  # Toggle to integrate local weather station data to improve accuracy
+
+
+# -------------------------------
+# CANAL WATER ALLOTMENT
+# -------------------------------
+Canal_water_allotment_config:
+  canals_shp_file:  # Path to canal network shapefile. Eg - Shapefiles/canal_network/Merged_Irr_Network.shp 
+  canals_feature_name:                       # Unique ID field for canal features. Eg - CNLNM
+  supply_data_path:  # Path to the supply data CSV file. Eg - 'Data/Landsat_Command_Area_Stats.csv'
+  numeric_id_name:   # Numeric ID field for canal features. Eg - ID
+  subdivisions_in_canal_network:   # Number of subdivisions in the canal network. Eg - 4
+  parents_canals_nomenclature:   # Nomenclature for parent canals in the canal network (from sub-parent to child). Eg - ['SEC_CNLNM', 'Sec_CNLNM2', 'SEC_CNLNM3', 'SEC_CNLNM4']
+  
+
+# -------------------------------
+# IN-SITU SENSOR CONFIGURATION
+# -------------------------------
+Insitu_Sensor_integration_config:
+  air_temperature_sensor:            # Use air temperature sensor data for correction. Eg - true or false
+  soil_moisture_sensor:              # Use soil moisture sensor data. Eg - true or false
+  wind_speed_sensor:                 # Use wind speed sensor data. Eg - true or false
+  specific_humidity_sensor:           # Use specific humidity sensor data. Eg - true or false
+  hub_url:   # URL to the sensor data hub (if applicable). Eg - "https://your_data_hub.com/Sensor_Cronjob/"
+  date_regex: "(\\d{4}_\\d{2}_\\d{2})" # Regular expression to extract date from sensor filenames. 4 represents _ _ _ _ in Year, 2 represens _ _ in months and another 2 represents _ _ in date.
+  date_format: "%Y_%m_%d" # Date format for sensor data filenames. Eg - "%Y_%m_%d" for 2024_04_06
+  sensor_data_path:                      # Path to folder containing sensor CSV files
+  interpolation_method: best             # Options: 'best', 'average', 'idw', 'kriging', 'inverse_distance_weighting', 'nearest_neighbor'
+
+
+# -------------------------------
+# WEATHER STATION CONFIGURATION
+# -------------------------------
+Weather_station_integration_config:
+  air_temperature_station:        # Use air temperature data from weather stations. Eg - true or false
+  wind_speed_station:   # Use wind speed data from weather stations. Eg - true or false
+  soil_moisture_station: true       # Use soil moisture data from weather stations. Eg - true or false
+  specific_humidity_station:    # Use specific humidity data from weather stations. Eg - true or false
+  pressure_station:    # Use air pressure data from weather stations. Eg - true or false
+  precipitation_station:    # Use precipitation data from weather stations. Eg - true or false
+  weather_station_shp_file:   # Path to station shapefile. Eg - Shapefiles/Weather_stations.shp
+  weather_station_feature_name:                    # Unique ID for station points. Eg - STATION_ID
+  EPSG_code: 'EPSG:4326'  # EPSG code for the coordinate system of the weather station shapefile. By default, it is set to 'EPSG:4326'
+  weather_station_data_path:                                 # Path to weather station CSV files. Eg - Station_Data.csv
+  interpolation_method: idw                                 # Options: 'best', 'average', 'idw', 'kriging', 'inverse_distance_weighting', 'nearest_neighbor'. By default, it is set to 'idw'
+
+
+# --------------------------------------------------
+# LOW-LEVEL MODULE CONTROLS (Common to every module)
+# --------------------------------------------------
+Irrigation_cmd_area_shapefile:
+  path:    # Path to the irrigation command area shapefile. Eg - Shapefiles/my_roi/my_roi.shp
+  feature_name:       # Unique identifier for the irrigation command area features. Eg - ADM3_EN
+  numeric_id_name:    # Numeric ID field for the irrigation command area features. Eg - ID or ADM3_EN (if a number)
+  area_column_name:  # Column name in the canal shapefile that contains the area of the command area (in meters squared). Eg - 'Irrigabl_Area'
+
+Irrigation_cmd_area_shapefile_Bounds:  # Bounds for the irrigation command area shapefile in EPSG:4326. 
+                                      # Here this param is given as the IMERG Precipitation spatial resolution is 25km and it might be possible 
+                                      # that the bounds need to be adjusted due to small size of command areas
+  leftlon: 
+  rightlon: 
+  toplat: 
+  bottomlat: 
+
+GEE_Asset_ID:   # GEE asset ID for the irrigation command area shapefile, if you have uploaded it to GEE, use 'id' otherwise use 'shp' for local shapefile.
+  id: # Path to the GEE asset. Eg - "users/skhan7/BWDB_Commad_Area"
+  shp:  # Path to the local irrigation command area shapefile. Eg - Shapefiles/Irrigation_Command_Areas.shp
+
+Date_Running:   # Date from which the sDRIPS will start running
+  start_date:   # Eg - "2024-06-07"
+  default_run_week: false # true - runs the sDRIPS for currentweek and lastweek. For manual run set it false and enter week in run_week below. By default - false
+  run_week: ["currentweek"] # Enter if 'default_run_week' is set to false. Eg - ["currentweek", "lastweek"].
+
+Save_Data_Location:    # Location where the output data will be saved
+  save_data_loc:    # Eg - Playground/Test/ 
+
+Cmd_Area_Config:    # Configuration for the command area, giving info on how each command area should be processed
+  path:  # Eg - config_files/uw_ca_config.yaml
+
+Crop_Config:    # Configuration for the crop type, giving info on how each crop should be processed based on number of days after planting.
+  path: config_files/crop_config.yaml 
+
+Config_links:
+  path: config_files/config_links.yaml
+
+Correction_iter:   # Number of iterations for the aerdoynamic correction process (By default, it is set to 3)
+  correction_iter: 3
+
+Multiprocessing:  # Number of cores to use for multiprocessing. 
+  cores: 5   # Set to null or leave out to use default cpu_count - 1
+
+Clean_Directory:  # Whether to clear the output directory before running the sDRIPS
+  clear_directory_condition: true
+
+Run_ET_Estimation:  # Whether to run the ET estimation module
+  et_estimation: true
+
+Secrets_Path:       # Path to the secrets.yaml file, which contains sensitive information like IMERG credentials, GEE service account details.
+  path: config_files/secrets.yaml
+
+Download_ET_TIFF:   # Whether to download the ET TIFF files from GEE
+  download_tiff: true
+ 
+GLCC_Mask:        # Whether to use GLCC LULC for to the ET estimation or use your own LULC map
+  glcc_mask: true
+
+Percolation_Config:   # Whether to run the percolation estimation module to estimate net water requirement
+  consider_percolation: true
+
+Precipitation_Config: # Whether to consider precipitation to estimate net water requirement
+  consider_preciptation: true
+
+Weather_Config:  # Whether to download forecasted weather data for the ET estimation
+  consider_forecasted_weather: true
+
+Region_stats:   # Generates details CSV files with statistics for all the command area
+  estimate_region_stats: true
+
+Tiff_to_PNGs:  # Whether to convert the downloaded TIFF files to PNG format for easier visualization
+  tiff_to_pngs: false

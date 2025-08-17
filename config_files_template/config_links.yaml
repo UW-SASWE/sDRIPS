@@ -1,0 +1,9 @@
+precipitation:
+  base_urls:
+    before: "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/"
+    year:   "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/"
+    after:  "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/"
+
+  file_pattern:
+    prefix: "3B-HHR-E.MS.MRG.3IMERG."
+    suffix: "-S233000-E235959.1410.V07B.1day.tif"

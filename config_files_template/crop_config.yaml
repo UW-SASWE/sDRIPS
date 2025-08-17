@@ -1,0 +1,74 @@
+# Crop configuration file
+# -----------------------
+# Each crop has growth stages defined by day ranges after planting.
+# You can define a constant value for the stage or a linear progression.
+#
+# Syntax:
+# CropName:
+#   "startDay-endDay": value                # Constant value
+#   "startDay-endDay": [linear, startVal, endVal, duration]  # Linear progression over 'duration' days
+#   - startVal: value at the beginning of the stage
+#   - endVal: value at the end of the stage
+#   - durationDays: number of days over which the value increases/decreases linearly
+#
+# Example:
+# Rice:
+#   "0-20": 1.1                             # constant coefficient
+#   "21-45": [linear, 1.1, 1.4, 25]        # linear from 1.1 to 1.4 over 25 days
+#
+
+Rice:
+  "0-20": 1.1
+  "21-45": [linear, 1.1, 1.4, 25]
+  "46-105": 1.4
+  "106-115": [linear, 1.4, 1.0, 10]
+  "116-140": 1.0
+
+Wheat:
+  "0-28": 0.5
+  "29-56": [linear, 0.5, 1.15, 28]
+  "57-112": 1.15
+  "113-119": [linear, 1.15, 0.7, 7]
+  "120-140": 0.7
+  # Ref: https://www.researchgate.net/publication/4875041_Actual_evapotranspiration_and_crop_coefficients_of_wheat_Triticum_aestivum_under_varying_moisture_levels_of_humid_tropical_canal_command_area/figures?lo=1
+
+Corn:
+  "0-18": 0.4
+  "19-54": [linear, 0.4, 1.1, 36]
+  "55-96": 1.1
+  "97-120": [linear, 1.1, 0.6, 24]
+  # Ref: https://www.researchgate.net/publication/328200965_Climate_Change_Impacts_on_Corn_Phenology_and_Productivity/figures?lo=1
+
+Sugarcane:
+  "0-30": 0.4
+  "31-90": [linear, 0.4, 1.25, 60]
+  "91-270": 1.25
+  "271-365": [linear, 1.25, 0.75, 95]
+  # Ref: https://www.researchgate.net/publication/330242202_WATER_FOOTPRINT_OF_SUGARCANE_CROP_IN_EGYPT/figures?lo=1
+
+Eggplant:
+  "0-20": 1.1
+  "21-45": [linear, 1.1, 1.4, 25]
+  "46-105": 1.4
+  "106-115": [linear, 1.4, 1.0, 10]
+  "116-140": 1.0
+
+Potato:
+  "0-20": [linear, 0.4, 0.7, 20]
+  "21-60": [linear, 0.7, 1.15, 40]
+  "61-80": 1.15
+  "81-120": [linear, 1.15, 0.6, 40]
+  # Ref: https://link.springer.com/article/10.1007/s11540-020-09484-8
+
+Lentils:
+  "0-10": [linear, 0.30, 0.35, 10]
+  "11-20": [linear, 0.35, 0.50, 10]
+  "21-30": [linear, 0.50, 0.75, 10]
+  "31-40": [linear, 0.75, 0.95, 10]
+  "41-50": [linear, 0.95, 1.05, 10]
+  "51-60": [linear, 1.05, 1.00, 10]
+  "61-70": [linear, 1.00, 0.90, 10]
+  "71-80": [linear, 0.90, 0.75, 10]
+  "81-90": [linear, 0.75, 0.60, 10]
+  "91-100": [linear, 0.60, 0.45, 10]
+  # Ref: https://www.researchgate.net/publication/335396383_Crop_Water_Productivity_and_Crop_Coefficients_of_Lentil_Lens_Culinaris_M_Under_Different_Irrigation_Regimes/figures?lo=1 
