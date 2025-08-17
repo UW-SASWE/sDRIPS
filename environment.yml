@@ -1,0 +1,34 @@
+name: sdrips_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - beautifulsoup4
+  - cartopy
+  - colorlog
+  - contextily
+  - ee
+  - filelock
+  - geemap
+  - geopandas
+  - geopy
+  - matplotlib
+  - networkx
+  - numpy
+  - pandas
+  - paramiko
+  - pykrige
+  - pyproj
+  - pytest
+  - PyYAML
+  - PyYAML
+  - rasterio
+  - Requests
+  - rioxarray
+  - ruamel.yaml
+  - scikit_learn
+  - scipy
+  - setuptools
+  - Shapely
+  - tqdm
+  - xarray
