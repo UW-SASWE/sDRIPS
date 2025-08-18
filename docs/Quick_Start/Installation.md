@@ -2,14 +2,14 @@
 To configure sDRIPS for your area of interest, follow the steps described in the [***Installation***](#installation) section. sDRIPS is platform-independent and can be installed on **Windows, Linux, or macOS**. It has a modular architecture that provides flexibility through configuration files.
 
 - Use the Standard Version for most applications. This version contains the complete workflow and is recommended for general use.  
-- Use the Developer Version if you want to extend sDRIPS by adding custom modules or adapting it for research applications by tweaking the source code. Detailed instructions for the developer version can be found in [***Developer Verison***](/Developer_Version/Developer_Version).  
+- Use the Developer Version if you want to extend sDRIPS by adding custom modules or adapting it for research applications by tweaking the source code. Detailed instructions for the developer version can be found in [***Developer Verison***](/en/latest/Developer_Version/Developer_Version).  
 
 ## Requirements
 To setup the sDRIPS, following things are required:  
 
 - Anaconda/Miniconda. To install the appropriate distribution for your operating system, click [here](https://www.anaconda.com/download/success).  
-- Credentials for Google Earth Engine. Required for processing satellite imagery. If you do not have credentials, follow the [***Getting Ready***](/Quick_Start/Getting_ready).  
-- Credentials to download IMERG-GPM precipitation data, Required for downloading precipitation data via the NASA Precipitation Processing System (PPS). Credentials can be requested by following the [***Getting Ready***](/Quick_Start/Getting_ready).  
+- Credentials for Google Earth Engine. Required for processing satellite imagery. If you do not have credentials, follow the [***Getting Ready***](/en/latest/Quick_Start/Getting_ready).  
+- Credentials to download IMERG-GPM precipitation data, Required for downloading precipitation data via the NASA Precipitation Processing System (PPS). Credentials can be requested by following the [***Getting Ready***](/en/latest/Quick_Start/Getting_ready).  
 
 ## Installation
 <span class="preparation_step">Step 1:</span> <br>
