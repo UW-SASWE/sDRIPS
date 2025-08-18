@@ -24,7 +24,7 @@ def initialize_earth_engine():
         ee.Initialize()
         logger.info("Earth Engine initialized successfully.")
     except ee.ee_exception.EEException as init_error:
-        logger.critcal("Earth Engine not initialized. Attempting authentication...")
+        logger.critical("Earth Engine not initialized. Attempting authentication...")
         try:
             ee.Authenticate()
             ee.Initialize()
