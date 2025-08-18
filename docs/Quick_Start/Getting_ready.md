@@ -38,7 +38,7 @@ sDRIPS requires access to Google Earth Engine (GEE) for processing satellite dat
 <span id="std_acc"></span>
 <span class="choices">Choice 1 : Choose Your Account Type (GEE Standard Account).</span> <br><br>
 <span class="preparation_step">Step 1:</span> <br>
-Go to [code.earthengine.google.com](code.earthengine.google.com).  
+Go to [https://code.earthengine.google.com/](https://code.earthengine.google.com/).  
 
 <span class="preparation_step">Step 2:</span> <br>
 If you don’t have a Google account, click 'create account', otherwise login with 
