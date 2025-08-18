@@ -1,4 +1,5 @@
-precipitation:
+precipitation: # To check the latest version go to https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early link 
+    # You can view the prefix and suffix by hovering over the file names, or by copying a file link and pasting it into your browser to see the prefix and suffix details.
   base_urls:
     before: "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/"
     year:   "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/"
