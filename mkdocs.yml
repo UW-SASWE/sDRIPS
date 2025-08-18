@@ -95,10 +95,11 @@ nav:
     - 'Script Configuration File': 'Configuration/script_config.md'
     - 'Crop Configuration File': 'Configuration/crop_config.md'
     - 'Command Area Configuration File': 'Configuration/command_area_config.md'
+    - 'Configuration Links File': 'Configuration/config_links.md'
     - 'Secrets File': 'Configuration/secrets.md'
 - Data Description:
-    - 'Directory Structure': 'Directory/Data_Used.md'
-    - 'Global Database': 'Directory/Directory.md'
+    - 'Directory Structure': 'Directory/Directory.md'
+    - 'Data Used': 'Directory/Data_Used.md'
 - Tutorials:
     - Creating Command Areas (Optional):
         - Command Line Interface: tutorials/cmd_area_creation/cli.md
@@ -113,7 +114,7 @@ nav:
 - Development:
     - 'Recent Adjustments': 'Development/RecentAdjustments.md'
     - 'Patch Notes': 'Development/PatchNotes.md'
-    - 'Dev Version': 'Development/DeveloperVersion.md'
+    - 'Developer Version': 'Development/Developer_Version.md'
 - Contact:
     - 'Contact': 'Contact/contact.md'
 - Disclaimer:
