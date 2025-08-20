@@ -1,17 +1,17 @@
 # Conceptual Model of sDRIPS
 **sDRIPS** is a cloud-based, open-source irrigation advisory system designed to optimize surface water use by integrating Earth observation datasets and numerical weather models. It leverages publicly available data from multiple sources, including:
 
-1. **Landsat** and **Sentinel-1** satellites for surface monitoring
-2. **Global Forecast System (GFS)** for meteorological forecasts
+1. **Landsat** and **Sentinel-1** satellites for surface monitoring.
+2. **Global Forecast System (GFS)** for meteorological forecasts.
 3. **Global Precipitation Measurement (GPM)** – IMERG for precipitation estimates. 
 
 At its core, sDRIPS estimates evapotranspiration (ET) using two models:
 
-1. **Penman–Monteith** <a href="https://www.fao.org/4/x0490e/x0490e00.htm" target="_blank">(Allen et al., 1998)</a> method – used as a proxy for potential crop water demand under optimal (non-stressed) conditions.
+1. **Penman–Monteith** <a href="https://www.fao.org/4/x0490e/x0490e00.htm" target="_blank">(Allen et al., 1998)</a> method – used as a proxy of potential crop water demand under optimal (non-stressed) conditions.
 
 2. **Surface Energy Balance Algorithm for Land (SEBAL)** <a href="https://doi.org/10.1016/S0022-1694(98)00253-4" target="_blank">(Bastiaanssen et al., 1998)</a> – used to estimate actual ET under prevailing field conditions.
 
-By comparing these two ET estimates, sDRIPS quantifies the gap between water needed by crops and water actually supplied. This information is then combined with - nowcast and forecast precipitation data and estimated percolation losses to calculate the net irrigation requirement.
+By comparing these two ET estimates, sDRIPS quantifies the gap between water needed by crops and water actually supplied. This information is then combined with nowcast and forecast precipitation data as well as estimated percolation losses to calculate the net irrigation requirement.
 
 sDRIPS applies both energy balance and water balance principles to generate actionable irrigation advisories at multiple spatial scales — from individual farms to large irrigation command areas. 
 
@@ -51,13 +51,13 @@ Where:
 
 - $ET$ — Potential evapotranspiration for the specific crop (mm/day)  
 - $K_c$ — Crop coefficient (varies by crop type and growth stage)  
-- $K_s$ — Soil water stress coefficient (accounts for reduced transpiration under water-limited conditions)  
+- $K_s$ — Soil water stress coefficient    
 
 <span id="sebal_et"></span>
 ### SEBAL ET
 The SEBAL algorithm, developed by <a href="https://doi.org/10.1016/S0022-1694(98)00253-4" target="_blank">Bastiaanssen et al. (1998)</a>, has been successfully implemented in more than 30 countries <a href="https://doi.org/10.1061/(ASCE)0733-9437(2005)131:1(85)" target="_blank">(Bastiaanssen et al., 2005)</a>. It has demonstrated high accuracy in estimating evapotranspiration.
 
-SEBAL solves the surface energy balance equation to estimate evapotranspiration using satellite imagery and meteorological forcing data. It computes an instantaneous ET flux at the time of the Landsat overpass. The model calculates net surface radiation, soil heat flux, and sensible heat flux to the air. The residual energy flux, which is the latent heat flux driving evapotranspiration, is obtained by subtracting the soil and sensible heat fluxes from net radiation at the surface. For each pixel, the latent heat flux \( \lambda E \) is given by the surface energy balance equation:
+SEBAL solves the surface energy balance equation to estimate evapotranspiration using satellite imagery and meteorological forcing data. It computes an instantaneous ET flux at the time of the Landsat overpass. The model calculates net surface radiation (\(R_n\)), soil heat flux (\(G\)), and sensible heat flux to the air (\(H\)). The residual energy flux, which is the latent heat flux driving evapotranspiration, is obtained by subtracting the soil and sensible heat fluxes from net radiation at the surface. For each pixel, the latent heat flux (\( \lambda E \)) is given by the surface energy balance equation:
 
 \[
 \lambda E = R_n - G - H
@@ -70,13 +70,13 @@ Where:
 - \( G \) is soil heat flux, and  
 - \( H \) is sensible heat flux.
 
-The SEBAL-based evapotranspiration (SEBAL ET) serves as a proxy for the **actual water consumed by the crop**, a concept validated by <a href="https://doi.org/10.1029/2020WR028654" target="_blank">Bose et al. (2021)</a>. In this study, daily (24-hour) evapotranspiration was estimated assuming that instantaneous ET variations are negligible over the day <a href="https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)" target="_blank">(Allen et al., 2007)</a>. For weekly ET, the evapotranspiration estimated on the Landsat acquisition day was assumed steady for the following seven days until the next image was available.
+The SEBAL-based evapotranspiration (SEBAL ET) serves as a proxy for the **actual water consumed by the crop** <a href="https://doi.org/10.1029/2020WR028654" target="_blank">Bose et al. (2021)</a>. In sDRIPS, daily (24-hour) evapotranspiration is estimated assuming that instantaneous ET variations are negligible over the day <a href="https://doi.org/10.1061/(ASCE)0733-9437(2007)133:4(380)" target="_blank">(Allen et al., 2007)</a>. For weekly ET, the evapotranspiration estimated on the Landsat acquisition day is assumed steady for the following seven days until the next image is available.
 
 <span id="percolation"></span>
 ## Percolation
-To account for percolation, Sentinel-1 Synthetic Aperture Radar (SAR) data available on Google Earth Engine (GEE) was utilized. Sentinel-1 C-band (5 cm wavelength) data has been extensively used for soil moisture estimation and shows promising results up to 100 mm depth (<a href="https://doi.org/10.1109/TGRS.2018.2858004" target="_blank">Bauer-Marschallinger et al., 2019</a>; <a href="https://doi.org/10.1016/j.asr.2022.03.019" target="_blank">Bhogapurapu et al., 2022</a>). Ground sensors are ideal but impractical for large-scale deployment. Hence, Sentinel-1 was selected to maintain global scalability.
+To account for percolation, Sentinel-1 Synthetic Aperture Radar (SAR) data available on Google Earth Engine (GEE) is utilized. Sentinel-1 C-band (5 cm wavelength) data has been extensively used for soil moisture estimation and provides reliable results up to ~100 mm depth (<a href="https://doi.org/10.1109/TGRS.2018.2858004" target="_blank">Bauer-Marschallinger et al., 2019</a>; <a href="https://doi.org/10.1016/j.asr.2022.03.019" target="_blank">Bhogapurapu et al., 2022</a>).Ground sensors are ideal but not scalable, so Sentinel-1 is chosen for global applicability.  
 
-After estimating soil moisture from Sentinel-1, field capacity soil moisture was derived from the <a href="https://doi.org/10.5281/zenodo.2784001" target="_blank">Hengl & Gupta (2019)</a> dataset available on GEE. Percolation was then computed as:
+Soil moisture estimates from Sentinel-1 are combined with field capacity values from the <a href="https://doi.org/10.5281/zenodo.2784001" target="_blank">Hengl & Gupta (2019)</a> dataset available on GEE. Percolation is then computed as:
 
 \[
 Percolation =
