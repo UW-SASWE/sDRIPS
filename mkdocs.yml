@@ -1,7 +1,7 @@
 site_name: sDRIPS Documentation
 site_url: https://sdrips.readthedocs.io/
 site_author: Shahzaib Khan 
-repo_url: https://github.com/shahzaib1007/sDRIPS
+repo_url: https://github.com/UW-SASWE/sDRIPS
 nav:
   - Home: index.md
   - API Reference:
