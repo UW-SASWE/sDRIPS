@@ -53,6 +53,10 @@ sdrips init -d ./sdrips_project
 ```
 After initialization, four configuration files will be created in the `config_files/` directory. These files form the core of sDRIPS, as they store user inputs and control the execution of workflows. At this stage, add your credential details (IMERG-GPM PPS account and Google Earth Engine service account, if applicable) to the `secrets.yaml` file.
 
+!!! warning_note "Warning"
+    You only need to initialize the project **once per directory**. Running initialization again will reset your configuration files to their default values, potentially overwriting any custom settings you've already prepared for your analysis.
+
+
 ## Testing
 After initialization, you can verify whether sDRIPS has been installed correctly.
 This test step is required only for **first-time installations**. 
