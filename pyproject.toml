@@ -42,9 +42,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/shahzaib1007/sDRIPS"
-Repository = "https://github.com/shahzaib1007/sDRIPS/tree/src-refactor"
-"Bug Tracker" = "https://github.com/shahzaib1007/sDRIPS/issues"
+Homepage = "https://github.com/UW-SASWE/sDRIPS"
+Repository = "https://github.com/UW-SASWE/sDRIPS/tree/src-refactor"
+"Bug Tracker" = "https://github.com/UW-SASWE/sDRIPS/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
