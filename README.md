@@ -86,5 +86,5 @@ The detailed functioning of the framework is outlined in the sD.R.I.P.S Paper. I
 ### How to Cite
 <div style="text-align: justify;">
 If you use the scripts from this repository, please cite the following paper:
-Khan, S; et.al (2024). <i>Satellite Data Rendered Irrigation using Penman and SEBAL (sD.R.I.P.S) for Surface Water Irrigation Optimization, Agricultural Water Management.</i> Paper Under Review.
+Khan, S; et.al (2024). <i>Satellite Data Rendered Irrigation using Penman and SEBAL (sD.R.I.P.S) for Surface Water Irrigation Optimization, IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing.</i> Paper Under Review.
 </div>
