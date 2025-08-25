@@ -1,4 +1,4 @@
-# Satellite Data Rendered Irrigation Using Penman-Monteith and Sebal (sDRIPS) for Surface Water Irrigation Optimization
+# Satellite Data Rendered Irrigation Using Penman-Monteith and SEBAL (sDRIPS) for Surface Water Irrigation Optimization
 
 <div style="text-align: justify">
 
