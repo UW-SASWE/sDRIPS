@@ -19,7 +19,7 @@ Together, these controls determine the **scope, inputs, and computational logic*
 High-level controls govern the *core objectives* of a model run. A high-level control in sDRIPS is defined as a configuration switch that activates a **distinct analytical capability or output dimension** beyond the core water requirement estimation workflow.  
 Unlike low-level controls (which specify run parameters, inputs, file structures and output format), high-level controls represent **conceptual modules** that extend the scientific scope of sDRIPS.  
 
-Examples include:  
+Examples:  
 - **New considerations** → Incorporating additional physical processes (e.g., deep groundwater–surface water interaction).  
 - **New outputs** → Generating novel advisory products (e.g., crop yield forecasts, fertilizer optimization metrics).  
 
@@ -50,7 +50,6 @@ When enabled, sDRIPS estimates the **net crop water requirement** within each de
 - If the user wishes to incorporate **in-situ sensor data** or **local weather station observations**, those features should be activated in parallel while keeping this control enabled.  
 - This functionality is most useful for **field-scale water management and scheduling decisions**.  
 
----
 
 ### Canal Water Allotment
 This control generates **advisories for canal operators and irrigation managers**.  
@@ -79,7 +78,7 @@ This control incorporates **local meteorological station data** (e.g., precipita
 - This module is particularly valuable in regions with **dense weather station coverage**.  
 
 ### Adding a New High-Level Control
-To extend the capabilities of sDRIPS, new high-level controls can be defined using the [***developer version***](/en/latest/Development/Developer_Version/).  
+To extend the capabilities of sDRIPS, new high-level controls can be defined using the [***Developer version***](/en/latest/Development/Developer_Version/).  
 
 A **high-level control** refers to a feature that introduces a **new analytical capability or output dimension** to the system (e.g., crop yield prediction, fertilizer application effects, groundwater–surface water interactions).  
 
