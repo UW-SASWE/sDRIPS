@@ -65,9 +65,9 @@ Irrigation_cmd_area_shapefile:
   numeric_id_name:    # Numeric ID field for the irrigation command area features. Eg - ID or ADM3_EN (if a number)
   area_column_name:  # Column name in the canal shapefile that contains the area of the command area (in meters squared). Eg - 'Irrigabl_Area'
 
-Irrigation_cmd_area_shapefile_Bounds:  # Bounds for the irrigation command area shapefile in EPSG:4326. 
-                                      # Here this param is given as the IMERG Precipitation spatial resolution is 25km and it might be possible 
-                                      # that the bounds need to be adjusted due to small size of command areas
+Irrigation_cmd_area_shapefile_Bounds:  # Bounds for the irrigation command area shapefile in EPSG:4326. If empty, sDRIPS consider bounds of the command area shapefile.
+                                      # Here this param is given as the IMERG Precipitation spatial resolution is 25km and it might be possible
+                                      # that the bounds need to be adjusted due to small size of command areas.
   leftlon: 
   rightlon: 
   toplat: 
