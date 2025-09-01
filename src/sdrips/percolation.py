@@ -14,7 +14,8 @@ from sdrips.utils.utils import (
     load_yaml_config,
     get_irrigation_cmd_area
 )
-from sdrips.utils.ee_utils import initialize_earth_engine
+# from sdrips.utils.ee_utils import initialize_earth_engine
+from sdrips.utils.ee_utils import ensure_ee_initialized
 
 
 def estimate_region_soil_moisture(region, s1_collection, field_capacity, feature_name) -> pd.DataFrame:
@@ -97,6 +98,11 @@ def percolation_estimation(config_path) -> None:
     logger = logging.getLogger()
     logger.critical("Started Percolation Estimation")
     script_config = load_yaml_config(config_path)
+    secrets_file_path = script_config['Secrets_Path']['path']
+    secrets = load_yaml_config(rf'{secrets_file_path}')
+    gee_service_acc = secrets['GEE_Account']['username']
+    gee_key_file = secrets['GEE_Account']['key_file']
+    ensure_ee_initialized(service_account=gee_service_acc, key_file=gee_key_file)
     feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
     # print(f"Feature Name: {feature_name}")
     cores = script_config.get("Multiprocessing", {}).get("cores")
