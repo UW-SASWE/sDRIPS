@@ -12,12 +12,25 @@ from rasterio.mask import mask as riomask
 from ruamel.yaml import YAML
 from typing import Tuple, Any, Dict, List, Union, Optional
 from tqdm import tqdm
-
+import requests
+from pathlib import Path
 
 from sdrips.utils.ee_utils import upload_shapefile_to_ee
 
 yaml = YAML(typ='safe')
 yaml.preserve_quotes = True
+
+def get_gdrive_url(file_id: str) -> str:
+    """
+    Generate direct download URL for Google Drive file
+    
+    Args:
+        file_id (str): Google Drive file ID.
+
+    Returns:
+        str: Direct download URL for the file.
+    """
+    return f"https://drive.google.com/uc?export=download&id={file_id}"
 
 
 def load_yaml_config(config_path: str) -> Dict:
@@ -175,7 +188,7 @@ def get_valid_raster_path(save_data_loc, cmd_area_list, run_week) -> Optional[st
     for cmd_area_name, *_ in cmd_area_list:
         path = os.path.join(
             save_data_loc, 'landsat', 'irrigation', run_week[0],
-            f"irrigation_{cmd_area_name.replace(' ', '-')}.eta.tif"
+            f"irrigation_{cmd_area_name.replace(' ', '_').replace('-', '_')}.eta.tif"
         )
         if os.path.exists(path):
             return path
@@ -250,18 +263,29 @@ def get_cmd_area_list(config_path: str) -> List[List[str]]:
     feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
     if gee_asset_section.get('id'): 
         gee_asset_id = gee_asset_section['id']
+        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
     elif gee_asset_section.get('shp'):
         gee_asset_id = gee_asset_section['shp']
+        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id)  
     else:
-        raise ValueError(
-            "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-            "Both are missing or empty."
-        )
-    if gee_asset_section.get('id'):
-        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
-        # print(f'GEE Asset ID: {gee_asset_id}')
-    else:
-        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
+        gee_asset_id = script_config['Irrigation_cmd_area_shapefile']['path']
+        secrets_file_path = script_config['Secrets_Path']['path']
+        secrets = load_yaml_config(rf'{secrets_file_path}')
+        gee_service_acc = secrets['GEE_Account']['username']
+        gee_key_file = secrets['GEE_Account']['key_file']
+        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file) 
+
+    # else:
+    #     # raise ValueError(
+    #     #     "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+    #     #     "Both are missing or empty."
+    #     # )
+    #     _, gee_asset_id = upload_shapefile_to_ee(gee_asset_id, dry_run = True)  
+    # if gee_asset_section.get('id'):
+    #     irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
+    #     # print(f'GEE Asset ID: {gee_asset_id}')
+    # else:
+    #     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, dry_run = True)  
     cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
     return cmd_area_list
 
@@ -283,16 +307,28 @@ def get_irrigation_cmd_area(config_path: str) -> ee.FeatureCollection:
     feature_name = script_config['Irrigation_cmd_area_shapefile']['feature_name']
     if gee_asset_section.get('id'): 
         gee_asset_id = gee_asset_section['id']
+        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
     elif gee_asset_section.get('shp'):
         gee_asset_id = gee_asset_section['shp']
+        irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id, dry_run = True) 
     else:
-        raise ValueError(
-            "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-            "Both are missing or empty."
-        )
-    if gee_asset_section.get('id'):
-        irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
-        # print(f'GEE Asset ID: {gee_asset_id}')
-    else:
-        irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id) 
+        gee_asset_id = script_config['Irrigation_cmd_area_shapefile']['path']
+        secrets_file_path = script_config['Secrets_Path']['path']
+        secrets = load_yaml_config(rf'{secrets_file_path}')
+        gee_service_acc = secrets['GEE_Account']['username']
+        gee_key_file = secrets['GEE_Account']['key_file']
+        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file) 
+    # else:
+    #     # shp_path= script_config['Irrigation_cmd_area_shapefile']['path']
+        
+    #     raise ValueError(
+    #         "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+    #         "Both are missing or empty."
+    #     )
+    #     # logger.info(f"Using local shapefile: {gee_asset_id}")
+    # if gee_asset_section.get('id'):
+    #     irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
+    #     # print(f'GEE Asset ID: {gee_asset_id}')
+    # else:
+    #     irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id, dry_run = True) 
     return irrigation_cmd_area
