@@ -166,7 +166,7 @@ def process_day(date: datetime.date, bounds: tuple, save_data_loc: str, imerg_us
 
     logger = logging.getLogger()
     try:
-        raw_tif = download_imerg_file(date, save_data_loc, imerg_username, imerg_password)
+        raw_tif = download_imerg_file(date, save_data_loc, imerg_username, imerg_password, precip_links_base_url, suffix, prefix)
         clipped_tif = os.path.join(save_data_loc, 'precip', f'precip.imerg.{date.strftime("%Y%m%d")}.tif')
         clip_and_resample_tif(raw_tif, clipped_tif, bounds)
         logger.info(f'Processed {clipped_tif}')
@@ -220,9 +220,34 @@ def imergprecip(config_path: Path):
     yaml.preserve_quotes = True
     script_config = load_yaml_config(config_path)
 
+    
     bounds = script_config['Irrigation_cmd_area_shapefile_Bounds']
-    left, right = float(bounds['leftlon']), float(bounds['rightlon'])
-    top, bottom = float(bounds['toplat']), float(bounds['bottomlat'])
+    left, right = bounds['leftlon'], bounds['rightlon']
+    top, bottom = bounds['toplat'], bounds['bottomlat']
+
+    if not all([left, right, top, bottom]):
+        shapefile_path = script_config['Irrigation_cmd_area_shapefile']['path']
+        gdf = gpd.read_file(shapefile_path)
+
+        # Ensure CRS is EPSG:4326 for consistency
+        if gdf.crs is None:
+            logger.error("Shapefile has no CRS defined. Please set it before using bounds.")
+            raise ValueError("Shapefile has no CRS defined. Please set it before using bounds.")
+        if gdf.crs.to_epsg() != 4326:
+            gdf = gdf.to_crs(epsg=4326)
+
+        minx, miny, maxx, maxy = gdf.total_bounds
+
+        left = minx
+        right = maxx
+        bottom = miny
+        top = maxy
+    else:
+        left = float(left)
+        right = float(right)
+        top = float(top)
+        bottom = float(bottom)
+
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
     start_date_str = script_config['Date_Running']['start_date']
     start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
