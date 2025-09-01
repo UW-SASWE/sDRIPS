@@ -74,6 +74,7 @@ Irrigation_cmd_area_shapefile_Bounds:  # Bounds for the irrigation command area 
   bottomlat: 
 
 GEE_Asset_ID:   # GEE asset ID for the irrigation command area shapefile, if you have uploaded it to GEE, use 'id' otherwise use 'shp' for local shapefile.
+                # If empty, sDRIPS will consider the local shapefile mentioned in 'Irrigation_cmd_area_shapefile'.
   id: # Path to the GEE asset. Eg - "users/skhan7/BWDB_Commad_Area"
   shp:  # Path to the local irrigation command area shapefile. Eg - Shapefiles/Irrigation_Command_Areas.shp
 
