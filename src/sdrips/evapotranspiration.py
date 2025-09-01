@@ -45,7 +45,7 @@ from sdrips.utils.logging_utils import (
 from sdrips.utils.ee_utils import upload_shapefile_to_ee
 
 
-initialize_earth_engine()
+
 #########*******Module (1) USER INPUT (ROI and Intereset Dates and Planting Date)********########
 
 #########*******Module (2) Estimates Penman-Monteith and SEBAL Evapotranspiration********########
@@ -53,7 +53,7 @@ def process_single_cmd_area(args):
   logger = logging.getLogger()
   cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
   try:
-    regionid = cmd_area[0].replace(" ", "-")
+    regionid = cmd_area[0].replace(" ", "_").replace("-", "_")
     regionn = cmd_area[0]
     output_zip = rf"{save_data_loc}/landsat/sebal/{wktime}/sebal_eto_{regionid}.zip"
 
@@ -745,11 +745,16 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
       gee_asset_id = gee_asset_section['id']
   elif gee_asset_section.get('shp'):
       gee_asset_id = gee_asset_section['shp']
+      # instead of error i want to use irrigation_cmd_area_path as the shp  and raise a warning that gee_asset_id wasnt provided so irrigation_cmd_area_path is used as gee asset
+      
   else:
-      raise ValueError(
-          "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-          "Both are missing or empty."
-      )
+      gee_asset_id = irrigation_cmd_area_path
+      # warnings.warn(f"GEE_Asset_ID was not provided. Using irrigation_cmd_area_path as GEE asset: {gee_asset_id}")
+      main_logger.warning(f"GEE_Asset_ID was not provided. Using irrigation_cmd_area_path as GEE asset: {gee_asset_id}")
+      # raise ValueError(
+      #     "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+      #     "Both are missing or empty."
+      # )
 
   # Accessing the information from 'Date_Running' section
   start_date = script_config['Date_Running']['start_date']
@@ -771,10 +776,17 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
 
   correction_iter = script_config["Correction_iter"]["correction_iter"]
 
+  secrets_file_path = script_config['Secrets_Path']['path']
+  secrets = load_yaml_config(rf'{secrets_file_path}')
+  gee_service_acc = secrets['GEE_Account']['username']
+  gee_key_file = secrets['GEE_Account']['key_file']
+  print('Initializing GEE and Setting Up Assets (may take time, depending on the size of the assets)...')
+  initialize_earth_engine(service_account = gee_service_acc, key_file = gee_key_file)
+
   if gee_asset_section.get('id'):
       irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
   else:
-     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
+     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file) 
 
   cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
 
@@ -803,11 +815,11 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
   total_iterations = len(run_week) * len(cmd_area_list)
   with tqdm(total=total_iterations, desc="Estimating ET with models", unit=" Command Area") as pbar:
     for wktime in run_week:
-      stats_file = rf"{save_data_loc}/landsat/stats_{wktime}.txt"
-      os.makedirs(os.path.dirname(stats_file), exist_ok=True)
+      # stats_file = rf"{save_data_loc}/landsat/stats_{wktime}.txt"
+      # os.makedirs(os.path.dirname(stats_file), exist_ok=True)
 
-      with open(stats_file, 'w') as txt:
-          txt.write("Region,Penman_ET,Sebal_ET,Irrigation\n")
+      # with open(stats_file, 'w') as txt:
+      #     txt.write("Region,Penman_ET,Sebal_ET,Irrigation\n")
 
       main_logger.critical(f"Running Week: {wktime}")
       main_logger.critical(f"Start Date: {start_date}")
@@ -826,8 +838,8 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
               result = future.result()
               if result and not isinstance(result, str):
                   region, penman, sebal, irr = result
-                  with open(stats_file, 'a') as txt:
-                      txt.write(f"{region},{penman},{sebal},{irr}\n")
+                  # with open(stats_file, 'a') as txt:
+                  #     txt.write(f"{region},{penman},{sebal},{irr}\n")
                   results.append(result)
               elif isinstance(result, str):
                   main_logger.error(result)
