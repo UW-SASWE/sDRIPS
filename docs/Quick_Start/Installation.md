@@ -66,7 +66,7 @@ sDRIPS supports two testing modes for advisory generation:
 
 2. **Satellite + weather model data (bias-corrected with in-situ sensors)** – Extends the first mode by integrating in-situ observations to bias-correct the numerical model data before estimating evapotranspiration and generating advisories.
 
-For more in-depth information on testing for developers, refer to the [***Developer Version***](/en/latest/Development/Developer_Version/).  
+For more in-depth information on testing for developers, refer to the [***Developer Version***](/en/latest/Development/Developer_Version/#testing).  
 
 !!! tip_note "Tip"
     Make sure to provide your credentials in the `secrets.yaml` file before running tests.
