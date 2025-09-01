@@ -30,7 +30,8 @@ from typing import List, Optional, Pattern, Union
 import warnings
 warnings.filterwarnings("ignore")
 
-from sdrips.utils.ee_utils import initialize_earth_engine
+# from sdrips.utils.ee_utils import initialize_earth_engine
+from sdrips.utils.ee_utils import ensure_ee_initialized
 from sdrips.utils.utils import (
    load_yaml_config,
     read_cmd_area_settings,
@@ -47,14 +48,14 @@ from sdrips.utils.weather_station_utils import (
 )
 
 
-initialize_earth_engine()
+# initialize_earth_engine()
 
 
 def process_single_cmd_area_stn(args):
   logger = logging.getLogger()
   air_temp_condition, wind_speed_condition, spec_humidity_condition, pressure_condition, station_csv_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, interpolation_method, station_epsg_code, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
   try:
-    regionid = cmd_area[0].replace(" ", "-")
+    regionid = cmd_area[0].replace(" ", "_").replace("-", "_")
     regionn = cmd_area[0]
     output_zip = rf"{save_data_loc}/landsat/sebal/{wktime}/sebal_eto_{regionid}.zip"
 
@@ -761,6 +762,12 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
   yaml.preserve_quotes = True  # Optional: preserves quotes around strings
 
   script_config = load_yaml_config(config_path)
+
+  secrets_file_path = script_config['Secrets_Path']['path']
+  secrets = load_yaml_config(rf'{secrets_file_path}')
+  gee_service_acc = secrets['GEE_Account']['username']
+  gee_key_file = secrets['GEE_Account']['key_file']
+  ensure_ee_initialized(service_account=gee_service_acc, key_file=gee_key_file)
 
   # Accessing the information from 'Irrigation_cmd_area_shapefile' section
   irrigation_cmd_area_path = script_config['Irrigation_cmd_area_shapefile']['path']
