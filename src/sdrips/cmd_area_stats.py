@@ -46,9 +46,9 @@ def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, 
     for i, (cmd_name, *_) in enumerate(cmd_area_list):
         try:
             geometry = cmd_area_gdf.geometry
-            penman_path = f"{save_data_loc}/landsat/penman/{week}/penman_eto_{cmd_name.replace(' ', '-')}.constant.tif"
-            sebal_path = f"{save_data_loc}/landsat/sebal/{week}/sebal_eto_{cmd_name.replace(' ', '-')}.eta.tif"
-            
+            penman_path = f"{save_data_loc}/landsat/penman/{week}/penman_eto_{cmd_name.replace(' ', '_').replace('-', '_')}.constant.tif"
+            sebal_path = f"{save_data_loc}/landsat/sebal/{week}/sebal_eto_{cmd_name.replace(' ', '_').replace('-', '_')}.eta.tif"
+
             cmd_area_gdf.loc[i, f'{day_label} Penman ET'] = compute_masked_mean(penman_path, geometry)
             cmd_area_gdf.loc[i, f'{day_label} SEBAL ET'] = compute_masked_mean(sebal_path, geometry)
 
