@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Union, Optional
 import geopandas as gpd
 import yaml
+from ruamel.yaml import YAML
 
 
 def get_ca_ids(
@@ -70,6 +71,11 @@ def create_yaml_file(
     default_distribution_unif: float
 ) -> None:
     """Create a YAML config file for the command areas with defaults."""
+    
+    yaml = YAML()
+    yaml.indent(sequence=4, offset=2)
+    yaml.default_flow_style = False
+
     config = {
         'DEFAULT': {
             'use_default': True,
@@ -90,7 +96,10 @@ def create_yaml_file(
         }
 
     with open(yaml_file_path, 'w') as yaml_file:
-        yaml.dump(config, yaml_file, sort_keys=False, default_flow_style=False)
+        # yaml.dump(config, yaml_file, sort_keys=False, default_flow_style=False)
+        for key, value in config.items():
+            yaml.dump({key: value}, yaml_file)
+            yaml_file.write("\n")
 
 def run_cmd_config(
     shp_path: Union[str, Path],
@@ -169,7 +178,7 @@ def main():
     )
     parser.add_argument(
         "-c", "--column_name", required=True,
-        help="Column name in shapefile containing unique command area IDs."
+        help="Column name in shapefile containing unique command area names. It is recommended to use a column with string values and no spaces in between."
     )
     parser.add_argument(
         "-d", "--default_planting_date", default="2023-04-01",
@@ -181,15 +190,15 @@ def main():
     )
     parser.add_argument(
         "-sc", "--default_soil_coef", type=float, default=0.5,
-        help="Default soil coefficient (e.g., 0.3, 0.5)."
+        help="[Optional] Default soil coefficient (e.g., 0.3, 0.5)."
     )
     parser.add_argument(
         "-du", "--default_distribution_unif", type=float, default=1.0,
-        help="Default distribution uniformity (e.g., 0.7, 1.0)."
+        help="[Optional] Default distribution uniformity (e.g., 0.7, 1.0)."
     )
     parser.add_argument(
         "-o", "--output_path", default=None,
-        help="Optional output path for the YAML config file."
+        help="[Optional] Output path for the YAML config file. Default is config_files/ca_config.yaml"
     )
 
 
