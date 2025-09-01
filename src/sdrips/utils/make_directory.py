@@ -12,7 +12,7 @@ def make_directory(save_data_loc: str, run_week: List[str]) -> None:
         run_week (List[str]): List of week identifiers (e.g., ['lastweek', 'currentweek']).
     """
     logger = logging.getLogger()
-    folders_list = ['landsat', 'uploads', 'precip', 'avgt', 'tmax', 'tmin', 'ugrd', 'vgrd', 'wind', 'logs']
+    folders_list = ['landsat', 'uploads', 'precip', 'logs']#, 'avgt', 'tmax', 'tmin', 'ugrd', 'vgrd', 'wind']
     et_params = ['penman', 'sebal', 'irrigation']
 
     try:
