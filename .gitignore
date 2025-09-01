@@ -181,3 +181,5 @@ config_files/test_script_config.yaml
 
 #### Ignore Secrets
 */[Ss]ecrets.yaml
+!config_files_template/secrets.yaml
+
