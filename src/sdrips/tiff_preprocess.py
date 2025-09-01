@@ -27,6 +27,7 @@ def unzip_tiffs(config_path: str) -> None:
     None
     """
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     logger.critical("Unzipping TIFF files...")
     script_config = load_yaml_config(config_path)
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
@@ -66,6 +67,7 @@ def convert_tiffs(config_path: str) -> None:
     None
     """
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     logger.critical("Converting TIFF files...")
     script_config = load_yaml_config(config_path)
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
@@ -123,6 +125,7 @@ def converting_to_eto(config_path:str) -> None:
     None
     """
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     logger.critical("Starting TIFF conversion for uploading purpose...")
     script_config = load_yaml_config(config_path)
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
@@ -131,7 +134,7 @@ def converting_to_eto(config_path:str) -> None:
     for ca_area in tqdm(cmd_area_list, desc="Processing Command Area TIFF to ETo Format", unit=' Command Area'):
         try:
             region_raw = ca_area[0]
-            region_id = region_raw.replace(" ", "-")
+            region_id = region_raw.replace(" ", "_").replace("-", "_")
 
             for sensor in ['landsat']:
                 for week in run_week:
