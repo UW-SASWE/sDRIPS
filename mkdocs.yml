@@ -97,6 +97,9 @@ nav:
 - Quick Start: 
     - 'Getting Ready': 'Quick_Start/Getting_ready.md'
     - 'Installation Guide': 'Quick_Start/Installation.md'
+- Commands:
+    - 'Command Line Interface': 'Commands/cli.md'
+    - 'Jupyter Notebook': 'Commands/jupyter.md'
 - Configuration:
     - 'Script Configuration File': 'Configuration/script_config.md'
     - 'Crop Configuration File': 'Configuration/crop_config.md'
