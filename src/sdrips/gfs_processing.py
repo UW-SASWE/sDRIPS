@@ -11,13 +11,15 @@ from ruamel.yaml import YAML
 from tqdm import tqdm
 import ee
 import urllib.request
+import geopandas as gpd
 import rasterio as rio
 from rasterio.windows import from_bounds
 from rasterio.shutil import copy as rio_copy
 import tempfile
 from typing import Dict, Union
 
-from sdrips.utils.ee_utils import initialize_earth_engine
+# from sdrips.utils.ee_utils import initialize_earth_engine
+from sdrips.utils.ee_utils import ensure_ee_initialized
 from sdrips.utils.utils import load_yaml_config
 
 
@@ -48,7 +50,7 @@ def download_tif_from_ee(image, path, name, bounds_leftlon, bounds_bottomlat, bo
     url = image.getDownloadURL(params)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     urllib.request.urlretrieve(url, path)
-    logger.info(f'Downloaded Successfully From GEE: {path}')
+    # logger.info(f'Downloaded Successfully From GEE: {path}')
 
 
 
@@ -83,6 +85,7 @@ def gfsdata_ee(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, boun
         bounds_toplat (float): Northern latitude of bounding box.
     """
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     startDate = datetime.datetime.strptime(start_date, "%Y-%m-%d")
     endDate = startDate + datetime.timedelta(days=1)
     datestr = startDate.strftime("%Y%m%d")
@@ -109,8 +112,12 @@ def gfsdata_ee(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, boun
     os.remove(apcp_path)
 
     weeks = ['currentweek', 'nextweek']
-    params_ee = ['u_component_of_wind_10m_above_ground', 'v_component_of_wind_10m_above_ground', 'temperature_2m_above_ground']
+    # params_ee = ['u_component_of_wind_10m_above_ground', 'v_component_of_wind_10m_above_ground', 'temperature_2m_above_ground']
+    params_ee = []
     total_iterations = len(weeks) * len(params_ee) * 14 # 14 comes from the range(12, 169, 12)
+
+    if len(params_ee) == 0:
+        return
 
     with tqdm(total=total_iterations, desc="Downloading GFS Data From GEE", unit="file") as pbar:
         for week in weeks:
@@ -164,6 +171,7 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
     """
 
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
     datestr = start_dt.strftime("%Y%m%d")
 
@@ -216,11 +224,16 @@ def gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bo
 
     # GFS variables
     weeks = ['currentweek', 'nextweek']
-    params = ['tmax', 'tmin', 'ugrd', 'vgrd']
-    param_ids = ['TMAX', 'TMIN', 'UGRD', 'VGRD']
+    # params = ['tmax', 'tmin', 'ugrd', 'vgrd']
+    params = []
+    # param_ids = ['TMAX', 'TMIN', 'UGRD', 'VGRD']
+    param_ids = []
 
     total_steps = len(weeks) * len(params) * len(range(12, 169, 12))
-
+    
+    if len(params) == 0:
+        return 
+    
     with tqdm(total=total_steps, desc="Downloading GFS Data From NOAA", unit="file") as pbar:
         for week in weeks:
             for param, param_id in zip(params, param_ids):
@@ -282,17 +295,47 @@ def gfsdata(config_path: str)-> None:
     - config_path (str): Path to the main configuration file.
     """
     logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     logger.critical('GFS Data Download Started')
 
-    initialize_earth_engine()
 
     yaml = YAML()
     yaml.preserve_quotes = True
     script_config = load_yaml_config(config_path)
-    bounds_leftlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['leftlon'])
-    bounds_rightlon = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['rightlon'])
-    bounds_toplat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['toplat'])
-    bounds_bottomlat = float(script_config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat'])
+    secrets_file_path = script_config['Secrets_Path']['path']
+    secrets = load_yaml_config(rf'{secrets_file_path}')
+    gee_service_acc = secrets['GEE_Account']['username']
+    gee_key_file = secrets['GEE_Account']['key_file']
+    ensure_ee_initialized(service_account=gee_service_acc, key_file=gee_key_file)
+
+    bounds_leftlon = script_config['Irrigation_cmd_area_shapefile_Bounds']['leftlon']
+    bounds_rightlon = script_config['Irrigation_cmd_area_shapefile_Bounds']['rightlon']
+    bounds_toplat = script_config['Irrigation_cmd_area_shapefile_Bounds']['toplat']
+    bounds_bottomlat = script_config['Irrigation_cmd_area_shapefile_Bounds']['bottomlat']
+
+    if not all([bounds_leftlon, bounds_rightlon, bounds_toplat, bounds_bottomlat]):
+        shapefile_path = script_config['Irrigation_cmd_area_shapefile']['path']
+        gdf = gpd.read_file(shapefile_path)
+
+        # Ensure CRS is EPSG:4326 for consistency
+        if gdf.crs is None:
+            logger.error("Shapefile has no CRS defined. Please set it before using bounds.")
+            raise ValueError("Shapefile has no CRS defined. Please set it before using bounds.")
+        if gdf.crs.to_epsg() != 4326:
+            gdf = gdf.to_crs(epsg=4326)
+
+        minx, miny, maxx, maxy = gdf.total_bounds
+
+        bounds_leftlon = minx
+        bounds_rightlon = maxx
+        bounds_bottomlat = miny
+        bounds_toplat = maxy
+    else:
+        bounds_leftlon = float(bounds_leftlon)
+        bounds_rightlon = float(bounds_rightlon)
+        bounds_toplat = float(bounds_toplat)
+        bounds_bottomlat = float(bounds_bottomlat)
+
     start_date = script_config['Date_Running']['start_date']
     save_data_loc = script_config['Save_Data_Location']['save_data_loc']
     start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
@@ -302,8 +345,13 @@ def gfsdata(config_path: str)-> None:
         logger.info("Switching to Google Earth Engine for GFS Forecast Data Download Due To Ten-Day Difference.")
         gfsdata_ee(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat)
         weeks = ['currentweek', 'nextweek']
-        params = ['avgt', 'ugrd', 'vgrd']
+        # params = ['avgt', 'ugrd', 'vgrd']
+        params = []
         letterstr = "ABCDEFGHIJKLMN"
+
+        if len(params) == 0:
+            # logger.warning("No parameters found for GFS data processing.")
+            return
 
         total_iterations = len(weeks) * len(params)
         with tqdm(total=total_iterations, desc="Processing GFS Data", unit=" file") as pbar:
@@ -365,7 +413,8 @@ def gfsdata(config_path: str)-> None:
         gfsdata_noaa(save_data_loc, start_date, bounds_leftlon, bounds_bottomlat, bounds_rightlon, bounds_toplat)
 
         weeks = ['currentweek', 'nextweek']
-        params = ['tmax', 'tmin', 'ugrd', 'vgrd']
+        # params = ['tmax', 'tmin', 'ugrd', 'vgrd']
+        params = []
         letterstr = "ABCDEFGHIJKLMN"
 
         total_iterations = len(weeks) * len(params)
