@@ -7,9 +7,9 @@ To configure sDRIPS for your area of interest, follow the steps in the [***Insta
 ## Requirements
 To setup the sDRIPS, following things are required:  
 
-- Anaconda/Miniconda - To install the appropriate distribution for your operating system, click [here](https://www.anaconda.com/download/success).  
-- Credentials for Google Earth Engine - Required for processing satellite imagery. If you do not have credentials, follow the [***Getting Ready***](/en/latest/Quick_Start/Getting_ready).  
-- Credentials to download IMERG-GPM precipitation data - Required for downloading precipitation data via the NASA Precipitation Processing System (PPS). Instructions are provided in the [***Getting Ready***] guide.  
+- **Anaconda/Miniconda** - To install the appropriate distribution for your operating system, click [here](https://www.anaconda.com/download/success).  
+- **Credentials for Google Earth Engine** - Required for processing satellite imagery. If you do not have credentials, follow the [***Getting Ready***](/en/latest/Quick_Start/Getting_ready/#pps-registration).  
+- **Credentials to download IMERG-GPM precipitation data** - Required for downloading precipitation data via the NASA Precipitation Processing System (PPS). Instructions are provided in the [***Getting Ready***] guide.  
 
 ## Installation
 <span class="preparation_step">Step 1:</span> <br>
