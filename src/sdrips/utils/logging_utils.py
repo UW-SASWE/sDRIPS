@@ -14,10 +14,20 @@ from sdrips.utils.utils import load_yaml_config
 class ExcludeModulesFilter(logging.Filter):
     def __init__(self, excluded_modules):
         super().__init__()
-        self.excluded_modules = excluded_modules
+        self.excluded_modules = excluded_modules 
 
     def filter(self, record):
         return not any(record.pathname.endswith(mod) for mod in self.excluded_modules)
+
+class IncludeModulesFilter(logging.Filter):
+    def __init__(self, included_modules):
+        super().__init__()
+        self.included_modules = included_modules
+    
+    def filter(self, record):
+        # Check if the filename is in included modules
+        filename = record.filename
+        return filename in self.included_modules 
     
 def setup_logger_with_queue(config_path: str) -> Tuple[Queue, QueueListener, str]:
     """
@@ -41,14 +51,42 @@ def setup_logger_with_queue(config_path: str) -> Tuple[Queue, QueueListener, str
     formatter = logging.Formatter('%(asctime)s - %(filename)s:%(lineno)d - %(message)s')
     file_handler.setFormatter(formatter)
 
-    excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', 
-    '__init__.py', 'warp.py', 'mask.py', 
-    'utils.py', 'features.py', 'collection.py',
-    'collection.py', 'geodataframe.py', 'retry.py'
-    'google_auth_httplib2.py', 'session.py', 'font_manager.py'
-    'file.py', 'google_auth_httplib2.py', 'api.py'
+    # excluded_modules = ['discovery.py', 'connectionpool.py', 'env.py', 
+    # '__init__.py', 'warp.py', 'mask.py', 
+    # 'utils.py', 'features.py', 'collection.py',
+    # 'collection.py', 'geodataframe.py', 'retry.py'
+    # 'google_auth_httplib2.py', 'session.py', 'font_manager.py'
+    # 'file.py', 'google_auth_httplib2.py', 'api.py'
+    # ]
+    included_modules = [
+        'sdrips_init.py',
+        'sdrips_test.py',              
+        'ee_utils.py',   
+        'utils.py',
+        'clean.py',
+        'make_directory.py',
+        'sensor_utils.py',
+        'evapotranspiration.py',          
+        'gfs_processing.py',             
+        'run_sdrips.py',
+        'canal_water_dist.py',
+        'canal_water_distribution.py',
+        'cmd_config.py',
+        'percolation.py',
+        'precipitation.py',
+        'stn_corr_evapotranspiration.py',
+        'sen_corr_evapotranspiration.py',
+        'tiff_preprocess.py',
+        'cmd_area_stats.py',
+        'initialize.py',
+        'logging_utils.py',
+        'weather_station_utils.py',
+        'command_area_creation.py'
+
+        # Add any other files you want to monitor
     ]
-    file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
+    # file_handler.addFilter(ExcludeModulesFilter(excluded_modules))
+    file_handler.addFilter(IncludeModulesFilter(included_modules))
 
     queue_listener = QueueListener(log_queue, file_handler)
     queue_listener.start()
