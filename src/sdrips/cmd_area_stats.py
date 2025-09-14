@@ -144,7 +144,7 @@ def command_area_info(config_path: Path) -> None:
                     sorted_cmd_area_gdf.to_csv(f"{save_data_loc}/Landsat_Command_Area_Stats_{week}.csv",index = False)
                     logging.critical('Finished Last Week Command Area Info')
             else:
-                logging.info(f"Area column '{area_column_name}' not found in command area GeoDataFrame. Estimating area from geometry, this might be different than the irrigable area of the command area.")
+                logging.info(f"Area column '{area_column_name}' not found in the command area geometry file. Estimating area from geometry, this might be different than the irrigable area of the command area.")
                 if cmd_area_gdf.crs.is_geographic:
                     logging.info("Command area shapefile is in geographic CRS. Estimating UTM CRS for area calculation.")
                     utm_crs = cmd_area_gdf.estimate_utm_crs()
