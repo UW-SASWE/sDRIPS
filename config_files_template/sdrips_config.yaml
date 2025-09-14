@@ -29,9 +29,13 @@ Canal_water_allotment_config:
 # -------------------------------
 Insitu_Sensor_integration_config:
   air_temperature_sensor:            # Use air temperature sensor data for correction. Eg - true or false
+  air_temperature_variable:  # Reference name of the variable in insitu data. (If air_temperature_sensor is True) Eg - 'Temperature'
   soil_moisture_sensor:              # Use soil moisture sensor data. Eg - true or false
+  soil_moisture_variable:  # Reference name of the variable in insitu data. (If soil_moisture_sensor is True) Eg - 'Water Content'
   wind_speed_sensor:                 # Use wind speed sensor data. Eg - true or false
+  wind_speed_variable:       # Reference name of the variable in insitu data. (If wind_speed_sensor is True) Eg - 'Wind'
   specific_humidity_sensor:           # Use specific humidity sensor data. Eg - true or false
+  specific_humidity_variable:        # Reference name of the variable in insitu data. (If specific_humidity_sensor is True) Eg - 'Specific Humidity'
   hub_url:   # URL to the sensor data hub (if applicable). Eg - "https://your_data_hub.com/Sensor_Cronjob/"
   date_regex: "(\\d{4}_\\d{2}_\\d{2})" # Regular expression to extract date from sensor filenames. 4 represents _ _ _ _ in Year, 2 represens _ _ in months and another 2 represents _ _ in date.
   date_format: "%Y_%m_%d" # Date format for sensor data filenames. Eg - "%Y_%m_%d" for 2024_04_06
@@ -44,11 +48,17 @@ Insitu_Sensor_integration_config:
 # -------------------------------
 Weather_station_integration_config:
   air_temperature_station:        # Use air temperature data from weather stations. Eg - true or false
+  air_temperature_variable:  # Reference name of the variable in insitu data. (If air_temperature_sensor is True) Eg - 'Temperature'
   wind_speed_station:   # Use wind speed data from weather stations. Eg - true or false
-  soil_moisture_station: true       # Use soil moisture data from weather stations. Eg - true or false
+  wind_speed_variable:       # Reference name of the variable in insitu data. (If wind_speed_sensor is True) Eg - 'Wind'
+  soil_moisture_station:        # Use soil moisture data from weather stations. Eg - true or false
+  soil_moisture_variable:  # Reference name of the variable in insitu data. (If soil_moisture_sensor is True) Eg - 'Water Content'
   specific_humidity_station:    # Use specific humidity data from weather stations. Eg - true or false
+  specific_humidity_variable:        # Reference name of the variable in insitu data. (If specific_humidity_sensor is True) Eg - 'Specific Humidity'
   pressure_station:    # Use air pressure data from weather stations. Eg - true or false
+  pressure_variable:        # Reference name of the variable in insitu data. (If pressure_sensor is True) Eg - 'Pressure'
   precipitation_station:    # Use precipitation data from weather stations. Eg - true or false
+  precipitation_variable:        # Reference name of the variable in insitu data. (If precipitation_sensor is True) Eg - 'Precipitation'
   weather_station_shp_file:   # Path to station shapefile. Eg - Shapefiles/Weather_stations.shp
   weather_station_feature_name:                    # Unique ID for station points. Eg - STATION_ID
   EPSG_code: 'EPSG:4326'  # EPSG code for the coordinate system of the weather station shapefile. By default, it is set to 'EPSG:4326'
@@ -115,6 +125,7 @@ Download_ET_TIFF:   # Whether to download the ET TIFF files from GEE
  
 GLCC_Mask:        # Whether to use GLCC LULC for to the ET estimation or use your own LULC map
   glcc_mask: true
+  glcc_id:   # GEE asset ID for the customized LULC map, if nothing is mentioned and 'glcc_mask' is false, sDRIPS will use the ROI as the LULC cover.
 
 Percolation_Config:   # Whether to run the percolation estimation module to estimate net water requirement
   consider_percolation: true
