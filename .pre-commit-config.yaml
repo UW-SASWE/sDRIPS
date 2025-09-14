@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check-related-scripts
+        name: Check related scripts consistency
+        entry: python .githooks/check_et_scripts.py
+        language: system
+        pass_filenames: false
