@@ -6,5 +6,5 @@ precipitation: # To check the latest version go to https://jsimpsonhttps.pps.eos
     after:  "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/early/"
 
   file_pattern:
-    prefix: "3B-HHR-E.MS.MRG.3IMERG."
-    suffix: "-S233000-E235959.1410.V07B.1day.tif"
+    prefix: "3B-HHR-E.MS.MRG.3IMERG." # E - is for early, and L - is for late.
+    suffix: "-S233000-E235959.1410.V07B.1day.tif" # As an example, V07B is the version could be changed to V07D.
