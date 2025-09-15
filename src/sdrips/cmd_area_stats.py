@@ -70,7 +70,7 @@ def process_week(save_data_loc: str, cmd_area_gdf: gpd.GeoDataFrame, week: str, 
     )
 
     if percolation_condition:
-        percolation_df = pd.read_csv(f'{save_data_loc}/percolation/percolation_{week}.csv')
+        percolation_df = pd.read_csv(f'{save_data_loc}/percolation/Percolation_{week}.csv')
         cmd_area_gdf = cmd_area_gdf.merge(percolation_df, on=feature_name)
 
     if is_current or is_last:
