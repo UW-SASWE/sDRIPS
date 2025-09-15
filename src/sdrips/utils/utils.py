@@ -266,7 +266,11 @@ def get_cmd_area_list(config_path: str) -> List[List[str]]:
         irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
     elif gee_asset_section.get('shp'):
         gee_asset_id = gee_asset_section['shp']
-        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id)  
+        secrets_file_path = script_config['Secrets_Path']['path']
+        secrets = load_yaml_config(rf'{secrets_file_path}')
+        gee_service_acc = secrets['GEE_Account']['username']
+        gee_key_file = secrets['GEE_Account']['key_file']
+        irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file)
     else:
         gee_asset_id = script_config['Irrigation_cmd_area_shapefile']['path']
         secrets_file_path = script_config['Secrets_Path']['path']
@@ -310,7 +314,10 @@ def get_irrigation_cmd_area(config_path: str) -> ee.FeatureCollection:
         irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
     elif gee_asset_section.get('shp'):
         gee_asset_id = gee_asset_section['shp']
-        irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id, dry_run = True) 
+        secrets = load_yaml_config(rf'{secrets_file_path}')
+        gee_service_acc = secrets['GEE_Account']['username']
+        gee_key_file = secrets['GEE_Account']['key_file']
+        irrigation_cmd_area= upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file, dry_run = True) 
     else:
         gee_asset_id = script_config['Irrigation_cmd_area_shapefile']['path']
         secrets_file_path = script_config['Secrets_Path']['path']
