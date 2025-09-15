@@ -258,6 +258,26 @@ def update_config_file_for_test(config_path: Path, save_outputs_dir: Path, test_
     
     return True
 
+def update_config_links_file_for_test(config_path: Path):
+    """
+    Updates the precipitation related data links in config_links file for testing:
+    
+    Args:
+        config_path (Path): Path to the config file to modify.
+    """
+    yaml = YAML()
+    yaml.preserve_quotes = True
+
+    with open(config_path, "r") as f:
+        config = yaml.load(f)
+    
+    config["precipitation"]["base_urls"]["before"] = "https://jsimpsonhttps.pps.eosdis.nasa.gov/imerg/gis/2024/"
+    config["precipitation"]["file_pattern"]["prefix"] = "3B-HHR-L.MS.MRG.3IMERG."
+    
+    with open(config_path, "w") as f:
+            yaml.dump(config, f)
+        
+    return True
 
 # ------------------------------
 # Raster & CSV comparison utils
@@ -459,7 +479,10 @@ def run_tests(test_dir: Path | str = "./tests", sensor_test: bool = False) -> No
         test_data_dir=TEST_DATA_DIR,
         sensor_test = sensor_test
     )
-
+    if sensor_test:
+        update_config_links_file_for_test(config_path=CONFIG_DIR.joinpath("config_links.yaml"))
+    else:
+        pass
     print("\nMoving sensor meta files to test model data directory...")
     if not move_sensor_files(CSV_DIR, test_model_data_dir):
         print("Warning: Could not move all sensor files")
