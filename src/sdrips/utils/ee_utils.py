@@ -49,15 +49,26 @@ def initialize_earth_engine(service_account: str = None, key_file: str = None):
         # default_project = ee.data.getAssetRoots()[0]["id"].split("/")[1]
         ee.Initialize(project = default_project)
         logger.info("Earth Engine initialized successfully.")
-    except ee.ee_exception.EEException as init_error:
+    except ee.EEException:
         logger.critical("Earth Engine not initialized. Attempting authentication...")
         try:
             ee.Authenticate()
-            ee.Initialize()
+            client = ProjectsClient()
+            for project in client.search_projects():
+                # Check if the project has the 'earth-engine' label
+                if "earth-engine" in project.labels and "default project" in project.display_name.lower():
+                    default_project = project.project_id
+                    break
+            logger.info(f"Default Earth Engine project identified: {default_project}")
+            # default_project = ee.data.getAssetRoots()[0]["id"].split("/")[1]
+            ee.Initialize(project = default_project)
             logger.info("Earth Engine authenticated and initialized successfully.")
         except ee.ee_exception.EEException as auth_error:
-            logger.error(f"Earth Engine authentication or initialization failed: {auth_error}")
-            raise
+            try:
+                ee.Authenticate()
+                ee.Initialize()
+            except Exception as e:
+                logger.error(f"Earth Engine authentication or initialization failed: {auth_error}")
     except Exception as e:
         logger.error(f"An unexpected error occurred during Earth Engine initialization: {e}")
         raise Exception("Failed to initialize Earth Engine after authentication.") from e
