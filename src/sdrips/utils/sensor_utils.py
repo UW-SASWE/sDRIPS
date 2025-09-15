@@ -308,6 +308,7 @@ def bias_correction(image: Image, roi: Geometry, start_date: Union[str, pd.Times
     df = specific_date_df[specific_date_df['Measurement Type'] == variable]
     if df.empty:
         logger.critical(f"No sensor data for {start_date} and variable '{variable}'. Skipping correction.")
+        return image
     def extract_value(row: pd.Series) -> float:
         point = ee.Geometry.Point([row['Longitude'], row['Latitude']])
         selscale = 30
@@ -327,6 +328,7 @@ def bias_correction(image: Image, roi: Geometry, start_date: Union[str, pd.Times
 
     if df.empty:
         logger.critical(f"No valid satellite data for {start_date}. Skipping correction.")
+        return image
 
     mean_sensor = df['Sensor Value'].mean()
     mean_model = df['Model Value'].mean()
