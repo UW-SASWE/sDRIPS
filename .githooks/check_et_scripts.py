@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import subprocess
 import sys
 
@@ -13,7 +12,7 @@ changed = subprocess.check_output(
 modified = [s for s in SCRIPTS if s in changed]
 
 if modified and len(modified) < len(SCRIPTS):
-    print("⚠️  sDRIPS developer you modified:", ", ".join(modified))
+    print("[WARNING] sDRIPS developer you modified:", ", ".join(modified))
     print(f"Check if the same change is needed in the other scripts: {', '.join(SCRIPTS)}")
     sys.exit(1)  # block the commit until confirmed
 
