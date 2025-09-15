@@ -57,7 +57,11 @@ from sdrips.utils.sensor_utils import (
 
 def process_single_cmd_area_sensor(args):
   logger = logging.getLogger()
-  air_temp_condition, wind_speed_sensor_condition, specific_humidity_sensor_condition, base_url, sensor_data_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, date_pattern, date_format, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
+  (air_temp_condition, air_temp_variable, wind_speed_sensor_condition, wind_speed_variable, 
+  specific_humidity_sensor_condition, specific_humidity_variable, base_url, sensor_data_path, 
+  cmd_area, start_date, irrigation_cmd_area, feature_name, 
+  wktime, date_pattern, date_format, save_data_loc, 
+  cmd_area_settings, crop_config_path, correction_iter, glcc_mask, glcc_id) = args
   try:
     regionid = cmd_area[0].replace(" ", "_").replace("-", "_")
     regionn = cmd_area[0]
@@ -171,7 +175,7 @@ def process_single_cmd_area_sensor(args):
     gfs_forcings_composite=gfs_forcings.first()
     if air_temp_condition is True:
         temp_celcius = gfs_forcings_composite.select('temperature_2m_above_ground')
-        adjusted_temp = bias_correction(image = temp_celcius, roi = ROI, start_date = landsat_date, sensor_data_path = sensor_data_path, save_data_loc = save_data_loc, variable="Temperature")
+        adjusted_temp = bias_correction(image = temp_celcius, roi = ROI, start_date = landsat_date, sensor_data_path = sensor_data_path, save_data_loc = save_data_loc, variable = air_temp_variable)
         temp = adjusted_temp.add(273.15)
     else:
         temp = gfs_forcings_composite.select('temperature_2m_above_ground').add(273.15)  # Convert Kelvin to Celsius
@@ -194,12 +198,12 @@ def process_single_cmd_area_sensor(args):
         'sqrt(a**2+b**2)', {'a': wind_u, 'b': wind_v}
     ).rename('wind')
     if wind_speed_sensor_condition is True:
-        wind = bias_correction(wind, ROI, landsat_date, sensor_data_path, variable="Wind")
+        wind = bias_correction(image = wind, roi = ROI, start_date = landsat_date,sensor_data_path = sensor_data_path, save_data_loc = save_data_loc, variable = wind_speed_variable)
     pressure_Pa = ee.Image.constant(101325).rename('pressure')
     gfs_forcings_composite.addBands(pressure_Pa)
     QH=gfs_forcings_composite.select('specific_humidity_2m_above_ground')
     if specific_humidity_sensor_condition is True:
-        QH = bias_correction(QH, ROI, landsat_date, sensor_data_path, variable="Specific Humidity")
+        QH = bias_correction(image = QH, roi = ROI, start_date = landsat_date, sensor_data_path = sensor_data_path, save_data_loc = save_data_loc, variable = specific_humidity_variable)
     # PS=gfs_forcings_composite.select('pressure_Pa')
 
     #### To calculate the surface pressure, we use hypsometric equation
@@ -638,8 +642,10 @@ def process_single_cmd_area_sensor(args):
     ETref_24=ETref_24.select('constant').rename('etr')
     if glcc_mask:
         ETref_24 = ETref_24.updateMask(glcc_crop)  
+    elif glcc_id:
+        ETref_24 = ETref_24.updateMask(ee.Image(glcc_id))
     else:
-        ETref_24 = ETref_24.clip(ROI) 
+        ETref_24 = ETref_24.clip(ROI)
     # #logger.info(ETref_24.getInfo())
     penmanET = ee.Image.constant(soil_coef).multiply(ETref_24.multiply(ee.Image.constant(growth_kc))).multiply(ee.Image.constant(dayVal))
     # #logger.info(penmanET_24.getInfo())
@@ -686,6 +692,8 @@ def process_single_cmd_area_sensor(args):
     ETA_24_mask=ETA_24_mask.updateMask(NDVI.gte(0.2)).unmask(0)
     if glcc_mask:
         ETA_24_mask = ETA_24_mask.updateMask(glcc_crop)
+    elif glcc_id:
+        ETA_24_mask = ETA_24_mask.updateMask(ee.Image(glcc_id))
     else:
         ETA_24_mask = ETA_24_mask.clip(ROI)
     ETA_mask = ETA_24_mask.multiply(ee.Image.constant(dayVal))
@@ -777,10 +785,12 @@ def process_cmd_area_sensor_parallel(config_path, main_logger, log_queue, cores)
   elif gee_asset_section.get('shp'):
       gee_asset_id = gee_asset_section['shp']
   else:
-      raise ValueError(
-          "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-          "Both are missing or empty."
-      )
+      gee_asset_id = irrigation_cmd_area_path
+      main_logger.warning(f"GEE_Asset_ID was not provided. Using irrigation_cmd_area_path as GEE asset: {gee_asset_id}")
+      # raise ValueError(
+      #     "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+      #     "Both are missing or empty."
+      # )
 
   # Accessing the information from 'Date_Running' section
   start_date = script_config['Date_Running']['start_date']
@@ -793,15 +803,27 @@ def process_cmd_area_sensor_parallel(config_path, main_logger, log_queue, cores)
   sensor_data_path = script_config['Insitu_Sensor_integration_config']['sensor_data_path']
   base_url = script_config['Insitu_Sensor_integration_config']['hub_url']
   air_temp_condition = script_config['Insitu_Sensor_integration_config']['air_temperature_sensor']
+  air_temp_variable = script_config['Insitu_Sensor_integration_config']['air_temperature_variable']
+  if not air_temp_variable or str(air_temp_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'air_temp_variable' while air_temperature_sensor is True.")
+
   wind_speed_sensor_condition = script_config['Insitu_Sensor_integration_config']['wind_speed_sensor']
+  wind_speed_variable = script_config['Insitu_Sensor_integration_config']['wind_speed_variable']
+  if not wind_speed_variable or str(wind_speed_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'wind_speed_variable' while wind_speed_sensor_condition is True.")
+
   specific_humidity_sensor_condition = script_config['Insitu_Sensor_integration_config']['specific_humidity_sensor']
+  specific_humidity_variable = script_config['Insitu_Sensor_integration_config']['specific_humidity_variable']
+  if not specific_humidity_variable or str(specific_humidity_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'specific_humidity_variable' while specific_humidity_sensor is True.")
+
   date_pattern = re.compile(script_config["Insitu_Sensor_integration_config"]["date_regex"])
   date_format = script_config["Insitu_Sensor_integration_config"]["date_format"]
   cmd_config_path = script_config['Cmd_Area_Config']['path']
   crop_config_path = script_config['Crop_Config']['path']
   # === Conditional Flags ===
   glcc_mask = script_config['GLCC_Mask'].get('glcc_mask', False)
-
+  glcc_id = script_config['GLCC_Mask'].get('glcc_id', None)
   # === multiprocessing ===
   cores = script_config.get("Multiprocessing", {}).get("cores")
   worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
@@ -811,7 +833,8 @@ def process_cmd_area_sensor_parallel(config_path, main_logger, log_queue, cores)
   if gee_asset_section.get('id'):
       irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
   else:
-     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
+      print('Initializing GEE and Setting Up Assets (may take time, depending on the size of the assets)...')
+      irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file)
 
   cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
 
@@ -850,7 +873,11 @@ def process_cmd_area_sensor_parallel(config_path, main_logger, log_queue, cores)
       main_logger.critical(f"Start Date: {start_date}")
       # logger.critical(f"End Date: {(datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=8+2)).strftime('%Y-%m-%d')}")
 
-      args_list = [(air_temp_condition, wind_speed_sensor_condition, specific_humidity_sensor_condition, base_url, sensor_data_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, date_pattern, date_format, save_data_loc, cmd_area_settings, crop_config_path, correction_iter, glcc_mask) for cmd_area in cmd_area_list]
+      args_list = [(air_temp_condition, air_temp_variable, wind_speed_sensor_condition, wind_speed_variable, 
+      specific_humidity_sensor_condition, specific_humidity_variable, base_url, sensor_data_path, 
+      cmd_area, start_date, irrigation_cmd_area, feature_name, 
+      wktime, date_pattern, date_format, save_data_loc, 
+      cmd_area_settings, crop_config_path, correction_iter, glcc_mask, glcc_id) for cmd_area in cmd_area_list]
 
       with ThreadPoolExecutor(
                 max_workers=cores,
