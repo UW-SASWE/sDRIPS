@@ -745,8 +745,6 @@ def process_cmd_area_parallel(config_path, main_logger, log_queue, cores):
       gee_asset_id = gee_asset_section['id']
   elif gee_asset_section.get('shp'):
       gee_asset_id = gee_asset_section['shp']
-      # instead of error i want to use irrigation_cmd_area_path as the shp  and raise a warning that gee_asset_id wasnt provided so irrigation_cmd_area_path is used as gee asset
-      
   else:
       gee_asset_id = irrigation_cmd_area_path
       # warnings.warn(f"GEE_Asset_ID was not provided. Using irrigation_cmd_area_path as GEE asset: {gee_asset_id}")
