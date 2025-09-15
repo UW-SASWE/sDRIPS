@@ -53,7 +53,11 @@ from sdrips.utils.weather_station_utils import (
 
 def process_single_cmd_area_stn(args):
   logger = logging.getLogger()
-  air_temp_condition, wind_speed_condition, spec_humidity_condition, pressure_condition, station_csv_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, interpolation_method, station_epsg_code, cmd_area_settings, crop_config_path, correction_iter, glcc_mask= args
+  (air_temp_condition, air_temp_variable, wind_speed_condition, wind_speed_variable, 
+   spec_humidity_condition, specific_humidity_variable, pressure_condition, pressure_variable, 
+   station_csv_path, cmd_area, start_date, irrigation_cmd_area, 
+   feature_name, wktime, save_data_loc, interpolation_method, 
+   station_epsg_code, cmd_area_settings, crop_config_path, correction_iter, glcc_mask, glcc_id) = args
   try:
     regionid = cmd_area[0].replace(" ", "_").replace("-", "_")
     regionn = cmd_area[0]
@@ -167,7 +171,7 @@ def process_single_cmd_area_stn(args):
     gfs_forcings_composite=gfs_forcings.first()
     if air_temp_condition is True:
         temp_celcius = gfs_forcings_composite.select('temperature_2m_above_ground')
-        adjusted_temp = interpolate_bias_surface(image = temp_celcius, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable="Temperature", interpolation_method = interpolation_method, crs = station_epsg_code)
+        adjusted_temp = interpolate_bias_surface(image = temp_celcius, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable = air_temp_variable, interpolation_method = interpolation_method, crs = station_epsg_code)
         temp = adjusted_temp.add(273.15)
     else:
         temp = gfs_forcings_composite.select('temperature_2m_above_ground').add(273.15)  # Convert Kelvin to Celsius
@@ -190,7 +194,7 @@ def process_single_cmd_area_stn(args):
         'sqrt(a**2+b**2)', {'a': wind_u, 'b': wind_v}
     ).rename('wind')
     if wind_speed_condition is True:
-        wind = interpolate_bias_surface(wind, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable="Wind Speed", interpolation_method = interpolation_method, crs = station_epsg_code)
+        wind = interpolate_bias_surface(wind, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable = wind_speed_variable, interpolation_method = interpolation_method, crs = station_epsg_code)
     pressure_Pa = ee.Image.constant(101325).rename('pressure')
     gfs_forcings_composite.addBands(pressure_Pa)
     QH=gfs_forcings_composite.select('specific_humidity_2m_above_ground')
@@ -199,7 +203,7 @@ def process_single_cmd_area_stn(args):
         scale=selscale)
     logger.info("Mean Specific Humidty: %s", mean_QH.get('specific_humidity_2m_above_ground').getInfo())
     if spec_humidity_condition is True:
-        QH = interpolate_bias_surface(QH, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable="Specific Humidity", interpolation_method = interpolation_method, crs = station_epsg_code)
+        QH = interpolate_bias_surface(QH, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable = specific_humidity_variable, interpolation_method = interpolation_method, crs = station_epsg_code)
 
     #### To calculate the surface pressure, we use hypsometric equation
     seaLevelPressure = 101325 ##// Standard sea level pressure in Pascals
@@ -215,7 +219,7 @@ def process_single_cmd_area_stn(args):
         scale=selscale)
     logger.info("Mean Surface Pressure: %s", mean_PS.get('pressure').getInfo())
     if pressure_condition:
-        PS = interpolate_bias_surface(PS, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable="Pressure", interpolation_method = interpolation_method, crs = station_epsg_code)
+        PS = interpolate_bias_surface(PS, roi = ROI, target_date = landsat_date, station_csv_path = station_csv_path, save_data_loc = save_data_loc, variable = pressure_variable, interpolation_method = interpolation_method, crs = station_epsg_code)
     
     ## equations for saturated vapor pressure has temperature in celsius
     tmp1=ee.Image.constant(17.67).multiply(temp.subtract(ee.Image.constant(273.15)))
@@ -643,6 +647,8 @@ def process_single_cmd_area_stn(args):
     ETref_24=ETref_24.select('constant').rename('etr')
     if glcc_mask:
         ETref_24 = ETref_24.updateMask(glcc_crop)  
+    elif glcc_id:
+        ETref_24 = ETref_24.updateMask(ee.Image(glcc_id))
     else:
         ETref_24 = ETref_24.clip(ROI) 
     # #logger.info(ETref_24.getInfo())
@@ -691,6 +697,8 @@ def process_single_cmd_area_stn(args):
     ETA_24_mask=ETA_24_mask.updateMask(NDVI.gte(0.2)).unmask(0)
     if glcc_mask:
         ETA_24_mask = ETA_24_mask.updateMask(glcc_crop)
+    elif glcc_id:
+        ETA_24_mask = ETA_24_mask.updateMask(ee.Image(glcc_id))
     else:
         ETA_24_mask = ETA_24_mask.clip(ROI)
     ETA_mask = ETA_24_mask.multiply(ee.Image.constant(dayVal))
@@ -782,10 +790,13 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
   elif gee_asset_section.get('shp'):
       gee_asset_id = gee_asset_section['shp']
   else:
-      raise ValueError(
-          "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
-          "Both are missing or empty."
-      )
+      gee_asset_id = irrigation_cmd_area_path
+      main_logger.warning(f"GEE_Asset_ID was not provided. Using irrigation_cmd_area_path as GEE asset: {gee_asset_id}")
+
+      # raise ValueError(
+      #     "Configuration error: 'GEE_Asset_ID' must contain either 'id' or 'shp'."
+      #     "Both are missing or empty."
+      # )
 
   # Accessing the information from 'Date_Running' section
   start_date = script_config['Date_Running']['start_date']
@@ -797,9 +808,25 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
   )
   station_csv_path = script_config['Weather_station_integration_config']['weather_station_data_path']
   air_temp_condition = script_config['Weather_station_integration_config']['air_temperature_station']
+  air_temp_variable = script_config['Weather_station_integration_config']['air_temperature_variable']
+  if not air_temp_variable or str(air_temp_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'air_temp_variable' while air_temperature_station is True.")
+
   wind_speed_condition = script_config['Weather_station_integration_config']['wind_speed_station']
+  wind_speed_variable = script_config['Weather_station_integration_config']['wind_speed_variable']
+  if not wind_speed_variable or str(wind_speed_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'wind_speed_variable' while wind_speed_station is True.")
+
   spec_humidity_condition = script_config['Weather_station_integration_config']['specific_humidity_station']
+  specific_humidity_variable = script_config['Weather_station_integration_config']['specific_humidity_variable']
+  if not specific_humidity_variable or str(specific_humidity_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'specific_humidity_variable' while specific_humidity_station is True.")
+
   pressure_condition = script_config['Weather_station_integration_config']['pressure_station']
+  pressure_variable = script_config['Weather_station_integration_config']['pressure_variable']
+  if not pressure_variable or str(pressure_variable).strip() == "":
+        raise ValueError("Error: No input provided for 'pressure_variable' while pressure_station is True.")
+  
   station_epsg_code = script_config['Weather_station_integration_config']['EPSG_code']
   interpolation_method = script_config['Weather_station_integration_config']['interpolation_method']
   
@@ -807,7 +834,7 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
   crop_config_path = script_config['Crop_Config']['path']
   # === Conditional Flags ===
   glcc_mask = script_config['GLCC_Mask'].get('glcc_mask', False)
-
+  glcc_id = script_config['GLCC_Mask'].get('glcc_id', None)
   # === multiprocessing ===
   cores = script_config.get("Multiprocessing", {}).get("cores")
   worker_count = cores if cores is not None else multiprocessing.cpu_count() - 1
@@ -817,7 +844,8 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
   if gee_asset_section.get('id'):
       irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
   else:
-     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id) 
+     print('Initializing GEE and Setting Up Assets (may take time, depending on the size of the assets)...')
+     irrigation_cmd_area = upload_shapefile_to_ee(gee_asset_id, service_account=gee_service_acc, key_file=gee_key_file)
 
   cmd_area_list = irrigation_cmd_area.reduceColumns(ee.Reducer.toList(1), [feature_name]).get('list').getInfo()
 
@@ -856,7 +884,12 @@ def process_cmd_area_stn_parallel(config_path, main_logger, log_queue, cores):
       main_logger.critical(f"Start Date: {start_date}")
       # logger.critical(f"End Date: {(datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=8+2)).strftime('%Y-%m-%d')}")
 
-      args_list = [(air_temp_condition, wind_speed_condition, spec_humidity_condition, pressure_condition, station_csv_path, cmd_area, start_date, irrigation_cmd_area, feature_name, wktime, save_data_loc, interpolation_method, station_epsg_code, cmd_area_settings, crop_config_path, correction_iter, glcc_mask) for cmd_area in cmd_area_list]
+      args_list = [(air_temp_condition, air_temp_variable, wind_speed_condition, wind_speed_variable, 
+                    spec_humidity_condition, specific_humidity_variable, pressure_condition, pressure_variable, 
+                    station_csv_path, cmd_area, start_date, irrigation_cmd_area, 
+                    feature_name, wktime, save_data_loc, interpolation_method, 
+                    station_epsg_code, cmd_area_settings, crop_config_path, 
+                    correction_iter, glcc_mask, glcc_id) for cmd_area in cmd_area_list]
 
       with ThreadPoolExecutor(
                 max_workers=cores,
