@@ -159,6 +159,11 @@ def main():
         default=Path("./tests"),
         help="Path to the test directory (default: ./tests)"
     )
+    test_parser.add_argument(
+        "--sensor","-s",
+        action="store_true",
+        help="Enable sensor test mode"
+    )
 
     # ------------------------------
     # run subcommand
@@ -180,7 +185,7 @@ def main():
         sys.exit(0 if initialize_project(args.dir, args.force) else 1)
     
     elif args.command == "test":
-        run_tests(args.dir)  
+        run_tests(args.dir, args.sensor)  
 
     elif args.command == "run":
         run_sdrips(args.config)
