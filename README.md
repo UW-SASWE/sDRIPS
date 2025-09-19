@@ -7,7 +7,7 @@ sDRIPS is an open-source Python package that generates weekly, farm-scale (30 
 ### How to Cite
 <div style="text-align: justify;">
 
-Khan, S; et.al (2025). sDRIPS: A Cloud-Based, Open-Source Python Package for Satellite-Informed Surface Water Irrigation Optimization, <i>Digital Water.</i> **Paper Under Review**.
+Khan, S; Hossain, F.(2025). sDRIPS: A Cloud-Based, Open-Source Python Package for Satellite-Informed Surface Water Irrigation Optimization, <i>Digital Water.</i> **Paper Under Review**.
 </div>
 
 ### Read The Docs Documentation
