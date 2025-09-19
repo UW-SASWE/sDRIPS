@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sdrips"
-version = "0.1.5"
+version = "0.1.7"
 description = "A Package For Optimizing Surface Water Irrigation using Satellite Remote Sensing"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -39,7 +39,8 @@ dependencies = [
     "tqdm",
     "xarray",
     "cartopy",
-    "google-cloud-resource-manager"
+    "google-cloud-resource-manager",
+    "pycrs"
 ]
 
 [project.urls]
