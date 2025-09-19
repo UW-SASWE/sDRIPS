@@ -314,6 +314,7 @@ def get_irrigation_cmd_area(config_path: str) -> ee.FeatureCollection:
         irrigation_cmd_area = ee.FeatureCollection(gee_asset_id) 
     elif gee_asset_section.get('shp'):
         gee_asset_id = gee_asset_section['shp']
+        secrets_file_path = script_config['Secrets_Path']['path']
         secrets = load_yaml_config(rf'{secrets_file_path}')
         gee_service_acc = secrets['GEE_Account']['username']
         gee_key_file = secrets['GEE_Account']['key_file']

@@ -6,6 +6,8 @@ import time
 from datetime import datetime
 import logging
 from google.cloud.resourcemanager import ProjectsClient
+from google.oauth2 import service_account as ga_service_account
+import google.auth
 
 # from sdrips.utils.utils import load_yaml_config
 # from sdrips.utils.ee_initialize import initialize_earth_engine
@@ -210,11 +212,23 @@ def upload_shapefile_to_ee(shp_path: str, asset_folder: str = "sdrips_folder", d
 
     roots = ee.data.getAssetRoots()
     if roots == []:
-        client = ProjectsClient()
+        if key_file:
+            credentials = ga_service_account.Credentials.from_service_account_file(key_file)
+            client = ProjectsClient(credentials=credentials)
+        else:
+            try:
+                credentials, _ = google.auth.default()
+            except google.auth.exceptions.DefaultCredentialsError as e:
+                raise RuntimeError(
+                    "No service account key provided and default credentials not found. "
+                    "Set GOOGLE_APPLICATION_CREDENTIALS or provide a service account key."
+                ) from e
+            client = ProjectsClient(credentials=credentials)
+
         for project in client.search_projects():
             if "earth-engine" in project.labels and "default project" in project.display_name.lower():
                 default_project = project.project_id
-                break  # once condition is met come out of the for loop
+                break
 
         project_id = default_project
         shp_name = os.path.splitext(os.path.basename(shp_path))[0]
@@ -234,17 +248,33 @@ def upload_shapefile_to_ee(shp_path: str, asset_folder: str = "sdrips_folder", d
         base_folder = asset_folder
 
     else:
-        root = roots[0]["id"]
-        if asset_folder not in roots:
-            base_folder = f"{root}/{asset_folder}"
-        else:
+        root = roots[0]["id"].split("/")[1]
+        if root.isdigit():
+            project_id = root
+            asset_folder = f"projects/{project_id}/assets/{asset_folder}"
+            result = subprocess.run(
+                ["earthengine", "ls", asset_folder],
+                capture_output=True,
+                text=True
+            )
+            logger.debug(f'result: {result.stdout}')
+            if "not found" in result.stdout.lower():
+                logger.info(f"Folder does not exist. Creating: {asset_folder}")
+                subprocess.run(["earthengine", "create", "folder", asset_folder])
+            else:
+                logger.info(f"Folder exists: {asset_folder}")
             base_folder = asset_folder
-        try:
-            ee.data.getAsset(base_folder)
-            logger.critical(f"Folder already exists: {base_folder}")
-        except ee.EEException:
-            logger.critical(f"Creating folder: {base_folder}")
-            ee.data.createFolder(base_folder)
+        else:
+            if asset_folder not in roots:
+                base_folder = f"{roots[0]['id']}/{asset_folder}"
+            else:
+                base_folder = asset_folder
+            try:
+                ee.data.getAsset(base_folder)
+                logger.critical(f"Folder already exists: {base_folder}")
+            except ee.EEException:
+                logger.critical(f"Creating folder: {base_folder}")
+                ee.data.createFolder(base_folder)
 
     asset_id = f"{base_folder}/{shp_name}"
 
