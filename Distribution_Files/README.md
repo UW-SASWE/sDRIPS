@@ -1,2 +1,0 @@
-# Folder to store the outputs in CSV Format
-This folder is created to store the distribution files that contain data on the amount of water required by each command area, the amount of water supplied, and the resulting deficit or surplus after supply. Additionally, this folder replicates the directory structure of the sD.R.I.P.S framework.
