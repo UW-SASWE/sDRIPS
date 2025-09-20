@@ -10,6 +10,7 @@ import os
 import logging
 import re
 import datetime
+import time
 from ruamel.yaml import YAML
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -90,7 +91,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Runs the sDRIPS framework for surface water irrigation optimization.\n\n"
             "This script supports both full and modular runs (with multiprocessing support) depending on the flags "
-            "specified in the script configuration YAML file.",
+            "specified in the sdrips configuration YAML file.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
@@ -111,6 +112,7 @@ def run_sdrips(config_path: str):
     Returns:
         None
     """
+    print('Reading Configurations and Setting Up Logging...')
     config = load_config(config_path)
 
     save_data_loc = config.Save_Data_Location.save_data_loc
@@ -149,34 +151,64 @@ def run_sdrips(config_path: str):
             )
 
         if run_et:
+            start_time = time.time()
             logger.info("Running ET module for all command areas...")
             run_et_for_ca(config_path, log_queue, cores, cmd_area_nwr, Insitu_Sensor_integration, Weather_station_integration)
+            logger.info(f"ET module finished in {time.time() - start_time:.2f} seconds")
+
+            start_time = time.time()
             unzip_tiffs(config_path)
+            logger.info(f"Tiff unzipping finished in {time.time() - start_time:.2f} seconds")
+
+            start_time = time.time()
             convert_tiffs(config_path)
+            logger.info(f"Tiff conversion finished in {time.time() - start_time:.2f} seconds")
+
+            start_time = time.time()
             converting_to_eto(config_path)
-        
+            logger.info(f"Conversion to ETo finished in {time.time() - start_time:.2f} seconds")
+
         if run_precip:
+            start_time = time.time()
             logger.info("Running Precipitation module...")
             imergprecip(config_path)
+            logger.info(f"Precipitation module finished in {time.time() - start_time:.2f} seconds")
+
         if run_weather:
+            start_time = time.time()
             logger.info("Running GFS module...")
             gfsdata(config_path)
+            logger.info(f"GFS module finished in {time.time() - start_time:.2f} seconds")
+            
         if run_soil_moisture:
+            start_time = time.time()
             logger.info("Running Percolation module...")
             percolation_estimation(config_path)
+            logger.info(f"Percolation module finished in {time.time() - start_time:.2f} seconds")
+
         if run_region_stats:
+            start_time = time.time()
             logger.info("Running Command Area Statistics module...")
             command_area_info(config_path)
+            logger.info(f"Command Area Statistics module finished in {time.time() - start_time:.2f} seconds")
+
         if canal_water_allotment:
+            start_time = time.time()
             logger.info("Running Canal Water Allotment module...")
             calculate_canal_cumulative_discharge(config_path)
+            logger.info(f"Canal Water Allotment module finished in {time.time() - start_time:.2f} seconds")
+        
+        logger.info("===== sDRIPS Framework Finished =====")
+        print(f'sDRIPS execution completed. Check logs for details. Address of the log: {log_file_path}')
 
     except Exception as e:
         logger.exception("Unhandled exception during sDRIPS execution")
+        print(f'Error occurred during sDRIPS execution. \nCheck logs for details. Address of the log: {log_file_path}')
 
     finally:
-        logger.info("===== sDRIPS Framework Finished =====")
+        # logger.info("===== sDRIPS Framework Finished =====")
         queue_listener.stop()
+        
         
 def main():
     args = parse_args()
