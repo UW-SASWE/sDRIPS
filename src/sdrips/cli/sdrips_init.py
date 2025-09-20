@@ -13,10 +13,10 @@ from sdrips.run_sdrips import run_sdrips
 
 # GitHub links
 CONFIG_SOURCES = {
-    "config_links.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/src-refactor/config_files_template/config_links.yaml", 
-    "crop_config.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/src-refactor/config_files_template/crop_config.yaml",
-    "sdrips_config.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/src-refactor/config_files_template/sdrips_config.yaml",
-    "secrets.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/src-refactor/config_files_template/secrets.yaml"
+    "config_links.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/main/config_files_template/config_links.yaml", 
+    "crop_config.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/main/config_files_template/crop_config.yaml",
+    "sdrips_config.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/main/config_files_template/sdrips_config.yaml",
+    "secrets.yaml": "https://raw.githubusercontent.com/UW-SASWE/sDRIPS/refs/heads/main/config_files_template/secrets.yaml"
 }
 
 
