@@ -75,6 +75,10 @@ Running Tests
 ```
 sdrips test -d ./tests
 ```
+or 
+```
+sdrips test -d ./tests -s
+```
 
 Expected Output  
 
@@ -85,6 +89,18 @@ Tests (3 Tests) for ET based raster outputs completed successfully.
 Checks (2 Checks) for precipitation raster outputs completed successfully.
 
 Tests (2 Tests) for CSV outputs completed successfully.
+
+All tests passed!
+```
+
+or
+
+```yaml
+Tests (3 Tests) for sensor corrected ET based raster outputs completed successfully.
+
+Checks (2 Checks) for precipitation raster outputs completed successfully.
+
+Tests (2 Tests) for sensor corrected CSV outputs completed successfully.
 
 All tests passed!
 ```
