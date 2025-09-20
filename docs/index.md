@@ -10,6 +10,6 @@ The system integrates satellite remote sensing data with Global Forecast System 
 </div>
 
 ## How to Cite
-- <p><strong>S. Khan, F. Hossain, M. Ahamed and K. Islam</strong> (2024). Satellite Data Rendered Irrigation using Penman-Monteith and SEBAL (<strong>sDRIPS</strong>) for Surface Water Irrigation Optimization, <i>Hydrology and Earth System Sciences (HESS)</i></p>
+- <p><strong>S. Khan, F. Hossain, K. Islam and M. Ahamed</strong> (2025). Satellite Data Rendered Irrigation using Penman-Monteith and SEBAL (<strong>sDRIPS</strong>) for Surface Water Irrigation Optimization, <i>Hydrology and Earth System Sciences (HESS)</i></p>
 
 - <p><strong>S. Khan, and F. Hossain</strong> (2025). (<strong>sDRIPS</strong>): A Cloud-Based, Open-Source Python Package for Satellite-Informed Surface Water Irrigation Optimization. <i>Digital Water</i></p>
