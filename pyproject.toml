@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sdrips"
-version = "0.1.7"
+version = "0.0.1"
 description = "A Package For Optimizing Surface Water Irrigation using Satellite Remote Sensing"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {file = "LICENSE"}
 authors = [
-  { name = "Shahzaib Khan", email = "skhan7@uw.edu" }
+  { name = "Shahzaib Khan", email = "khan.shahzaib1007@gmail.com" }
 ]
 dependencies = [
     "beautifulsoup4",
@@ -45,7 +45,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/UW-SASWE/sDRIPS"
-Repository = "https://github.com/UW-SASWE/sDRIPS/tree/src-refactor"
+Repository = "https://github.com/UW-SASWE/sDRIPS/tree/main"
 "Bug Tracker" = "https://github.com/UW-SASWE/sDRIPS/issues"
 
 [tool.setuptools]
