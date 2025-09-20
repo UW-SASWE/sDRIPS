@@ -2,7 +2,7 @@ site_name: sDRIPS Documentation
 site_url: https://sdrips.readthedocs.io/
 site_author: Shahzaib Khan 
 repo_url: https://github.com/UW-SASWE/sDRIPS
-edit_uri: edit/src-refactor/docs/
+edit_uri: edit/main/docs/
 nav:
   - Home: index.md
   - API Reference:
