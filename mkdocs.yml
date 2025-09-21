@@ -116,7 +116,10 @@ nav:
     - Creating Command Area Config Files:
         - Command Line Interface: tutorials/config_files/cli.md
         - Notebook: tutorials/config_files/Creating_CMD_Config.ipynb
-    
+    - Guided Example of sDRIPS:
+        - Command Line Interface: tutorials/full_guide/cli.md
+        # - Notebook: tutorials/full_guide/Guided_Example.ipynb
+
 - Application:
     - 'sDRIPS-Sense': 'https://depts.washington.edu/saswe/sdrips-sense/'
     - 'sDRIPS-Ukulima': 'https://depts.washington.edu/saswe/sdrips_ukulima/'
