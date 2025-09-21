@@ -1,6 +1,6 @@
 # Command Line Interface (CLI) Guide for Generating Command Area Configuration File
 
-This function reads a vector dataset (e.g., Shapefile, GeoJSON, GeoPackage, FileGDB)
+This function reads a vector dataset (e.g., Shapefile, GeoJSON, GeoPackage, GDB file)
 using GeoPandas, extracts the unique command‑area identifiers from the specified
 attribute column, and writes a YAML config with one section per ID plus a DEFAULT
 section containing baseline parameters. Here Shapefile format is highly recommended as it 
