@@ -31,8 +31,8 @@ conda activate sdrips_env
 ```
 
 <span class="preparation_step">Step 4:</span> <br>
-Install sDRIPS using either pip (currently recommended) or mamba (under development).  
-Using [pip](https://test.pypi.org/project/sdrips/):
+Install sDRIPS using either [pip](https://pypi.org/project/sdrips) (currently recommended) or mamba (under development).  
+Using [pip](https://pypi.org/project/sdrips):
 ```
 pip install sdrips
 ```
