@@ -13,6 +13,15 @@ pip install sdrips
 ### Read The Docs Documentation
 Detailed guide with step-by-step tutorial on sDRIPS can be found on ReadTheDocs page - [https://sdrips.readthedocs.io/en/latest/](https://sdrips.readthedocs.io/en/latest/). 
 
+### Package Stats
+
+| Name | Downloads | Version | Platforms | Documentation |
+|------|------------|----------|------------|----------------|
+| [sDRIPS](https://pypi.org/project/sdrips/) | ![Pepy Total Downloads](https://img.shields.io/pepy/dt/sdrips) | [![PyPI](https://img.shields.io/pypi/v/sdrips.svg)](https://pypi.org/project/sdrips/) | ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FUW-SASWE%2FsDRIPS%2Frefs%2Fheads%2Fmain%2Fpyproject.toml) | [Docs](https://sdrips.readthedocs.io/en/latest/) |
+
+
+
+
 ### How to Cite
 <div style="text-align: justify;">
 
