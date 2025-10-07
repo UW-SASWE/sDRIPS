@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/Development/Developer_Version/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Developer Version - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Developer Version";
+        var mkdocs_page_input_path = "Development\\Developer_Version.md";
+        var mkdocs_page_url = "/Development/Developer_Version/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../images/sDRIPS_Logo/Logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ConceptualModel/">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ComputationalModel/">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Getting_ready/">Getting Ready</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Installation/">Installation Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Commands</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Commands/cli/">Command Line Interface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Commands/jupyter.md">Jupyter Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/script_config/">Script Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/crop_config/">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/command_area_config/">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/config_links/">Configuration Links File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/secrets/">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Directory/">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Data_Used/">Data Used</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Area Config Files</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guided Example of sDRIPS</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full_guide/cli/">Command Line Interface</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips-sense/">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_ukulima/">sDRIPS-Ukulima</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_tbp/">sDRIPS-TBP</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="" href="../RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Developer Version</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#raster-output-tests">Raster Output Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#imerg-and-gfs-module-tests">IMERG and GFS Module Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#percolation-and-net-water-requirement-tests">Percolation and Net Water Requirement Tests</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extending-the-test-suite">Extending the Test Suite</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#contributing-to-sdrips">Contributing to sDRIPS</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Contact/contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Disclaimer/disclaimer/">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Development</li>
+      <li class="breadcrumb-item active">Developer Version</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/UW-SASWE/sDRIPS/edit/main/docs/Development/Developer_Version.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="guide-to-installing-the-developer-version-of-sdrips">Guide to Installing the Developer Version of sDRIPS<a class="headerlink" href="#guide-to-installing-the-developer-version-of-sdrips" title="Permanent link">&para;</a></h1>
+<p>This guide explains how to set up the <strong>Developer Version of sDRIPS</strong> in a dedicated project environment.</p>
+<p><span class="preparation_step">Step 1: Create the Project Directory</span> <br>
+Create a new project directory (e.g., <code>sdrips_project</code>) along with the required subdirectories: </p>
+<pre><code>mkdir sdrips_project
+cd sdrips_project
+mkdir Shapefiles
+</code></pre>
+<p><span class="preparation_step">Step 2: Clone the sDRIPS Repository</span> <br>
+Clone the sDRIPS repository into your project directory:</p>
+<pre><code>git clone https://github.com/UW-SASWE/sDRIPS.git .
+</code></pre>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>Adding <code>.</code> ensures the repository is cloned directly into the current directory, rather than creating a subfolder.</p>
+</div>
+<p><span class="preparation_step">Step 3: Set Up the Conda Environment</span> <br>
+Create and activate a new conda environment for sDRIPS:</p>
+<pre><code>conda create --name sdrips_env
+conda activate sdrips_env
+</code></pre>
+<p>Install the required dependencies and configure sDRIPS for development:</p>
+<pre><code>mamba env update --file environment.yml
+mamba install conda-build
+conda develop src/
+</code></pre>
+<p>This setup allows you to <code>import sdrips</code> and immediately apply any changes made in the root directory immediately.</p>
+<p><span class="preparation_step">Step 4: Initialize sDRIPS</span> <br>
+Some sDRIPS functionalities require credentials. Update the <code>secrets.yaml</code> template located in <code>config_files_templates/secrets.yaml</code>. Detailed instructions on configuring secrets are available <a href="/en/latest/Configuration/secrets/">here</a>.
+Run the initialization script:</p>
+<pre><code>python src/sdrips/cli/sdrips_init.py -d .
+</code></pre>
+<p><span class="preparation_step">Step 5: Prepare Shapefiles and Configuration</span> <br>
+Add all required shapefiles to the <code>Shapefiles/</code> directory. 
+Create <code>ca_config.yaml</code> based on your farm or command-area specifications using <code>cmd_config</code> module.
+Update the <code>sdrips_config.yaml</code> file with the appropriate parameters.  </p>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>Ensure that the following parameters are correctly updated in the sdrips_config.yaml file:  </p>
+<pre><code>- Irrigation_cmd_area_shapefile
+- GEE_Asset_ID
+- Date_Running
+- Irrigation_cmd_area_shapefile_Bounds
+- Cmd_Area_Config
+</code></pre>
+</div>
+<p><span class="preparation_step">Step 6: Running sDRIPS in Developer Mode</span> <br>
+After initialization, you can begin testing and integrating your code by placing it in the <code>src/</code> folder.<br />
+To test sDRIPS:</p>
+<pre><code>python src/sdrips/cli/ sdrips_test.py -d ./tests/
+</code></pre>
+<p>To run sDRIPS:</p>
+<pre><code>python src/sdrips/run_sdrips.py config_files_templates/sdrips_config.yaml
+</code></pre>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>If IMERG data links are outdated, update them in config_links.yaml to ensure proper data access.</p>
+</div>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<p>sDRIPS includes a testing framework to verify both correct installation and pipeline stability when new modules are introduced. The pipeline is tested under two scenarios:</p>
+<ul>
+<li><strong>Satellite + weather model data</strong> – Runs the functional logic using satellite datasets in combination with numerical weather model data.</li>
+<li><strong>Satellite + weather model data (bias-corrected with in-situ sensors)</strong> – Extends the first mode by integrating in-situ observations to bias-correct the numerical model data before estimating evapotranspiration and generating advisories.</li>
+</ul>
+<h3 id="raster-output-tests">Raster Output Tests<a class="headerlink" href="#raster-output-tests" title="Permanent link">&para;</a></h3>
+<p>sDRIPS validates three ET-based raster outputs (sebal, penman-montieth, irrigation). For each raster, it checks both the existence of the file and its values by comparing development-run outputs against a stable version. To perform this check, sDRIPS randomly selects five pixel locations (after masking <code>NoData</code> values) from the raster generated by the development run and compares them with the expected raster downloaded from <a href="https://drive.google.com/drive/u/2/folders/17EBofNrHaEikLecqWJLk7NOdaNm0HgVC">Google Drive</a> (based on a stable run of sDRIPS).</p>
+<h3 id="imerg-and-gfs-module-tests">IMERG and GFS Module Tests<a class="headerlink" href="#imerg-and-gfs-module-tests" title="Permanent link">&para;</a></h3>
+<p>For IMERG and GFS, sDRIPS only checks whether the precipitation rasters are generated and can be opened successfully. Raster values are not compared because IMERG data links are frequently updated, which can cause inconsistencies and may lead to broken testing pipeline. The precipitation value may be zero, but the file must exist and open without errors.  </p>
+<h3 id="percolation-and-net-water-requirement-tests">Percolation and Net Water Requirement Tests<a class="headerlink" href="#percolation-and-net-water-requirement-tests" title="Permanent link">&para;</a></h3>
+<p>sDRIPS verifies the percolation and net water requirement modules by comparing the percolation outputs (<code>Percolation_currentweek.csv</code>) and the field statistics CSV (<code>Landsat_Command_Area_Stats.csv</code>). If additional columns exist in the development output compared to the stable output, those columns are ignored. Similarly, any column containing IMERG precipitation data or derived from IMERG is also ignored. The purpose of this test is to confirm that the addition of new modules does not break the stable sDRIPS pipeline.</p>
+<h3 id="extending-the-test-suite">Extending the Test Suite<a class="headerlink" href="#extending-the-test-suite" title="Permanent link">&para;</a></h3>
+<p>Developers can add new tests for additional functionality by extending the <code>sdrips_test.py</code> module, and uploading the expected data output to the <a href="https://drive.google.com/drive/u/2/folders/17EBofNrHaEikLecqWJLk7NOdaNm0HgVC">Google Drive</a>.</p>
+<h2 id="contributing-to-sdrips">Contributing to sDRIPS<a class="headerlink" href="#contributing-to-sdrips" title="Permanent link">&para;</a></h2>
+<p>We welcome contributions to improve sDRIPS — whether it’s fixing bugs, adding new modules, improving documentation, or refining existing workflows. This section outlines the recommended workflow for contributors.</p>
+<p><span class="preparation_step">Step 1: Fork and Clone</span> <br>
+Start by forking the sDRIPS repository and cloning your fork locally:</p>
+<pre><code>git clone https://github.com/UW-SASWE/sDRIPS.git .
+</code></pre>
+<p><span class="preparation_step">Step 2: Create a Feature Branch</span> <br>
+Always create a new branch for your changes to keep development organized:</p>
+<pre><code>git checkout -b feature/my-new-module-in-sDRIPS
+</code></pre>
+<p><span class="preparation_step">Step 3: Development Setup</span> <br>
+Follow the <a href="/en/latest/Development/Developer_Version/#"><strong><em>Developer Installation Guide</em></strong></a> to configure your environment. This ensures you can import and test your changes immediately.</p>
+<p><span class="preparation_step">Step 4: Write Your Code</span> <br></p>
+<ol>
+<li>
+<p>Add new modules under <code>src/sdrips/</code>. Modules should follow <strong>PEP 8</strong> and <strong>PEP 257</strong> guidelines as much as possible.</p>
+</li>
+<li>
+<p>Update or add configuration templates if required</p>
+</li>
+<li>
+<p>Document any new features in the appropriate section in the <code>docs/</code>.</p>
+</li>
+</ol>
+<p><span class="preparation_step">Step 5: Run Tests Locally</span> <br>
+Before submitting a pull request, make sure your changes do not break the existing pipeline.
+Run the sDRIPS test suite:</p>
+<pre><code>python src/sdrips/cli/sdrips_test.py -d ./tests/
+</code></pre>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>Developers adding new functionality should extend the tests in sdrips_test.py to cover their changes.</p>
+</div>
+<p><span class="preparation_step">Step 6: Commit and Push</span> <br>
+Use clear commit messages describing why the change was made:</p>
+<pre><code>git add &lt;changed-or-new-script&gt;
+git commit -m &quot;Adding XXXXX functionality&quot;
+git push origin feature/my-new-module
+</code></pre>
+<p><span class="preparation_step">Step 7: Open a Pull Request</span> <br>
+Go to the GitHub repository and open a Pull Request (PR) from your branch.
+Please describe:</p>
+<ul>
+<li>What the change does</li>
+<li>Why it is needed</li>
+<li>Any new dependencies introduced</li>
+<li>Instructions for testing</li>
+</ul>
+<p><span class="preparation_step">Step 8: Review Process</span> <br>
+Your PR will be reviewed by maintainers. Requested changes by maintainer should be addressed promptly. Once approved, your contribution will be merged into the main branch.</p>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>Congratulations! Your contribution to <strong>sDRIPS</strong> has been successfully submitted and integrated. Thank you for helping improve the project!</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../tutorials/full_guide/cli/" class="btn btn-neutral float-left" title="Command Line Interface"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../Contact/contact/" class="btn btn-neutral float-right" title="Contact">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/UW-SASWE/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../tutorials/full_guide/cli/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../Contact/contact/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="https://www.googletagmanager.com/gtag/js?id=G-5C11Q4TSHT"></script>
+      <script src="../../js/google_analytics.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

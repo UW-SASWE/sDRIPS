@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/Quick_Start/Getting_ready/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Getting Ready - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Getting Ready";
+        var mkdocs_page_input_path = "Quick_Start\\Getting_ready.md";
+        var mkdocs_page_url = "/Quick_Start/Getting_ready/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../images/sDRIPS_Logo/Logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ConceptualModel/">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ComputationalModel/">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Getting Ready</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pps-registration">PPS Registration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#setup-gee">Setup GEE</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary-table">Summary Table</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Installation/">Installation Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Commands</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Commands/cli/">Command Line Interface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Commands/jupyter.md">Jupyter Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/script_config/">Script Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/crop_config/">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/command_area_config/">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/config_links/">Configuration Links File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/secrets/">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Directory/">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Data_Used/">Data Used</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Area Config Files</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guided Example of sDRIPS</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full_guide/cli/">Command Line Interface</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips-sense/">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_ukulima/">sDRIPS-Ukulima</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_tbp/">sDRIPS-TBP</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../Development/RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Development/PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Development/Developer_Version/">Developer Version</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Contact/contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Disclaimer/disclaimer/">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Quick Start</li>
+      <li class="breadcrumb-item active">Getting Ready</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/UW-SASWE/sDRIPS/edit/main/docs/Quick_Start/Getting_ready.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="getting-ready">Getting Ready<a class="headerlink" href="#getting-ready" title="Permanent link">&para;</a></h1>
+<p>This guide covers the two required setups before using sDRIPS:<br />
+1. <strong>PPS (Precipitation Processing System)</strong> - Required for downloading IMERG (Integrated Multi-satellitE Retrievals for GPM) precipitation data. <br />
+2. <strong>Google Earth Engine Account</strong> - for processing and analyzing geospatial datasets.</p>
+<h2 id="pps-registration">PPS Registration<a class="headerlink" href="#pps-registration" title="Permanent link">&para;</a></h2>
+<p>PPS registration is necessary if users plan to utilize IMERG Precipitation data. Registration can be done by following the below steps.</p>
+<p><span id="pps_access"></span>
+<span class="preparation_step">Step 1:</span> <br>
+Click <a href="https://registration.pps.eosdis.nasa.gov/registration/">here</a> to register on PPS platform for IMERG products.  </p>
+<p><span class="preparation_step">Step 2:</span> <br>
+Click on <strong>Register</strong> (highlighted in the screenshot below). <br>
+<img alt="Registration page for IMERG Product" src="../../images/IMERG/imerg_register.jpg" /></p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Fill out the registration form shown below. Please make sure to check <strong>'Near-Realtime Products'</strong> (highlighted in the screenshot below).<br><br />
+<img alt="Registration form for IMERG Product" src="../../images/IMERG/imerg_nrt.jpg" />  </p>
+<p><span class="preparation_step">Step 4:</span> <br>
+Click on Save. You will get a confirmation email and use that to complete the process.</p>
+<p><span class="preparation_step">Step 5:</span> <br>
+Copy and paste the PPS credentials in the secrets.yaml file under <strong>IMERG_Account</strong> section.</p>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>Your PPS account is now ready for IMERG downloads.</p>
+</div>
+<h2 id="setup-gee">Setup GEE<a class="headerlink" href="#setup-gee" title="Permanent link">&para;</a></h2>
+<p>sDRIPS requires access to Google Earth Engine (GEE) for processing satellite data. You can choose between:<br></p>
+<ul>
+<li>
+<p><strong>Standard Account</strong> - suitable for quick tests and manual runs.    </p>
+</li>
+<li>
+<p><strong>Service Account (Recommended)</strong> - better for automation and operational workflows.    </p>
+</li>
+</ul>
+<p><span id="std_acc"></span>
+<span class="choices">Choice 1 : Choose Your Account Type (GEE Standard Account).</span> <br><br>
+<span class="preparation_step">Step 1:</span> <br>
+Go to <a href="https://code.earthengine.google.com/">https://code.earthengine.google.com/</a>.  </p>
+<p><span class="preparation_step">Step 2:</span> <br>
+If you don’t have a Google account, click 'create account', otherwise login with 
+your Google account.  </p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Earth Engine will now request access to your Google account, click 'allow'.  </p>
+<p><span class="preparation_step">Step 4:</span> <br>
+Click the link to go to the registration page, fill out the application and submit.  </p>
+<p><span class="preparation_step">Step 5:</span> <br>
+After you receive your 'Welcome to Google Earth Engine!' email, you will be 
+able to login using your Google account on code.earthengine.google.com  </p>
+<p><span class="preparation_step">Step 6:</span> <br><br />
+Complete the following <strong>tasks</strong> in order. <br>  </p>
+<ul>
+<li><a href="#task1"><strong>Task 1</strong>: Create a Google Cloud Project</a>  </li>
+<li><a href="#task4"><strong>Task 4</strong>: Register the Cloud Project with GEE</a></li>
+</ul>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>Your standard GEE account is ready.  </p>
+</div>
+<p><span class="choices">Choice 2 : Choose Your Account Type (GEE Service Account).</span> <br><br>
+A Google Earth Engine (GEE) Service Account allows sDRIPS to run without requiring manual token renewals — a major advantage when moving from testing to continuous, automated operations. To set this up, you will: <br></p>
+<ol>
+<li>Create a Google Cloud Project (<a href="#task1">Task 1</a>).</li>
+<li>Enable the Earth Engine API for that project (<a href="#task2">Task 2</a>).</li>
+<li>Create and configure the Service Account (<a href="#task3">Task 3</a>).</li>
+<li>Register the Cloud Project with GEE (<a href="#task4">Task 4</a>)</li>
+</ol>
+<p>Following the above tasks ensures your sDRIPS workflows can run reliably without manual authentication interruptions.<br />
+<br>
+<span id="task1"></span>
+<span class="preparation_task">Task 1 : Setting up a google cloud project.</span> <br><br>
+<span class="preparation_step">Step 1:</span> <br>
+Click <a href="https://developers.google.com/earth-engine/cloud/earthengine_cloud_project_setup">here</a> to create a google cloud project.<br></p>
+<p><span class="preparation_step">Step 2:</span> <br>
+Click on 'registration page', highlighted in orange box in the screenshot below.<br><br />
+<img alt="Create cloud project page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj.jpg" /></p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Click on 'Register', highlighted in orange box in the screenshot below.<br><br />
+<img alt="Enter project details page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step3.jpg" /></p>
+<p><span class="preparation_step">Step 4:</span> <br>
+Click on 'Create Project', highlighted in orange box in the screenshot below.<br><br />
+<img alt="Enter project details page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step4.jpg" /></p>
+<p><span class="preparation_step">Step 5:</span> <br>
+Fill out the details on the page and click on 'Create Project'. For e.g, I have filled the project name as sDRIPS-RTD. You can leave the organisation.<br><br />
+<img alt="Enter project details page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step5.jpg" />
+<br></p>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>You just registered the project on GEE Cloud.</p>
+</div>
+<p><span id="task2"></span>
+<span class="preparation_task">Task 2 : Enable Earth Engine API for the cloud project created.</span> <br><br>
+<span class="preparation_step">Step 1:</span> <br>
+Click on the hamburger icon left of the Google Cloud. Highligheted in orange box in the screenshot below.<br>
+<img alt="Enable EE API page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step6.jpg" /></p>
+<p><span class="preparation_step">Step 2:</span> <br>
+Go to APIs &amp; Sevices and click on 'Enabled APIs &amp; Sevices' as shown in the highlighted orange box in the screenshot below.<br>
+<img alt="Enable EE API page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step7.jpg" />  </p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Click on 'Enabled APIs &amp; Sevices' as shown in the highlighted orange box in the screenshot below.<br><br />
+<img alt="Enabling EE API page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step8.jpg" /></p>
+<p><span class="preparation_step">Step 4:</span> <br>
+Type 'Earth Engine' in the search bar as shown in the highlighted orange box in the screenshot below.<br><br />
+<img alt="Enabling EE API page screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step9.jpg" /></p>
+<p><span class="preparation_step">Step 5:</span> <br>
+Click on 'Google Earth Engine API' and click on 'Enable'.<br></p>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>You just enabled Earth Engine API for your registered cloud project.</p>
+</div>
+<p><span id="task3"></span>
+<span class="preparation_task">Task 3 : Setting up a service account.</span> <br><br>
+<span class="preparation_step">Step 1:</span> <br>
+For your registered cloud project click on the hamburger icon on the left of 'Google Cloud', select 'IAM &amp; Admin' and click on 'Service Accounts' as shown in the highlighted orange box in the screenshot below.<br><br />
+<img alt="Cloud project menu list screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step10.jpg" /></p>
+<p><span class="preparation_step">Step 2:</span> <br>
+Click on 'CREATE SERVICE ACCOUNT', make sure you have selected right google cloud project.<br><br />
+<img alt="creating service account button screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step11.jpg" /></p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Fill out the details in 'Service account name' and Click on 'CREATE AND CONTINUE'.<br>    <br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step12.jpg" /></p>
+<p><span class="preparation_step">Step 4:</span> <br>
+In Permissions, under select role searcg for 'Earth Engine', and click on 'Earth Engine Resource Admin' for first role and then choose 'Service Usage Consumer' as another role. After selecting both roles, click on 'Continue'. And then click on 'Done'.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step13.jpg" /></p>
+<p><span class="preparation_step">Step 5:</span> <br>
+Click on 'Actions' and then on 'Manage Keys' for the service account you created.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step14.jpg" /></p>
+<p><span class="preparation_step">Step 6:</span> <br>
+Click on 'Add KEY' and then on 'Create new key' and select JSON, and save it in your project directory on local computer.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step15.jpg" /></p>
+<p><span id="task4"></span>
+<span class="preparation_task">Task 4 : Register the Google Cloud project for Earth Engine use.</span> <br><br>
+<span class="preparation_step">Step 1:</span> <br>
+Click <a href="https://developers.google.com/earth-engine">here</a> to register the created google cloud project to use earth engine API and sign-in using the user ID used to create cloud project, as shown in the orange highlighted box in the screen shot below.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step16.jpg" /></p>
+<p><span class="preparation_step">Step 2:</span> <br>
+Click on 'Register" as shown in the orange highlighted box in the screenshot below. Make sure that you have selected the correct project (for eg here it should be sDRIP-RTD), select the project through the purple highlighted box. Then click on 'Register a Noncommercial or Commercial Cloud project'.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step17.jpg" />  </p>
+<p><span class="preparation_step">Step 3:</span> <br>
+Check if you are eligible for non-commercial use by clicking on 'Get started' as shown in the orange highlighted box in the screenshot below.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step18.jpg" /></p>
+<p><span class="preparation_step">Step 4:</span> <br>
+Select either 'Public or Private instituition' or 'Nonprofit' as shown in the orange highlighted box in the screenshot below. After filling further details such as your instituition name, you should be eligible for non-commercial use of the GEE.<br><br />
+<img alt="Service Account description screenshot" src="../../images/GEE_Service_Acc/GEE_Step_register_proj_step19.jpg" /></p>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>You just registered your cloud project (for service account) on GEE, and now you can use it for free.</p>
+</div>
+<h2 id="summary-table">Summary Table<a class="headerlink" href="#summary-table" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Steps</th>
+<th>PPS</th>
+<th>GEE Standard</th>
+<th>GEE Service Account</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><a href="#pps_access">Request PPS access</a></td>
+<td><a href="#std_acc">Create GEE standard account</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td>—</td>
+<td><a href="#task3">Create Service Account</a></td>
+<td><a href="#task1">Create Google Cloud Project</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>—</td>
+<td><a href="#task4">Register Cloud Project for GEE</a></td>
+<td><a href="#task1">Enable Earth Engine API</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>—</td>
+<td>—</td>
+<td><a href="#task3">Create Service Account</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>—</td>
+<td>—</td>
+<td><a href="#task4">Register Cloud Project for GEE</a></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../Model/ComputationalModel/" class="btn btn-neutral float-left" title="Computational Model"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Installation/" class="btn btn-neutral float-right" title="Installation Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/UW-SASWE/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../Model/ComputationalModel/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Installation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="https://www.googletagmanager.com/gtag/js?id=G-5C11Q4TSHT"></script>
+      <script src="../../js/google_analytics.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/Configuration/script_config/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Script Configuration File - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Script Configuration File";
+        var mkdocs_page_input_path = "Configuration\\script_config.md";
+        var mkdocs_page_url = "/Configuration/script_config/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../images/sDRIPS_Logo/Logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ConceptualModel/">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ComputationalModel/">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Getting_ready/">Getting Ready</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Installation/">Installation Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Commands</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Commands/cli/">Command Line Interface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Commands/jupyter.md">Jupyter Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Script Configuration File</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#high-level-module-controls">High-level module controls</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#command-area-water-allotment">Command Area Water Allotment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#canal-water-allotment">Canal Water Allotment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#in-situ-sensor-configuration">In-Situ Sensor Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#weather-station-configuration">Weather Station Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-a-new-high-level-control">Adding a New High-Level Control</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#low-level-module-controls">Low-level module controls</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../crop_config/">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../command_area_config/">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../config_links/">Configuration Links File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../secrets/">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Directory/">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Data_Used/">Data Used</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Area Config Files</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guided Example of sDRIPS</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full_guide/cli/">Command Line Interface</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips-sense/">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_ukulima/">sDRIPS-Ukulima</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_tbp/">sDRIPS-TBP</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../Development/RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Development/PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Development/Developer_Version/">Developer Version</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Contact/contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Disclaimer/disclaimer/">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration</li>
+      <li class="breadcrumb-item active">Script Configuration File</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/UW-SASWE/sDRIPS/edit/main/docs/Configuration/script_config.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sdrips-configuration-file">sDRIPS Configuration File<a class="headerlink" href="#sdrips-configuration-file" title="Permanent link">&para;</a></h1>
+<p>The <strong>sDRIPS configuration file</strong> (<code>sdrips_config.yaml</code>) serves as the <strong>primary control interface</strong> for running the model. It provides a structured mechanism for tailoring simulations to user needs and computational resources.  </p>
+<p>Configuration parameters are divided into two major categories:  </p>
+<ol>
+<li>
+<p><strong>High-level module controls</strong>  </p>
+<ul>
+<li>Define the overall <strong>functional mode</strong> of sDRIPS (e.g., generating advisories for farmers or canal operators).  </li>
+<li>Specify whether to integrate <strong>in-situ sensor data</strong>, <strong>local weather station inputs</strong>, or rely exclusively on <strong>satellite and numerical weather model estimates</strong> without bias correction.  </li>
+</ul>
+</li>
+<li>
+<p><strong>Low-level module controls</strong>  </p>
+<ul>
+<li>Configure common parameters such as the <strong>running period</strong>, <strong>boundary polygon location</strong>, <strong>project directory paths</strong>, <strong>data-cleaning options</strong>, etc.  </li>
+</ul>
+</li>
+</ol>
+<p>Together, these controls determine the <strong>scope, inputs, and computational logic</strong> of a given sDRIPS run.  </p>
+<h2 id="high-level-module-controls">High-level module controls<a class="headerlink" href="#high-level-module-controls" title="Permanent link">&para;</a></h2>
+<p>High-level controls govern the <em>core objectives</em> of a model run. A high-level control in sDRIPS is defined as a configuration switch that activates a <strong>distinct analytical capability or output dimension</strong> beyond the core water requirement estimation workflow.<br />
+Unlike low-level controls (which specify run parameters, inputs, file structures and output format), high-level controls represent <strong>conceptual modules</strong> that extend the scientific scope of sDRIPS.  </p>
+<p>Examples:<br />
+- <strong>New considerations</strong> → Incorporating additional physical processes (e.g., deep groundwater–surface water interaction).<br />
+- <strong>New outputs</strong> → Generating novel advisory products (e.g., crop yield forecasts, fertilizer optimization metrics).  </p>
+<p>In essence, a high-level control introduces a <strong>new modeling domain, process pathway, or decision-support output</strong> that meaningfully expands the functionality of sDRIPS. </p>
+<p>Users can activate or deactivate modules to suit specific applications such as:  </p>
+<ul>
+<li><strong>Command area advisories</strong> → estimating water requirements at the irrigation command level.  </li>
+<li><strong>Canal water allocation</strong> → distributing water resources across canal networks.  </li>
+<li><strong>Data integration modes</strong> → enabling or disabling in-situ sensor and weather station data to improve accuracy.  </li>
+</ul>
+<p>Below is a representative snippet from the configuration file:  </p>
+<pre><code class="language-yaml"># -------------------------------
+# HIGH-LEVEL MODULE CONTROLS
+# -------------------------------
+Command_Area_Net_Water_Requirement: true   # Advisory: water requirement per command area
+Canal_water_allotment: false               # Advisory: water allotment per canal (primary → tertiary)
+Insitu_Sensor_integration: false           # Integrate in-situ sensor data for bias correction
+Weather_station_integration: false         # Integrate local weather station data for improved accuracy
+</code></pre>
+<h3 id="command-area-water-allotment">Command Area Water Allotment<a class="headerlink" href="#command-area-water-allotment" title="Permanent link">&para;</a></h3>
+<p>This control is designed to generate <strong>irrigation advisories at the command area level</strong> (i.e., farmer-focused outputs).<br />
+When enabled, sDRIPS estimates the <strong>net crop water requirement</strong> within each defined command area and translates it into actionable recommendations for farmers.  </p>
+<ul>
+<li>If the user wishes to incorporate <strong>in-situ sensor data</strong> or <strong>local weather station observations</strong>, those features should be activated in parallel while keeping this control enabled.  </li>
+<li>This functionality is most useful for <strong>field-scale water management and scheduling decisions</strong>.  </li>
+</ul>
+<h3 id="canal-water-allotment">Canal Water Allotment<a class="headerlink" href="#canal-water-allotment" title="Permanent link">&para;</a></h3>
+<p>This control generates <strong>advisories for canal operators and irrigation managers</strong>.<br />
+When enabled, sDRIPS:  </p>
+<ol>
+<li>Estimates the <strong>net water requirement</strong> for all fields served by a canal command area.  </li>
+<li>Aggregates demand across the irrigation hierarchy:  <ul>
+<li><strong>Tertiary canals</strong> (child nodes) →  <strong>Secondary canals</strong> →  <strong>Primary canals</strong> (root canal).  </li>
+</ul>
+</li>
+</ol>
+<p>This hierarchical aggregation ensures that water requirements are properly scaled from field-level needs to the <strong>canal network level</strong>, supporting equitable and efficient distribution.  </p>
+<ul>
+<li>In-situ or weather station integration can be activated alongside this featurefor improved accuracy.  </li>
+<li>This module is particularly relevant for <strong>system-level water allocation and canal scheduling</strong>.  </li>
+</ul>
+<h3 id="in-situ-sensor-configuration">In-Situ Sensor Configuration<a class="headerlink" href="#in-situ-sensor-configuration" title="Permanent link">&para;</a></h3>
+<p>Activating this control enables the incorporation of <strong>locally deployed sensors</strong> (e.g., air temperature, wind speed, soil moisture) into the analysis.  </p>
+<ul>
+<li>Sensor data are used to <strong>bias-correct satellite and model inputs</strong>, thereby improving the fidelity of water requirement estimates.  </li>
+<li>This feature is intended for applications where <strong>ground validation data are available</strong>.  </li>
+</ul>
+<h3 id="weather-station-configuration">Weather Station Configuration<a class="headerlink" href="#weather-station-configuration" title="Permanent link">&para;</a></h3>
+<p>This control incorporates <strong>local meteorological station data</strong> (e.g., precipitation, air temperature, wind speed, atmospheric pressure) into sDRIPS.  </p>
+<ul>
+<li>Similar to in-situ sensors, weather station inputs enhance <strong>local accuracy</strong> by replacing or correcting global model estimates.  </li>
+<li>This module is particularly valuable in regions with <strong>dense weather station coverage</strong>.  </li>
+</ul>
+<h3 id="adding-a-new-high-level-control">Adding a New High-Level Control<a class="headerlink" href="#adding-a-new-high-level-control" title="Permanent link">&para;</a></h3>
+<p>To extend the capabilities of sDRIPS, new high-level controls can be defined using the <a href="/en/latest/Development/Developer_Version/"><strong><em>Developer version</em></strong></a>.  </p>
+<p>A <strong>high-level control</strong> refers to a feature that introduces a <strong>new analytical capability or output dimension</strong> to the system (e.g., crop yield prediction, fertilizer application effects, groundwater–surface water interactions).  </p>
+<p>Adding a new control involves:<br />
+1. Declaring the control in <code>sdrips_config.yaml</code> with a <strong>Boolean toggle</strong> (<code>true</code> / <code>false</code>).<br />
+2. Implementing the corresponding logic in the source code so that the new control activates relevant computations or outputs.<br />
+3. Updating documentation to reflect the new functionality.  </p>
+<h2 id="low-level-module-controls">Low-level module controls<a class="headerlink" href="#low-level-module-controls" title="Permanent link">&para;</a></h2>
+<p>Low-level controls govern the <strong>operational details</strong> of an sDRIPS run. These parameters are common across high-level modules and provide essential contextual inputs:  </p>
+<ul>
+<li><strong>Boundary definition</strong> → Path to the region of interest boundary file (Shapefile or GeoJSON), field name of interest, and unique identifier.  </li>
+<li><strong>Running period</strong> → Start and end dates for the run.  </li>
+<li><strong>Project structure</strong> → Directory paths, links to supplementary configuration files, and output storage locations.  </li>
+<li><strong>Precipitation configuration</strong> → Specification of how precipitation should be incorporated into the analysis (a parameter shared across all high-level modules).  </li>
+<li><strong>Data handling options</strong> → Directory-cleaning settings, overwrite rules, and log management.  </li>
+<li><strong>Output options</strong> → Outputs can include PNGs (for practitioners), CSVs (for researchers and practitioners), and rasters (for advanced analysis).</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../Commands/cli/" class="btn btn-neutral float-left" title="Command Line Interface"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../crop_config/" class="btn btn-neutral float-right" title="Crop Configuration File">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/UW-SASWE/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../Commands/cli/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../crop_config/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="https://www.googletagmanager.com/gtag/js?id=G-5C11Q4TSHT"></script>
+      <script src="../../js/google_analytics.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

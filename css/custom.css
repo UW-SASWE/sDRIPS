@@ -10,11 +10,12 @@ body{
 div.admonition.success_note > .admonition-title:before {
   font-family: "Font Awesome 5 Free";
   content:  "✔️";
-  margin-right: 10px;
+  font-size: 22px;
+  font-weight:800;
+  margin-right: 2px;
   display: inline-block;
   padding-right: 3px;
   vertical-align: middle;
-  width:12px;
   color: transparent;  
   text-shadow: 0 0 0 rgb(1, 117, 94);
 }
@@ -61,7 +62,7 @@ div.admonition.tip_note > .admonition-title:before {
   display: inline-block;
   padding-right: 3px;
   vertical-align: middle;
-  color: transparent;  
+  /* color: transparent;   */
   text-shadow: 0 0 0 rgb(103, 63, 202);
 }
 
@@ -75,6 +76,20 @@ div.admonition.lightning_note > .admonition-title:before {
   padding-right: 3px;
   vertical-align: middle;
   color: transparent;  
+  text-shadow: 0 0 0 rgb(103, 63, 202);
+}
+
+
+div.admonition.congrats_note > .admonition-title:before {
+  font-family: "Font Awesome 5 Free";
+  content:  "🎊";
+  font-size: 22px;
+  font-weight:800;
+  margin-right: 2px;
+  display: inline-block;
+  padding-right: 3px;
+  vertical-align: middle;
+  /* color: transparent;   */
   text-shadow: 0 0 0 rgb(103, 63, 202);
 }
 
@@ -95,6 +110,16 @@ div.admonition.lightning_note > .admonition-title{
 
 div.admonition.lightning_note{
   background-color: rgb(242,237,255);
+  /* border:1px solid rgb(38, 121, 15,1.0); */
+}
+
+div.admonition.congrats_note > .admonition-title{
+  color: white;
+  background-color: #1B7979;
+}
+
+div.admonition.congrats_note{
+  background-color: #86c9c9;
   /* border:1px solid rgb(38, 121, 15,1.0); */
 }
 
@@ -140,7 +165,7 @@ h6.parameter_heading>em>code{
 span.preparation_step{
   font-size: 18px;
   font-weight: 700;
-  background-color:rgb(220, 250, 202);
+  /* background-color:rgb(220, 250, 202); */
   color:rgb(99, 13, 249);
 }
 
@@ -148,9 +173,14 @@ span.preparation_task{
   font-size: 19px;
   font-weight: 800;
   /* background-color:rgb(220, 250, 202); */
-  color:rgb(249, 162, 13);
+  color:#58bc08;
 }
-
+span.choices{
+  font-size: 19px;
+  font-weight: 800;
+  /* background-color:rgb(220, 250, 202); */
+  color:#a2cffe;
+}
 span.step_property{
   font-size: 17px;
   font-weight: 500;
@@ -183,4 +213,16 @@ p.folder_file_description{
 
 ul{
   margin-left: 20px;
+}
+
+.wy-side-nav-search > a img.logo {
+  width: 60% !important;    /* keep aspect ratio */
+}
+.wy-side-nav-search .wy-dropdown > a img.logo {
+  width: 40% !important;    /* keep aspect ratio */
+}
+
+
+.wy-side-nav-search {
+    background-color: #5ea9e2  !important;
 }

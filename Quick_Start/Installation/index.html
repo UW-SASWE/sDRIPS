@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/Quick_Start/Installation/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Installation Guide - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Installation Guide";
+        var mkdocs_page_input_path = "Quick_Start\\Installation.md";
+        var mkdocs_page_url = "/Quick_Start/Installation/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../images/sDRIPS_Logo/Logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ConceptualModel/">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ComputationalModel/">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Getting_ready/">Getting Ready</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Commands</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Commands/cli/">Command Line Interface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Commands/jupyter.md">Jupyter Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/script_config/">Script Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/crop_config/">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/command_area_config/">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/config_links/">Configuration Links File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/secrets/">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Directory/">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Directory/Data_Used/">Data Used</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Area Config Files</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guided Example of sDRIPS</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full_guide/cli/">Command Line Interface</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips-sense/">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_ukulima/">sDRIPS-Ukulima</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_tbp/">sDRIPS-TBP</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../Development/RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Development/PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Development/Developer_Version/">Developer Version</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Contact/contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Disclaimer/disclaimer/">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Quick Start</li>
+      <li class="breadcrumb-item active">Installation Guide</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/UW-SASWE/sDRIPS/edit/main/docs/Quick_Start/Installation.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Permanent link">&para;</a></h1>
+<p>To configure sDRIPS for your area of interest, follow the steps in the <a href="#installation"><strong><em>Installation</em></strong></a> section. sDRIPS is platform-independent and can be installed on <strong>Windows, Linux, or macOS</strong>. Its modular architecture offers flexibility through configuration files.</p>
+<ul>
+<li>Use the Standard Version for most applications. This version contains the complete workflow and is recommended for general use.  </li>
+<li>Use the Developer Version if you plan to extend sDRIPS by adding custom modules or adapting it for research applications by tweaking the source code. Detailed instructions for the developer version can be found in <a href="/en/latest/Developer_Version/Developer_Version"><strong><em>Developer Verison</em></strong></a>.  </li>
+</ul>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
+<p>To setup the sDRIPS, following things are required:  </p>
+<ul>
+<li><strong>Anaconda/Miniconda</strong> - To install the appropriate distribution for your operating system, click <a href="https://www.anaconda.com/download/success">here</a>.  </li>
+<li><strong>Credentials for Google Earth Engine</strong> - Required for processing satellite imagery. If you do not have credentials, follow the <a href="/en/latest/Quick_Start/Getting_ready/#setup-gee"><strong><em>Getting Ready</em></strong></a>.  </li>
+<li><strong>Credentials to download IMERG-GPM precipitation data</strong> - Required for downloading precipitation data via the NASA Precipitation Processing System (PPS). Instructions are provided in the <a href="/en/latest/Quick_Start/Getting_ready/#pps-registration"><strong><em>Getting Ready</em></strong></a> guide.  </li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p><span class="preparation_step">Step 1:</span> <br>
+Create an empty project directory.</p>
+<pre><code>mkdir ./sdrips_project
+</code></pre>
+<p><span class="preparation_step">Step 2:</span> <br>
+Create a conda environment</p>
+<pre><code>conda create -n sdrips_env python=3.11 pip
+</code></pre>
+<p><span class="preparation_step">Step 3:</span> <br>
+Activate your virtual environment using conda.</p>
+<pre><code>conda activate sdrips_env
+</code></pre>
+<p><span class="preparation_step">Step 4:</span> <br>
+Install sDRIPS using either <a href="https://pypi.org/project/sdrips">pip</a> (currently recommended) or mamba (under development).<br />
+Using <a href="https://pypi.org/project/sdrips">pip</a>:</p>
+<pre><code>pip install sdrips
+</code></pre>
+<p>Using mamba (under development):</p>
+<pre><code>conda install mamba -c conda-forge
+mamba install sdrips -c conda-forge
+</code></pre>
+<div class="admonition success_note">
+<p class="admonition-title">Success</p>
+<p>sDRIPS has been successfully installed. The next step is initialization, which is required before using sDRIPS. </p>
+</div>
+<h2 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h2>
+<p>Every new sDRIPS project must be initialized. This step generates the configuration files required to run workflows.</p>
+<p>Run the following command in your project directory (e.g., sdrips_project):</p>
+<pre><code>sdrips init -d ./sdrips_project
+</code></pre>
+<p>Initialization creates four configuration files in the <code>config_files/</code> directory. These files form the core of sDRIPS, storing user inputs and controlling workflow execution. At this stage, add your credential details (IMERG-GPM PPS account and Google Earth Engine service account, if applicable) to the <code>secrets.yaml</code> file.</p>
+<div class="admonition warning_note">
+<p class="admonition-title">Warning</p>
+<p>You only need to initialize the project <strong>once per directory</strong>. Re-running initialization resets configuration files to their default values and may overwrite custom settings. To prevent accidental data loss, sDRIPS will <strong>not overwrite existing configuration files</strong> unless you explicitly use the <code>--force</code> option.</p>
+</div>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<p>After installation, you can verify whether sDRIPS has been set up correctly. Running this test suite not only ensures a successful installation but also helps detect any issues in the pipeline when new functionality is introduced.</p>
+<p>sDRIPS supports two testing modes for advisory generation:</p>
+<ol>
+<li>
+<p><strong>Satellite + weather model data</strong> – Runs the functional logic using satellite datasets in combination with numerical weather model data.</p>
+</li>
+<li>
+<p><strong>Satellite + weather model data (bias-corrected with in-situ sensors)</strong> – Extends the first mode by integrating in-situ observations to bias-correct the numerical model data before estimating evapotranspiration and generating advisories.</p>
+</li>
+</ol>
+<p>For more in-depth information on testing for developers, refer to the <a href="/en/latest/Development/Developer_Version/#testing"><strong><em>Developer Version</em></strong></a>.  </p>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>Make sure to provide your credentials in the <code>secrets.yaml</code> file before running tests.</p>
+</div>
+<p>Running Tests</p>
+<pre><code>sdrips test -d ./tests
+</code></pre>
+<p>or </p>
+<pre><code>sdrips test -d ./tests -s
+</code></pre>
+<p>Expected Output  </p>
+<p>A successful installation produces output similar to the following:</p>
+<pre><code class="language-yaml">Tests (3 Tests) for ET based raster outputs completed successfully.
+
+Checks (2 Checks) for precipitation raster outputs completed successfully.
+
+Tests (2 Tests) for CSV outputs completed successfully.
+
+All tests passed!
+</code></pre>
+<p>or</p>
+<pre><code class="language-yaml">Tests (3 Tests) for sensor corrected ET based raster outputs completed successfully.
+
+Checks (2 Checks) for precipitation raster outputs completed successfully.
+
+Tests (2 Tests) for sensor corrected CSV outputs completed successfully.
+
+All tests passed!
+</code></pre>
+<div class="admonition tip_note">
+<p class="admonition-title">Tip</p>
+<p>Need help with the CLI? Run <code>sdrips -h</code> or <code>sdrips --help</code> to see all available options. Check <a href="/en/latest/Commands/cli/"><strong><em>Commands</em></strong></a> section for more details.</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Getting_ready/" class="btn btn-neutral float-left" title="Getting Ready"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../Commands/cli/" class="btn btn-neutral float-right" title="Command Line Interface">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/UW-SASWE/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Getting_ready/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../Commands/cli/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="https://www.googletagmanager.com/gtag/js?id=G-5C11Q4TSHT"></script>
+      <script src="../../js/google_analytics.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

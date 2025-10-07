@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Shahzaib Khan" /><link rel="canonical" href="https://sdrips.readthedocs.io/Directory/Data_Used/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Data Used - sDRIPS Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/custom.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Data Used";
+        var mkdocs_page_input_path = "Directory\\Data_Used.md";
+        var mkdocs_page_url = "/Directory/Data_Used/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../images/sDRIPS_Logo/Logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">sDRIPS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Motivation/motivation/">Motivation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ConceptualModel/">Conceptual Model</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Model/ComputationalModel/">Computational Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Quick Start</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Getting_ready/">Getting Ready</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Quick_Start/Installation/">Installation Guide</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Commands</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Commands/cli/">Command Line Interface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Commands/jupyter.md">Jupyter Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/script_config/">Script Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/crop_config/">Crop Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/command_area_config/">Command Area Configuration File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/config_links/">Configuration Links File</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Configuration/secrets/">Secrets File</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data Description</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Directory/">Directory Structure</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Data Used</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#table-1-minimal-data-and-credentials-required-to-run-sdrips">Table 1. Minimal data and credentials required to run sDRIPS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#table-2-global-datasets-integrated-into-sdrips">Table 2. Global datasets integrated into sDRIPS</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Areas (Optional)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/cmd_area_creation/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Command Area Config Files</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/cli/">Command Line Interface</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/config_files/Creating_CMD_Config/">Notebook</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Guided Example of sDRIPS</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/full_guide/cli/">Command Line Interface</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Application</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips-sense/">sDRIPS-Sense</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_ukulima/">sDRIPS-Ukulima</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://depts.washington.edu/saswe/sdrips_tbp/">sDRIPS-TBP</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../../Development/RecentAdjustments.md">Recent Adjustments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../../Development/PatchNotes.md">Patch Notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Development/Developer_Version/">Developer Version</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contact</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Contact/contact/">Contact</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Disclaimer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../Disclaimer/disclaimer/">Disclaimer</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">sDRIPS Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Data Description</li>
+      <li class="breadcrumb-item active">Data Used</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/UW-SASWE/sDRIPS/edit/main/docs/Directory/Data_Used.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="data-used">Data Used<a class="headerlink" href="#data-used" title="Permanent link">&para;</a></h1>
+<p>The design of <strong>sDRIPS</strong> emphasizes <em>minimal user-side data requirements</em> while leveraging cloud-hosted datasets to ensure scalability and global applicability.  </p>
+<p>To execute sDRIPS for a given region of interest (ROI), users must provide only two essential inputs:  </p>
+<ol>
+<li>A <strong>boundary polygon file</strong> (e.g., Shapefile or GeoJSON) that defines the spatial extent of the analysis.  </li>
+<li>The <strong>operational mode</strong> in which sDRIPS should run.  </li>
+</ol>
+<p>Beyond these minimal requirements, sDRIPS automatically integrates multiple <strong>satellite remote sensing</strong> and <strong>model-based datasets</strong> via <a href="/en/latest/Quick_Start/Getting_ready/#setup-gee">Google Earth Engine (GEE)</a>, including:  </p>
+<ul>
+<li><strong>Satellite imagery</strong> (e.g., Landsat, Sentinel)  </li>
+<li><strong>Precipitation estimates</strong> (NASA IMERG)  </li>
+<li><strong>Meteorological inputs</strong> (NOAA GFS)  </li>
+</ul>
+<p>Where available, <strong>in situ measurements</strong> (e.g., local weather station or sensor data) can supplement or replace global datasets. This adaptive design allows sDRIPS to operate seamlessly across varying levels of data availability, from global-scale applications to local field-level analysis.  </p>
+<ul>
+<li><strong>Table 1</strong> (adapted from <em>Khan et al., (2025)</em>) summarizes the minimal data and credentials required to run sDRIPS.  </li>
+<li><strong>Table 2</strong> (adapted from <em>Khan and Hossain, (2025)</em>) outlines the global datasets integrated into sDRIPS for estimation and analysis. </li>
+</ul>
+<h3 id="table-1-minimal-data-and-credentials-required-to-run-sdrips">Table 1. Minimal data and credentials required to run sDRIPS<a class="headerlink" href="#table-1-minimal-data-and-credentials-required-to-run-sdrips" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><strong>Sr. No.</strong></th>
+<th><strong>Requirement</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Google Earth Engine (GEE) Account</td>
+<td>Access to cloud computing power and hosted satellite datasets</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Precipitation Processing System (PPS) Account</td>
+<td>Download NASA IMERG precipitation data</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Boundary Polygon (Shapefile / GeoJSON)</td>
+<td>Defines the spatial extent of the analysis</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Crop Type and Planting Date</td>
+<td>Provides crop-specific information needed for accurate ET estimation</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Sensor or Weather Station Data (optional)</td>
+<td>Improves estimation of net water requirement; required only if in-situ data are to be used</td>
+</tr>
+</tbody>
+</table>
+<h3 id="table-2-global-datasets-integrated-into-sdrips">Table 2. Global datasets integrated into sDRIPS<a class="headerlink" href="#table-2-global-datasets-integrated-into-sdrips" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><strong>Dataset</strong></th>
+<th><strong>Dataset ID on GEE</strong></th>
+<th><strong>Band Name / Derived Products</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Spatial Resolution</strong></th>
+<th><strong>Temporal Resolution</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Global Forecasting System (GFS)</td>
+<td>NOAA/GFS0P25</td>
+<td>temperature_2m_above_ground</td>
+<td>Air Temperature</td>
+<td>25 km</td>
+<td>6 hours</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>u_component_of_wind_10m_above_ground</td>
+<td>Wind Speed (u component)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>u_component_of_wind_10m_above_ground</td>
+<td>Wind Speed (v component)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>specific_humidity_2m_above_ground</td>
+<td>Specific Humidity</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>----</td>
+<td>----</td>
+<td>Pressure (Estimated using Hypsometric Equation)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>GEE and NOAA</td>
+<td>total_precipitation_surface</td>
+<td>168-hour Precipitation</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Landsat 8 and Landsat 9 satellite</td>
+<td>LANDSAT/LC08/C02/T1_TOA <br> LANDSAT/LC09/C02/T1_TOA</td>
+<td>B2</td>
+<td>Blue</td>
+<td>30 m</td>
+<td>16 days individual, 8 days combined</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>B4</td>
+<td>Red</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>B5</td>
+<td>NIR</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>B6</td>
+<td>Shortwave IR</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>B10</td>
+<td>Low Gain Thermal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>B11</td>
+<td>High Gain Thermal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Sentinel 1 satellite</td>
+<td>COPERNICUS/S1_GRD</td>
+<td>VV</td>
+<td>Single co-polarization, vertical transmit/receive</td>
+<td>10 m</td>
+<td>10 days</td>
+</tr>
+<tr>
+<td>Shuttle Radar Terrain Mapping (SRTM)</td>
+<td>USGS/SRTMGL1_003</td>
+<td>---</td>
+<td>Digital Elevation Map</td>
+<td>30 m</td>
+<td>---</td>
+</tr>
+<tr>
+<td>Global Land Cover Classification</td>
+<td>COPERNICUS/Landcover/100m/Proba-V-C3/Global</td>
+<td>discrete_classification</td>
+<td>Land Use Land Cover</td>
+<td>100 m</td>
+<td>---</td>
+</tr>
+<tr>
+<td>IMERG GPM</td>
+<td>---</td>
+<td>---</td>
+<td>Precipitation</td>
+<td>10 km</td>
+<td>Around 4 hours</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Directory/" class="btn btn-neutral float-left" title="Directory Structure"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../tutorials/cmd_area_creation/cli/" class="btn btn-neutral float-right" title="Command Line Interface">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Developed by <a href="https://shahzaib1007.github.io/">Shahzaib Khan</a> <br> Copyright &copy; 2025, <a href="https://saswe.net/">University of Washington SASWE Research Group</a></p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/UW-SASWE/sDRIPS" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Directory/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../tutorials/cmd_area_creation/cli/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="https://www.googletagmanager.com/gtag/js?id=G-5C11Q4TSHT"></script>
+      <script src="../../js/google_analytics.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

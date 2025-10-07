@@ -2,30 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://sdrips.readthedocs.io/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Applications/sDRIPS_Ukulima/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Commands/cli/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Commands/notebook/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Configuration/command_area_config/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Configuration/config_links/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Configuration/crop_config/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Configuration/script_config/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Configuration/secrets/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Contact/contact/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Development/Developer_Version/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Directory/Data_Used/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Directory/Directory/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Disclaimer/disclaimer/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Model/ComputationalModel/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Model/ConceptualModel/</loc>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/Motivation/motivation/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Quick_Start/Getting_ready/</loc>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/Quick_Start/Installation/</loc>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/api/sdrips/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/tutorials/cmd_area_creation/Creating_CMD_Config/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/tutorials/cmd_area_creation/cli/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/tutorials/config_files/Creating_CMD_Config/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
     </url>
     <url>
          <loc>https://sdrips.readthedocs.io/tutorials/config_files/cli/</loc>
-         <lastmod>2025-08-06</lastmod>
+         <lastmod>2025-10-07</lastmod>
+    </url>
+    <url>
+         <loc>https://sdrips.readthedocs.io/tutorials/full_guide/cli/</loc>
+         <lastmod>2025-10-07</lastmod>
     </url>
 </urlset>
