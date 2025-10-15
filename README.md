@@ -15,9 +15,9 @@ Detailed guide with step-by-step tutorial on sDRIPS can be found on ReadTheDocs 
 
 ### Package Stats
 
-| Name | Downloads | Version | Platforms | Documentation | Release Date | OS Compatibility |
-|------|------------|---------|-----------|----------------|--------------|----------------|
-| [sDRIPS](https://pypi.org/project/sdrips/) | ![Pepy Total Downloads](https://img.shields.io/pepy/dt/sdrips) | [![PyPI](https://img.shields.io/pypi/v/sdrips.svg)](https://pypi.org/project/sdrips/) | ![Python Version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FUW-SASWE%2FsDRIPS%2Frefs%2Fheads%2Fmain%2Fpyproject.toml) | [![Documentation](https://img.shields.io/readthedocs/sdrips)](https://sdrips.readthedocs.io/en/latest/) | ![Release Date](https://img.shields.io/github/release-date/UW-SASWE/sDRIPS) | ![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue) |
+| Name | Downloads | Version | Platforms | Documentation | Release Date | OS Compatibility | License|
+|------|------------|---------|-----------|----------------|--------------|----------------|--------|
+| [sDRIPS](https://pypi.org/project/sdrips/) | ![Pepy Total Downloads](https://img.shields.io/pepy/dt/sdrips) | [![PyPI](https://img.shields.io/pypi/v/sdrips.svg)](https://pypi.org/project/sdrips/) | ![Python Version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FUW-SASWE%2FsDRIPS%2Frefs%2Fheads%2Fmain%2Fpyproject.toml) | [![Documentation](https://img.shields.io/readthedocs/sdrips)](https://sdrips.readthedocs.io/en/latest/) | ![Release Date](https://img.shields.io/github/release-date/UW-SASWE/sDRIPS) | ![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue) | ![GitHub License](https://img.shields.io/github/license/UW-SASWE/sDRIPS) |
 
 
 ### How to Cite
