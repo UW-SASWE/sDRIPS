@@ -24,5 +24,5 @@ Detailed guide with step-by-step tutorial on sDRIPS can be found on ReadTheDocs 
 <div style="text-align: justify;">
 
 - Khan, S; Hossain, F.(2025). sDRIPS: A Cloud-Based, Open-Source Python Package for Satellite-Informed Surface Water Irrigation Optimization, <i>Digital Water.</i>  
-- Khan, S; Hossain, F.; Islam, K.; Ahamed, M.(2025). Satellite Data Rendered Irrigation using Penman-Monteith and SEBAL - sDRIPS for Surface Water Irrigation Optimization, <i>Hydrology and Earth System Sciences (HESS).</i>
+- Khan, S; Hossain, F.; Islam, K.; Ahamed, M.(2025). Satellite Data Rendered Irrigation using Penman-Monteith and SEBAL - sDRIPS for Surface Water Irrigation Optimization, <i>Hydrology and Earth System Sciences (HESS). Preprint - [https://doi.org/10.5194/egusphere-2025-4574](https://doi.org/10.5194/egusphere-2025-4574)</i>
 </div>
