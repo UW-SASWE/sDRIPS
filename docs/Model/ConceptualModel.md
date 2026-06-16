@@ -74,17 +74,52 @@ The SEBAL-based evapotranspiration (SEBAL ET) serves as a proxy for the **actual
 
 <span id="percolation"></span>
 ## Percolation
-To account for percolation, Sentinel-1 Synthetic Aperture Radar (SAR) data available on Google Earth Engine (GEE) is utilized. Sentinel-1 C-band (5 cm wavelength) data has been extensively used for soil moisture estimation and provides reliable results up to ~100 mm depth (<a href="https://doi.org/10.1109/TGRS.2018.2858004" target="_blank">Bauer-Marschallinger et al., 2019</a>; <a href="https://doi.org/10.1016/j.asr.2022.03.019" target="_blank">Bhogapurapu et al., 2022</a>).Ground sensors are ideal but not scalable, so Sentinel-1 is chosen for global applicability.  
+Percolation represents water that moves beyond the active crop root zone and is therefore no longer available to meet near-term crop water demand. In the updated sDRIPS framework, percolation is estimated by combining fine-scale Sentinel-1 SAR information with coarser soil moisture and soil hydraulic datasets, following the published methodology of <a href="https://doi.org/10.5194/hess-30-3675-2026" target="_blank">Khan et al. (2026)</a>.
 
-Soil moisture estimates from Sentinel-1 are combined with field capacity values from the <a href="https://doi.org/10.5281/zenodo.2784001" target="_blank">Hengl & Gupta (2019)</a> dataset available on GEE. Percolation is then computed as:
+Global soil moisture products such as SMAP provide useful volumetric soil moisture information, but their native spatial resolution is too coarse for command-area or field-scale irrigation advisories. Sentinel-1 C-band SAR, available through Google Earth Engine (GEE), provides finer spatial detail at approximately 10 m resolution and is therefore used as the primary source for estimating the spatial pattern of relative soil moisture. Sentinel-1 C-band observations have been widely used for soil moisture estimation and have shown useful sensitivity near the upper soil layer, approximately up to 100 mm depth (<a href="https://doi.org/10.1109/TGRS.2018.2858004" target="_blank">Bauer-Marschallinger et al., 2019</a>; <a href="https://doi.org/10.1016/j.asr.2022.03.019" target="_blank">Bhogapurapu et al., 2022</a>).
+
+The Sentinel-1 VV backscatter signal is converted into a relative soil moisture index by comparing the current backscatter state with dry and wet reference conditions over the analysis window:
+
+\[
+SMI = \frac{\sigma^0_{VV} - \sigma^0_{VV,dry}}{\sigma^0_{VV,wet} - \sigma^0_{VV,dry}}
+\]
+
+Where:
+
+- \(SMI\) -- Sentinel-1 relative soil moisture index  
+- \(\sigma^0_{VV}\) -- Sentinel-1 VV backscatter for the analysis date or composite  
+- \(\sigma^0_{VV,dry}\) -- dry reference backscatter condition  
+- \(\sigma^0_{VV,wet}\) -- wet reference backscatter condition  
+
+The relative Sentinel-1 soil moisture index is then scaled to volumetric soil moisture using SMAP volumetric soil moisture estimates, and the scaled volumetric estimate is converted to water depth:
+
+\[
+SM_{mm} = \theta_{SMAP\text{-}scaled} \times Z
+\]
+
+Where:
+
+- \(SM_{mm}\) -- soil water depth in millimeters  
+- \(\theta_{SMAP\text{-}scaled}\) -- volumetric soil moisture after scaling the Sentinel-1 relative index with SMAP  
+- \(Z\) -- equivalent soil depth used for the percolation estimate  
+
+Soil moisture at field capacity is derived from the ISRIC SoilGrids dataset available on GEE (<a href="https://isric.org/explore/soilgrids" target="_blank">ISRIC SoilGrids</a>; Poggio et al., 2021). Field capacity is converted to the same water-depth basis:
+
+\[
+FC_{mm} = \theta_{FC} \times Z
+\]
+
+Percolation is calculated for each pixel only when the estimated soil water depth exceeds field capacity:
 
 \[
 Percolation =
 \begin{cases}
-\text{Soil Moisture} - \text{Field Capacity}, & \text{if } \geq 0 \\
-0, & \text{else}
+SM_{mm} - FC_{mm}, & SM_{mm} > FC_{mm} \\
+0, & SM_{mm} \leq FC_{mm}
 \end{cases}
 \]
+
+Pixel-level percolation estimates are then summarized over each command area and used as a loss term in the net water requirement calculation.
 
 <span id="precipitation"></span>
 ## Precipitation
