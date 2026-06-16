@@ -51,10 +51,10 @@ plugins:
         lang: en
     - mkdocstrings:
         handlers:
-        python:
+          python:
             paths: [src] 
             options:
-            show_source: true
+              show_source: true
     - mkdocs-jupyter:       
         execute: false     
         include_source: true
@@ -99,7 +99,7 @@ nav:
     - 'Installation Guide': 'Quick_Start/Installation.md'
 - Commands:
     - 'Command Line Interface': 'Commands/cli.md'
-    - 'Jupyter Notebook': 'Commands/jupyter.md'
+    - 'Jupyter Notebook': 'Commands/notebook.md'
 - Configuration:
     - 'Script Configuration File': 'Configuration/script_config.md'
     - 'Crop Configuration File': 'Configuration/crop_config.md'
