@@ -94,6 +94,7 @@ nav:
 - Model:
     - 'Conceptual Model': 'Model/ConceptualModel.md'
     - 'Computational Model': 'Model/ComputationalModel.md'
+    - 'Design Philosophy': 'Model/DesignPhilosophy.md'
 - Quick Start: 
     - 'Getting Ready': 'Quick_Start/Getting_ready.md'
     - 'Installation Guide': 'Quick_Start/Installation.md'
