@@ -1,7 +1,7 @@
 # Conceptual Model of sDRIPS
 **sDRIPS** is a cloud-based, open-source irrigation advisory system designed to optimize surface water use by integrating Earth observation datasets and numerical weather models. It leverages publicly available data from multiple sources, including:
 
-1. **Landsat** and **Sentinel-1** satellites for surface monitoring.
+1. **Landsat**, **Sentinel-1**, and **SMAP** satellites for surface and soil moisture monitoring.
 2. **Global Forecast System (GFS)** for meteorological forecasts.
 3. **Global Precipitation Measurement (GPM)** – IMERG for precipitation estimates. 
 
